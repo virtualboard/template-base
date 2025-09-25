@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VirtualBoard Feature Spec Workflow Template</title>
+    <meta name="description" content="A lightweight, automation-ready system for managing features with multiple AI agents using Markdown-first approach and bash scripts.">
+    <meta name="keywords" content="feature management, AI agents, markdown, workflow, project management, virtualboard">
+    <meta name="author" content="VirtualBoard">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://virtualboard.github.io/virtualboard-template-base/">
+    <meta property="og:title" content="VirtualBoard Feature Spec Workflow Template">
+    <meta property="og:description" content="A lightweight, automation-ready system for managing features with multiple AI agents using Markdown-first approach and bash scripts.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://virtualboard.github.io/virtualboard-template-base/">
+    <meta property="twitter:title" content="VirtualBoard Feature Spec Workflow Template">
+    <meta property="twitter:description" content="A lightweight, automation-ready system for managing features with multiple AI agents using Markdown-first approach and bash scripts.">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        
+        .version {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border-color: #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h3 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .card li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .card li:last-child {
+            border-bottom: none;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .workflow-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .workflow-step {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+            border: 2px solid #e0e7ff;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .step-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .code-block code {
+            color: #333;
+        }
+        
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .footer p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: #764ba2;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .workflow-steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">VirtualBoard</h1>
+            <p class="tagline">Feature Spec Workflow Template</p>
+            <span class="version">v1.0.0</span>
+            <div class="cta-buttons">
+                <a href="https://github.com/virtualboard/vb-cli" class="btn btn-primary">Get Virtual Board CLI</a>
+                <a href="https://github.com/virtualboard/virtualboard-template-base" class="btn btn-secondary">View on GitHub</a>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>🎯 What is this?</h2>
+                <p>This is a <span class="highlight">template repository</span> that provides a complete implementation of the VirtualBoard Feature Spec Workflow system. It's designed to be used with the <a href="https://github.com/virtualboard/vb-cli" style="color: #667eea;">Virtual Board CLI</a> to initialize new projects with a standardized feature management workflow.</p>
+                
+                <h3>Key Benefits:</h3>
+                <ul>
+                    <li>Zero dependencies - pure bash scripts</li>
+                    <li>Universal compatibility across Unix systems</li>
+                    <li>AI agent collaboration ready</li>
+                    <li>Markdown-first approach</li>
+                    <li>Automated validation and indexing</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>🚀 Quick Start</h2>
+                <h3>1. Install Virtual Board CLI</h3>
+                <div class="code-block">
+                    <code>git clone https://github.com/virtualboard/vb-cli.git<br>
+cd vb-cli<br>
+./install.sh</code>
+                </div>
+                
+                <h3>2. Initialize New Project</h3>
+                <div class="code-block">
+                    <code>vb init my-project --template virtualboard-template-base</code>
+                </div>
+                
+                <h3>3. Start Managing Features</h3>
+                <div class="code-block">
+                    <code>vb new "User Authentication" --labels "auth,frontend"<br>
+vb move FTR-0001 in-progress --owner agent-cursor-1</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🤖 AI Agent Ready</h3>
+                <p>Built-in support for multiple AI agents working concurrently on different features without conflicts. Includes role-specific prompts and rules of engagement.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📝 Markdown First</h3>
+                <p>Everything important lives in Markdown files - easy to diff, parse, and index. Features are tracked as individual Markdown files that move through lifecycle folders.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>⚡ Zero Dependencies</h3>
+                <p>Pure bash scripts eliminate Node.js/npm dependencies. Fast execution, universal compatibility, and easy maintenance across all Unix-like systems.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🔄 Lifecycle Management</h3>
+                <p>Clear state transitions: backlog → in-progress → review → done. Folder location is the source of truth, with automated validation and dependency checking.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🛡️ Multi-Agent Safety</h3>
+                <p>Built-in concurrency controls with ownership locks, dependency validation, and collision prevention to ensure agents don't step on each other.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🔧 CI/CD Integration</h3>
+                <p>Ready for continuous integration with validation rules, automated indexing, and GitHub Actions workflows. No build steps required.</p>
+            </div>
+        </div>
+
+        <div class="workflow-section">
+            <h2>🔄 How It Works</h2>
+            <p>The VirtualBoard Feature Spec Workflow uses a simple but powerful system where features move through clearly defined states, with each state represented by a folder location. This makes it easy for both humans and AI agents to understand the current state of any feature.</p>
+            
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Create Feature</div>
+                    <div class="step-description">New features start in the backlog with a unique FTR-ID and structured Markdown spec</div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Assign & Start</div>
+                    <div class="step-description">Agents claim features by moving them to in-progress with ownership tracking</div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-description">Work on implementation, updating the spec with progress and links to PRs</div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Review</div>
+                    <div class="step-description">Move to review status when ready for human review and testing</div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">Complete</div>
+                    <div class="step-description">Mark as done when merged and deployed, with full audit trail</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="workflow-section">
+            <h2>🏗️ Project Structure</h2>
+            <p>When you initialize a project with this template, you get a complete directory structure with all the necessary components:</p>
+            
+            <div class="code-block">
+                <code>my-project/<br>
+├── features/                 # Feature specifications<br>
+│   ├── backlog/             # Unassigned features<br>
+│   ├── in-progress/         # Features being worked on<br>
+│   ├── blocked/             # Features waiting on dependencies<br>
+│   ├── review/              # Features ready for review<br>
+│   ├── done/                # Completed features<br>
+│   └── INDEX.md             # Auto-generated feature index<br>
+├── templates/               # Templates and configuration<br>
+│   ├── spec.md              # Feature spec template<br>
+│   ├── pr-template.md       # Pull request template<br>
+│   └── rules.yml            # Agent rules configuration<br>
+├── schemas/                 # Validation schemas<br>
+│   └── frontmatter.schema.json<br>
+├── agents/                  # Agent documentation and role prompts<br>
+│   ├── pm.md                # Project manager prompt<br>
+│   ├── architect.md         # System architect prompt<br>
+│   ├── backend_dev.md       # Backend engineer prompt<br>
+│   ├── frontend_dev.md      # Frontend engineer prompt<br>
+│   └── ...                  # Other specialized agents<br>
+└── scripts/                 # Automation scripts<br>
+    ├── ftr-new.sh           # Create new feature<br>
+    ├── ftr-move.sh          # Move feature between states<br>
+    ├── ftr-validate.sh      # Validate features<br>
+    └── ftr-index.sh         # Generate feature index</code>
+            </div>
+        </div>
+
+        <div class="workflow-section">
+            <h2>🤖 AI Agent System</h2>
+            <p>The template includes a complete virtual team of AI agents, each with specialized roles and responsibilities:</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>👨‍💼 Project Manager</h3>
+                    <p>Oversees project planning, prioritization, and coordination between teams</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🏗️ System Architect</h3>
+                    <p>Designs system architecture, technical decisions, and integration patterns</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🎨 UX/Product Designer</h3>
+                    <p>Focuses on user experience, interface design, and product requirements</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>⚙️ Backend Developer</h3>
+                    <p>Handles server-side logic, APIs, databases, and infrastructure</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>💻 Frontend Developer</h3>
+                    <p>Manages client-side code, UI components, and user interactions</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🔒 Security Engineer</h3>
+                    <p>Ensures security best practices, compliance, and threat mitigation</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🧪 QA Engineer</h3>
+                    <p>Responsible for testing, quality assurance, and validation</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>📊 Data Analyst</h3>
+                    <p>Handles analytics, metrics, and data-driven insights</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>Ready to streamline your feature management workflow with AI agents?</p>
+            <div class="footer-links">
+                <a href="https://github.com/virtualboard/vb-cli">Get Virtual Board CLI</a>
+                <a href="https://github.com/virtualboard/virtualboard-template-base">View Template</a>
+                <a href="https://github.com/virtualboard">VirtualBoard Organization</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+# Agent Rules & Validation Parameters
+# Machine-readable configuration for AI agents
+
+# Agent Configuration
+agent:
+  max_concurrent_features: 3
+  conflict_resolution: "first-come-first-served"
+  error_retry_attempts: 2
+  lock_ttl_minutes: 60
+
+# Validation Rules
+validation:
+  frontmatter_schema: "/schemas/frontmatter.schema.json"
+  enforce_circular_dependency_check: true
+  require_updated_date_on_edit: true
+  max_description_length: 1000
+  max_labels: 10
+
+# File Naming
+naming:
+  id_pattern: "^FTR-\\d{4}$"
+  filename_pattern: "^FTR-\\d{4}-[a-z0-9-]+$"
+  max_description_words: 6
+
+# State Transitions
+transitions:
+  allowed:
+    - from: "backlog"
+      to: ["in-progress"]
+    - from: "in-progress" 
+      to: ["blocked", "review"]
+    - from: "blocked"
+      to: ["in-progress"]
+    - from: "review"
+      to: ["in-progress", "done"]
+  
+  forbidden:
+    - from: "done"
+      to: ["backlog", "in-progress", "blocked", "review"]
+
+# Dependencies
+dependencies:
+  check_circular: true
+  require_done_before_in_progress: true
+  max_dependency_depth: 10
+
+# Error Messages
+errors:
+  ownership_conflict: "Feature FTR-{id} is already owned by {owner}. Please select another feature."
+  circular_dependency: "Circular dependency detected involving FTR-{id}. Break the cycle before proceeding."
+  invalid_transition: "Transition from {from} to {to} is not allowed for FTR-{id}."
+  missing_dependency: "Dependency FTR-{dep_id} is not done. Cannot move FTR-{id} to in-progress."
