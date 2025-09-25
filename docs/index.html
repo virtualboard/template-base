@@ -484,8 +484,8 @@ vb move FTR-0001 in-progress --owner agent-cursor-1</code>
 │   ├── ftr-validate.sh      # Validate features<br>
 │   └── ftr-index.sh         # Generate feature index<br>
 ├── .pre-commit-config.yaml  # Pre-commit hooks configuration<br>
-├── .markdownlint.yaml       # Markdown linting rules (legacy)<br>
-├── .pymarkdown.json         # PyMarkdown configuration<br>
+├── .pymarkdown.json         # PyMarkdown markdown linting rules<br>
+├── .markdownlint.yaml       # Legacy markdownlint rules (optional)<br>
 └── .typos.toml              # Spell checking configuration</code>
             </div>
         </div>
@@ -495,24 +495,19 @@ vb move FTR-0001 in-progress --owner agent-cursor-1</code>
             <p>The template includes comprehensive development tools and quality checks to ensure consistent, high-quality code and documentation:</p>
             
             <div class="features-grid">
-            <div class="feature-card">
-                <h3>🔧 Pre-commit Hooks</h3>
-                <p>Automated checks run before every commit including YAML validation, JSON formatting, spell checking, and file integrity checks</p>
-            </div>
-            
-            <div class="feature-card">
-                <h3>📝 Markdown Linting</h3>
-                <p>Python-based markdown linting with PyMarkdown, configurable via .pymarkdown.json for consistent formatting and style enforcement</p>
-            </div>
+                <div class="feature-card">
+                    <h3>🔧 Pre-commit Hooks</h3>
+                    <p>Automated checks run before every commit including YAML validation, JSON formatting, spell checking, and file integrity checks</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>📝 Markdown Linting</h3>
+                    <p>Python-based markdown linting with PyMarkdown, configurable via .pymarkdown.json for consistent formatting and style enforcement</p>
+                </div>
                 
                 <div class="feature-card">
                     <h3>✅ Spell Checking</h3>
                     <p>Automated spell checking for Markdown, YAML, and text files with configurable dictionaries and ignore patterns</p>
-                </div>
-                
-                <div class="feature-card">
-                    <h3>🔍 Link Validation</h3>
-                    <p>Automatic checking of internal and external links to ensure documentation stays current and accurate</p>
                 </div>
                 
                 <div class="feature-card">
@@ -524,17 +519,36 @@ vb move FTR-0001 in-progress --owner agent-cursor-1</code>
                     <h3>🎨 Code Formatting</h3>
                     <p>Automatic formatting for YAML and JSON files with Prettier integration for consistent style</p>
                 </div>
+                
+                <div class="feature-card">
+                    <h3>🐍 Python-Only Toolchain</h3>
+                    <p>Zero dependencies on Ruby or Node.js - everything runs on Python for universal compatibility and easy maintenance</p>
+                </div>
+            </div>
+            
+            <h3>Current Working Configuration</h3>
+            <p>The template now includes a fully functional Python-only development environment with the following active tools:</p>
+            
+            <div class="code-block">
+                <code>✅ PyMarkdown Linter     - Python-based markdown validation<br>
+✅ Spell Checker        - typos with custom dictionary<br>
+✅ YAML Validator       - Prettier formatting<br>
+✅ JSON Validator       - Prettier formatting<br>
+✅ File Integrity       - Merge conflicts, permissions, line endings<br>
+✅ General Checks       - Large files, case conflicts, executables</code>
             </div>
             
             <h3>Quick Setup for Development Tools</h3>
             <div class="code-block">
-                <code># Install pre-commit hooks<br>
+                <code># Install pre-commit hooks (Python-only)<br>
 pip install pre-commit<br>
 pre-commit install<br><br>
 # Run all checks manually<br>
 pre-commit run --all-files<br><br>
 # Update hook versions<br>
-pre-commit autoupdate</code>
+pre-commit autoupdate<br><br>
+# Manual markdown linting (optional)<br>
+# markdownlint . --config .markdownlint.yaml</code>
             </div>
         </div>
 
