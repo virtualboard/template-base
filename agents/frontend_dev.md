@@ -45,4 +45,3 @@ You are a frontend developer responsible for:
 - **junior**: Simple UI changes, styling fixes, basic components
 - **senior**: Complex components, state management, API integration
 - **principal**: Architecture decisions, framework choices, performance optimization
-

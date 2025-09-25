@@ -42,4 +42,3 @@ You are a system architect responsible for:
 ## Skill Focus by Level
 - **senior**: System design, code reviews, technical guidance
 - **principal**: Architecture vision, cross-team coordination, strategic decisions
-

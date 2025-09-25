@@ -27,13 +27,13 @@ transitions:
   allowed:
     - from: "backlog"
       to: ["in-progress"]
-    - from: "in-progress" 
+    - from: "in-progress"
       to: ["blocked", "review"]
     - from: "blocked"
       to: ["in-progress"]
     - from: "review"
       to: ["in-progress", "done"]
-  
+
   forbidden:
     - from: "done"
       to: ["backlog", "in-progress", "blocked", "review"]

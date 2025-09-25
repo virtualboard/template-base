@@ -45,4 +45,3 @@ You are a QA engineer responsible for:
 - **junior**: Manual testing, basic test cases, bug reporting
 - **senior**: Test automation, performance testing, security testing
 - **principal**: Test strategy, framework design, team leadership
-

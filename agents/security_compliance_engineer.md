@@ -41,4 +41,3 @@ You ensure every feature meets security and compliance requirements by:
 ## Skill Focus by Level
 - **senior**: Application security reviews, compliance checklist execution, remediation planning.
 - **principal**: Security program leadership, regulatory strategy, cross-org risk management.
-

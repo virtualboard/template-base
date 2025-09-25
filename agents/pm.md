@@ -46,4 +46,3 @@ IMPORTANT: Features are created in `/features/backlog/` and developers can pick 
 ## Skill Focus by Level
 - **senior**: Task management, team coordination, basic planning
 - **principal**: Strategic planning, stakeholder management, process optimization
-

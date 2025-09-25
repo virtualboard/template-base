@@ -41,4 +41,3 @@ You shape product experiences by:
 ## Skill Focus by Level
 - **senior**: Interaction design, user research facilitation, accessibility integration.
 - **principal**: Product vision alignment, multi-surface design systems, cross-team discovery leadership.
-

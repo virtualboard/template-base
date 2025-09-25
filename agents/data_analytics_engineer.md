@@ -41,4 +41,3 @@ You deliver data capabilities by:
 ## Skill Focus by Level
 - **senior**: Data modeling, orchestration, analytics engineering best practices.
 - **principal**: Data strategy, platform architecture, cross-domain governance leadership.
-

@@ -1,0 +1,80 @@
+repos:
+  # YAML validation
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        name: Prettier YAML
+        types: [yaml]
+        files: \.github/.*\.ya?ml$
+        args: [--parser=yaml, --tab-width=2]
+
+  # Markdown linting (Python-based)
+  - repo: https://github.com/jackdewinter/pymarkdown
+    rev: v0.9.18
+    hooks:
+      - id: pymarkdown
+        name: PyMarkdown Linter
+        files: \.md$
+        args: [--config=.pymarkdown.json, scan]
+
+  # Spell checking
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.16.26
+    hooks:
+      - id: typos
+        name: Spell Checker
+        files: \.(md|txt|yaml|yml|go)$
+        args: [--config, .typos.toml]
+
+  # JSON validation
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        name: Prettier JSON
+        types: [json]
+        files: \.json$
+
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace
+        files: \.(md|txt|yaml|yml|go|json)$
+      - id: end-of-file-fixer
+        name: Fix End of Files
+        files: \.(md|txt|yaml|yml|go|json)$
+      - id: check-yaml
+        name: Check YAML Syntax
+        files: \.ya?ml$
+      - id: check-json
+        name: Check JSON Syntax
+        files: \.json$
+      - id: check-merge-conflict
+        name: Check for Merge Conflicts
+      - id: check-added-large-files
+        name: Check for Large Files
+        args: [--maxkb=1000]
+        exclude: '\.pymarkdown\.json$'
+      - id: check-case-conflict
+        name: Check for Case Conflicts
+      - id: check-merge-conflict
+        name: Check for Merge Conflicts
+      - id: mixed-line-ending
+        name: Mixed Line Ending
+        args: [--fix=lf]
+      - id: check-executables-have-shebangs
+        name: Check Executables Have Shebangs
+      - id: check-shebang-scripts-are-executable
+        name: Check Shebang Scripts Are Executable
+      - id: check-symlinks
+        name: Check Symlinks
+      - id: detect-private-key
+        name: Detect Private Keys
+      - id: check-ast
+        name: Check AST
+        files: \.go$
+      - id: check-merge-conflict
+        name: Check for Merge Conflicts

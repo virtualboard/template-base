@@ -22,10 +22,10 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
    ```bash
    # Clone the repository
    git clone https://github.com/virtualboard/vb-cli.git
-   
+
    # Navigate to the directory
    cd vb-cli
-   
+
    # Install the CLI
    ./install.sh
    ```
@@ -40,13 +40,13 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
    ```bash
    # Create a new feature
    vb new "Feature Title" --labels "label1,label2"
-   
+
    # Move a feature through lifecycle
    vb move FTR-0001 in-progress --owner agent-cursor-1
-   
+
    # Validate all features
    vb validate
-   
+
    # Generate feature index
    vb index
    ```

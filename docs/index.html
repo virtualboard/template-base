@@ -354,6 +354,7 @@
                     <li>AI agent collaboration ready</li>
                     <li>Markdown-first approach</li>
                     <li>Automated validation and indexing</li>
+                    <li>Built-in code quality tools and pre-commit hooks</li>
                 </ul>
             </div>
 
@@ -408,6 +409,11 @@ vb move FTR-0001 in-progress --owner agent-cursor-1</code>
             <div class="feature-card">
                 <h3>🔧 CI/CD Integration</h3>
                 <p>Ready for continuous integration with validation rules, automated indexing, and GitHub Actions workflows. No build steps required.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🛠️ Code Quality Tools</h3>
+                <p>Built-in pre-commit hooks, markdown linting, spell checking, and automated formatting ensure consistent, high-quality code and documentation.</p>
             </div>
         </div>
 
@@ -472,11 +478,63 @@ vb move FTR-0001 in-progress --owner agent-cursor-1</code>
 │   ├── backend_dev.md       # Backend engineer prompt<br>
 │   ├── frontend_dev.md      # Frontend engineer prompt<br>
 │   └── ...                  # Other specialized agents<br>
-└── scripts/                 # Automation scripts<br>
-    ├── ftr-new.sh           # Create new feature<br>
-    ├── ftr-move.sh          # Move feature between states<br>
-    ├── ftr-validate.sh      # Validate features<br>
-    └── ftr-index.sh         # Generate feature index</code>
+├── scripts/                 # Automation scripts<br>
+│   ├── ftr-new.sh           # Create new feature<br>
+│   ├── ftr-move.sh          # Move feature between states<br>
+│   ├── ftr-validate.sh      # Validate features<br>
+│   └── ftr-index.sh         # Generate feature index<br>
+├── .pre-commit-config.yaml  # Pre-commit hooks configuration<br>
+├── .markdownlint.yaml       # Markdown linting rules (legacy)<br>
+├── .pymarkdown.json         # PyMarkdown configuration<br>
+└── .typos.toml              # Spell checking configuration</code>
+            </div>
+        </div>
+
+        <div class="workflow-section">
+            <h2>🛠️ Code Quality & Development Tools</h2>
+            <p>The template includes comprehensive development tools and quality checks to ensure consistent, high-quality code and documentation:</p>
+            
+            <div class="features-grid">
+            <div class="feature-card">
+                <h3>🔧 Pre-commit Hooks</h3>
+                <p>Automated checks run before every commit including YAML validation, JSON formatting, spell checking, and file integrity checks</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>📝 Markdown Linting</h3>
+                <p>Python-based markdown linting with PyMarkdown, configurable via .pymarkdown.json for consistent formatting and style enforcement</p>
+            </div>
+                
+                <div class="feature-card">
+                    <h3>✅ Spell Checking</h3>
+                    <p>Automated spell checking for Markdown, YAML, and text files with configurable dictionaries and ignore patterns</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🔍 Link Validation</h3>
+                    <p>Automatic checking of internal and external links to ensure documentation stays current and accurate</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>📋 File Integrity</h3>
+                    <p>Checks for merge conflicts, large files, case conflicts, and ensures proper file permissions and line endings</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>🎨 Code Formatting</h3>
+                    <p>Automatic formatting for YAML and JSON files with Prettier integration for consistent style</p>
+                </div>
+            </div>
+            
+            <h3>Quick Setup for Development Tools</h3>
+            <div class="code-block">
+                <code># Install pre-commit hooks<br>
+pip install pre-commit<br>
+pre-commit install<br><br>
+# Run all checks manually<br>
+pre-commit run --all-files<br><br>
+# Update hook versions<br>
+pre-commit autoupdate</code>
             </div>
         </div>
 
