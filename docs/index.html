@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VirtualBoard Template · Feature Spec Workflow</title>
+  <meta name="description" content="A lightweight, automation-ready system for managing features with multiple AI agents using Markdown-first approach and bash scripts.">
+  <meta name="keywords" content="feature management, AI agents, markdown, workflow, project management, virtualboard, template">
+  <meta name="author" content="VirtualBoard">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://virtualboard.github.io/virtualboard-template-base/">
+  <meta property="og:title" content="VirtualBoard Feature Spec Workflow Template">
+  <meta property="og:description" content="A lightweight, automation-ready system for managing features with multiple AI agents using Markdown-first approach and bash scripts.">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://virtualboard.github.io/virtualboard-template-base/">
+  <meta property="twitter:title" content="VirtualBoard Feature Spec Workflow Template">
+  <meta property="twitter:description" content="A lightweight, automation-ready system for managing features with multiple AI agents using Markdown-first approach and bash scripts.">
+  
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f7f9fc;
+      --bg-alt: #ffffff;
+      --text: #121c2a;
+      --muted: #52606d;
+      --accent: #00d4ff;
+      --accent-dark: #00a8cc;
+      --accent-secondary: #32d74b;
+      --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #32d74b 100%);
+      --logo-bg: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+      --border: #d0d7e2;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--bg-alt);
+      padding: 4rem 1.5rem 3rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(30, 58, 138, 0.3);
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover img {
+      transform: scale(1.1);
+    }
+
+    .logo-text {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+
+    @media (max-width: 768px) {
+      .logo-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+      
+      .logo {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .logo-text {
+        font-size: 2rem;
+      }
+      
+      .hero-title {
+        font-size: 2rem;
+        text-align: center;
+      }
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 4vw + 1rem, 3.6rem);
+      margin: 0;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-tagline {
+      font-size: 1.2rem;
+      margin: 1rem 0;
+      color: var(--muted);
+      max-width: 620px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .hero-actions a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .hero-actions a.primary {
+      background: var(--accent-gradient);
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(0, 212, 255, 0.25);
+    }
+
+    .hero-actions a.primary:hover {
+      background: linear-gradient(135deg, #00a8cc 0%, #28a745 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 16px 40px rgba(0, 212, 255, 0.35);
+    }
+
+    .hero-actions a.secondary {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    main section {
+      margin: 3.5rem 0;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 0.75rem 0;
+    }
+
+    ul {
+      padding-left: 1.1rem;
+    }
+
+    code, pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      background: rgba(0, 212, 255, 0.08);
+      border-radius: 0.4rem;
+    }
+
+    code {
+      padding: 0.15rem 0.4rem;
+    }
+
+    pre {
+      padding: 1.2rem;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      white-space: pre-wrap;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    article {
+      background: var(--bg);
+      border-radius: 0.9rem;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 1.5rem 4rem;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--accent-dark);
+      text-decoration: none;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--accent-dark);
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .workflow-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .workflow-step {
+      text-align: center;
+      padding: 1.5rem;
+      border-radius: 0.9rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .step-number {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      background: var(--accent-gradient);
+      color: white;
+      border-radius: 50%;
+      line-height: 40px;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .step-title {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .step-description {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .highlight {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 600;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --bg-alt: #111c36;
+        --text: #f1f5f9;
+        --muted: #cbd5f5b3;
+        --border: #1e2a44;
+        --accent: #00d4ff;
+        --accent-dark: #00a8cc;
+        --accent-secondary: #32d74b;
+        --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #32d74b 100%);
+        --logo-bg: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+      }
+
+      main section {
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      article {
+        background: rgba(15, 23, 42, 0.6);
+        box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.12);
+      }
+
+      code, pre {
+        background: rgba(0, 212, 255, 0.12);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo-container">
+        <div class="logo">
+          <img src="avatar.png" alt="VirtualBoard Logo" />
+        </div>
+        <h1 class="logo-text">virtualboard</h1>
+      </div>
+      <h2 class="hero-title">Template</h2>
+      <p class="hero-tagline">A complete implementation of the VirtualBoard Feature Spec Workflow system. Ready-to-use template with AI agent collaboration, Markdown-first approach, and zero dependencies.</p>
+      <div class="hero-actions">
+        <a class="primary" href="https://github.com/virtualboard/vb-cli" target="_blank" rel="noreferrer">Get Virtual Board CLI</a>
+        <a class="secondary" href="https://github.com/virtualboard/virtualboard-template-base" target="_blank" rel="noreferrer">View on GitHub</a>
+      </div>
+      <div class="badge-row">
+        <span class="badge">Template · v0.0.1</span>
+        <span class="badge">Zero Dependencies</span>
+        <span class="badge">AI Ready</span>
+        <span class="badge">Markdown First</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <h2>What is this Template?</h2>
+      <div class="grid two">
+        <article>
+          <h3>Complete Implementation</h3>
+          <p>This is a <span class="highlight">template repository</span> that provides a complete implementation of the VirtualBoard Feature Spec Workflow system. It's designed to be used with the <a href="https://github.com/virtualboard/vb-cli" style="color: var(--accent);">Virtual Board CLI</a> to initialize new projects with a standardized feature management workflow.</p>
+        </article>
+        <article>
+          <h3>Key Benefits</h3>
+          <ul>
+            <li>Zero dependencies - pure bash scripts</li>
+            <li>Universal compatibility across Unix systems</li>
+            <li>AI agent collaboration ready</li>
+            <li>Markdown-first approach</li>
+            <li>Automated validation and indexing</li>
+            <li>Built-in code quality tools and pre-commit hooks</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Quick Start</h2>
+      <p>Get up and running with the VirtualBoard template in minutes.</p>
+      <pre><code># 1. Install Virtual Board CLI
+go install github.com/virtualboard/vb-cli@latest
+
+# 2. Initialize new project with template
+vb init my-project --template virtualboard-template-base
+
+# 3. Start managing features
+vb new "User Authentication" --labels "auth,frontend"
+vb move FTR-0001 in-progress --owner agent-cursor-1</code></pre>
+      <p>All commands accept <code>--json</code>, <code>--dry-run</code>, <code>--verbose</code>, and <code>--root</code> flags to adapt to your tooling.</p>
+    </section>
+
+    <section>
+      <h2>Template Features</h2>
+      <div class="grid three">
+        <article>
+          <h3>🤖 AI Agent Ready</h3>
+          <p>Built-in support for multiple AI agents working concurrently on different features without conflicts. Includes role-specific prompts and rules of engagement.</p>
+        </article>
+        <article>
+          <h3>📝 Markdown First</h3>
+          <p>Everything important lives in Markdown files - easy to diff, parse, and index. Features are tracked as individual Markdown files that move through lifecycle folders.</p>
+        </article>
+        <article>
+          <h3>⚡ Zero Dependencies</h3>
+          <p>Pure bash scripts eliminate Node.js/npm dependencies. Fast execution, universal compatibility, and easy maintenance across all Unix-like systems.</p>
+        </article>
+        <article>
+          <h3>🔄 Lifecycle Management</h3>
+          <p>Clear state transitions: backlog → in-progress → review → done. Folder location is the source of truth, with automated validation and dependency checking.</p>
+        </article>
+        <article>
+          <h3>🛡️ Multi-Agent Safety</h3>
+          <p>Built-in concurrency controls with ownership locks, dependency validation, and collision prevention to ensure agents don't step on each other.</p>
+        </article>
+        <article>
+          <h3>🔧 CI/CD Integration</h3>
+          <p>Ready for continuous integration with validation rules, automated indexing, and GitHub Actions workflows. No build steps required.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>How It Works</h2>
+      <p>The VirtualBoard Feature Spec Workflow uses a simple but powerful system where features move through clearly defined states, with each state represented by a folder location. This makes it easy for both humans and AI agents to understand the current state of any feature.</p>
+      
+      <div class="workflow-steps">
+        <div class="workflow-step">
+          <div class="step-number">1</div>
+          <div class="step-title">Create Feature</div>
+          <div class="step-description">New features start in the backlog with a unique FTR-ID and structured Markdown spec</div>
+        </div>
+        
+        <div class="workflow-step">
+          <div class="step-number">2</div>
+          <div class="step-title">Assign & Start</div>
+          <div class="step-description">Agents claim features by moving them to in-progress with ownership tracking</div>
+        </div>
+        
+        <div class="workflow-step">
+          <div class="step-number">3</div>
+          <div class="step-title">Implement</div>
+          <div class="step-description">Work on implementation, updating the spec with progress and links to PRs</div>
+        </div>
+        
+        <div class="workflow-step">
+          <div class="step-number">4</div>
+          <div class="step-title">Review</div>
+          <div class="step-description">Move to review status when ready for human review and testing</div>
+        </div>
+        
+        <div class="workflow-step">
+          <div class="step-number">5</div>
+          <div class="step-title">Complete</div>
+          <div class="step-description">Mark as done when merged and deployed, with full audit trail</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Project Structure</h2>
+      <p>When you initialize a project with this template, you get a complete directory structure with all the necessary components:</p>
+      
+      <pre><code>my-project/
+├── features/                 # Feature specifications
+│   ├── backlog/             # Unassigned features
+│   ├── in-progress/         # Features being worked on
+│   ├── blocked/             # Features waiting on dependencies
+│   ├── review/              # Features ready for review
+│   ├── done/                # Completed features
+│   └── INDEX.md             # Auto-generated feature index
+├── templates/               # Templates and configuration
+│   ├── spec.md              # Feature spec template
+│   ├── pr-template.md       # Pull request template
+│   └── rules.yml            # Agent rules configuration
+├── schemas/                 # Validation schemas
+│   └── frontmatter.schema.json
+├── agents/                  # Agent documentation and role prompts
+│   ├── pm.md                # Project manager prompt
+│   ├── architect.md         # System architect prompt
+│   ├── backend_dev.md       # Backend engineer prompt
+│   ├── frontend_dev.md      # Frontend engineer prompt
+│   └── ...                  # Other specialized agents
+├── scripts/                 # Automation scripts
+│   ├── ftr-new.sh           # Create new feature
+│   ├── ftr-move.sh          # Move feature between states
+│   ├── ftr-validate.sh      # Validate features
+│   └── ftr-index.sh         # Generate feature index
+├── .pre-commit-config.yaml  # Pre-commit hooks configuration
+├── .pymarkdown.json         # PyMarkdown markdown linting rules
+├── .markdownlint.yaml       # Legacy markdownlint rules (optional)
+└── .typos.toml              # Spell checking configuration</code></pre>
+    </section>
+
+    <section>
+      <h2>Code Quality & Development Tools</h2>
+      <p>The template includes comprehensive development tools and quality checks to ensure consistent, high-quality code and documentation:</p>
+      
+      <div class="grid two">
+        <article>
+          <h3>🔧 Pre-commit Hooks</h3>
+          <p>Automated checks run before every commit including YAML validation, JSON formatting, spell checking, and file integrity checks</p>
+        </article>
+        <article>
+          <h3>📝 Markdown Linting</h3>
+          <p>Python-based markdown linting with PyMarkdown, configurable via .pymarkdown.json for consistent formatting and style enforcement</p>
+        </article>
+        <article>
+          <h3>✅ Spell Checking</h3>
+          <p>Automated spell checking for Markdown, YAML, and text files with configurable dictionaries and ignore patterns</p>
+        </article>
+        <article>
+          <h3>🎨 Code Formatting</h3>
+          <p>Automatic formatting for YAML and JSON files with Prettier integration for consistent style</p>
+        </article>
+      </div>
+      
+      <h3>Current Working Configuration</h3>
+      <p>The template includes a fully functional Python-only development environment:</p>
+      
+      <pre><code>✅ PyMarkdown Linter     - Python-based markdown validation
+✅ Spell Checker        - typos with custom dictionary
+✅ YAML Validator       - Prettier formatting
+✅ JSON Validator       - Prettier formatting
+✅ File Integrity       - Merge conflicts, permissions, line endings
+✅ General Checks       - Large files, case conflicts, executables</code></pre>
+      
+      <h3>Quick Setup</h3>
+      <pre><code># Install pre-commit hooks (Python-only)
+pip install pre-commit
+pre-commit install
+
+# Run all checks manually
+pre-commit run --all-files
+
+# Update hook versions
+pre-commit autoupdate</code></pre>
+    </section>
+
+    <section>
+      <h2>AI Agent System</h2>
+      <p>The template includes a complete virtual team of AI agents, each with specialized roles and responsibilities:</p>
+      
+      <div class="grid three">
+        <article>
+          <h3>👨‍💼 Project Manager</h3>
+          <p>Oversees project planning, prioritization, and coordination between teams</p>
+        </article>
+        <article>
+          <h3>🏗️ System Architect</h3>
+          <p>Designs system architecture, technical decisions, and integration patterns</p>
+        </article>
+        <article>
+          <h3>🎨 UX/Product Designer</h3>
+          <p>Focuses on user experience, interface design, and product requirements</p>
+        </article>
+        <article>
+          <h3>⚙️ Backend Developer</h3>
+          <p>Handles server-side logic, APIs, databases, and infrastructure</p>
+        </article>
+        <article>
+          <h3>💻 Frontend Developer</h3>
+          <p>Manages client-side code, UI components, and user interactions</p>
+        </article>
+        <article>
+          <h3>🔒 Security Engineer</h3>
+          <p>Ensures security best practices, compliance, and threat mitigation</p>
+        </article>
+        <article>
+          <h3>🧪 QA Engineer</h3>
+          <p>Responsible for testing, quality assurance, and validation</p>
+        </article>
+        <article>
+          <h3>📊 Data Analyst</h3>
+          <p>Handles analytics, metrics, and data-driven insights</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Get Started</h2>
+      <p>Ready to streamline your feature management workflow with AI agents?</p>
+      <ul>
+        <li>Read the <a href="https://github.com/virtualboard/virtualboard-template-base/blob/main/README.md" target="_blank" rel="noreferrer">README</a> for a project overview.</li>
+        <li>Follow the <a href="https://github.com/virtualboard/vb-cli/blob/main/docs/CLI.md" target="_blank" rel="noreferrer">CLI documentation</a> to get started with the Virtual Board CLI.</li>
+        <li>Submit issues or pull requests via <a href="https://github.com/virtualboard/virtualboard-template-base" target="_blank" rel="noreferrer">GitHub</a>.</li>
+      </ul>
+      <p>Maintained by the VirtualBoard Engineering Guild with contributions from the community.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>VirtualBoard Template · Released under the MIT License · <a href="https://github.com/virtualboard/virtualboard-template-base" target="_blank" rel="noreferrer">github.com/virtualboard/virtualboard-template-base</a></p>
+  </footer>
+</body>
+</html>
