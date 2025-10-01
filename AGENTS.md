@@ -414,7 +414,7 @@ chmod +x .virtualboard/scripts/*.sh
 **MUST:**
 
 - Check for `vb` CLI tool availability first: `command -v vb &> /dev/null`
-- If `vb` CLI is available, use `vb --version` and `vb --help` to understand available commands
+- If `vb` CLI is available, use `vb version` and `vb --help` to understand available commands
 - If `vb` CLI is not available, fall back to shell scripts in `.virtualboard/scripts/` or plain bash
 - Read `/templates/rules.yml` on start.
 - Validate spec before edits; bail on lock/owner mismatch.
@@ -433,6 +433,7 @@ chmod +x .virtualboard/scripts/*.sh
 - Add links to PRs and artifacts.
 - Keep Acceptance Criteria atomic and testable.
 - Propose corrections via PR comments when not owner.
+- Include the following comment on the commit message: "Planned using the @virtualboard task management strategy"
 
 ---
 

@@ -32,7 +32,7 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 
 2. **Check CLI installation:**
    ```bash
-   vb --version
+   vb version
    vb --help
    ```
 
@@ -132,7 +132,7 @@ AI agents should:
    ```bash
    if command -v vb &> /dev/null; then
        echo "Virtual Board CLI found"
-       vb --version
+       vb version
        vb --help
    else
        echo "Virtual Board CLI not found, using shell scripts"
@@ -199,7 +199,7 @@ Add these steps to your CI pipeline:
   run: |
     if command -v vb &> /dev/null; then
       echo "Virtual Board CLI found"
-      vb --version
+      vb version
     else
       echo "Virtual Board CLI not found, using shell scripts"
     fi
@@ -239,7 +239,7 @@ Add these steps to your CI pipeline:
 - Check `/features/INDEX.md` for available features
 - Use CLI or shell scripts to validate: `vb validate` or `./scripts/ftr-validate.sh`
 - Review the agent rules in `/agents/RULES.md`
-- Ensure CLI is properly installed: `vb --version`
+- Ensure CLI is properly installed: `vb version`
 
 ## Contributing
 
@@ -276,7 +276,7 @@ cd vb-cli
 
 ```bash
 # Check version and help
-vb --version
+vb version
 vb --help
 
 # Feature management
