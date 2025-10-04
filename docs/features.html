@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VirtualBoard Template · Features</title>
+  <meta name="description" content="Explore the features of VirtualBoard Template including AI agent readiness, markdown-first approach, and zero dependencies.">
+  <meta name="keywords" content="feature management, AI agents, markdown, workflow, project management, virtualboard, template">
+  <meta name="author" content="VirtualBoard">
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f7f9fc;
+      --bg-alt: #ffffff;
+      --text: #121c2a;
+      --muted: #52606d;
+      --accent: #00d4ff;
+      --accent-dark: #00a8cc;
+      --accent-secondary: #32d74b;
+      --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #32d74b 100%);
+      --border: #d0d7e2;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Navbar Styles */
+    nav {
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(18, 28, 42, 0.08);
+    }
+
+    nav .container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+      gap: 1rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .nav-main {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .github-link {
+      display: flex;
+      align-items: center;
+      color: var(--muted);
+      transition: color 0.2s ease;
+    }
+
+    .github-link:hover {
+      color: var(--accent-dark);
+    }
+
+    .github-link svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .nav-brand .logo-small {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .nav-brand .logo-small img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: 500;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--accent-dark);
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1.25rem;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-gradient);
+    }
+
+    @media (max-width: 768px) {
+      nav .container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .nav-links {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .page-header {
+      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--bg-alt);
+      padding: 3rem 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin: 0.5rem 0 0;
+    }
+
+    main section {
+      margin: 3.5rem 0;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 0.75rem 0;
+    }
+
+    code, pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      background: rgba(0, 212, 255, 0.08);
+      border-radius: 0.4rem;
+    }
+
+    code {
+      padding: 0.15rem 0.4rem;
+    }
+
+    pre {
+      padding: 1.2rem;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      white-space: pre-wrap;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    article {
+      background: var(--bg);
+      border-radius: 0.9rem;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 1.5rem 4rem;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--accent-dark);
+      text-decoration: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --bg-alt: #111c36;
+        --text: #f1f5f9;
+        --muted: #cbd5f5b3;
+        --border: #1e2a44;
+      }
+
+      main section {
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      }
+
+      article {
+        background: rgba(15, 23, 42, 0.6);
+        box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.12);
+      }
+
+      code, pre {
+        background: rgba(0, 212, 255, 0.12);
+      }
+
+      nav {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="index.html" class="nav-brand">
+        <div class="logo-small">
+          <img src="avatar.png" alt="VirtualBoard" />
+        </div>
+        <span>VirtualBoard Template</span>
+      </a>
+      <div class="nav-main">
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="features.html" class="active">Features</a></li>
+          <li><a href="workflow.html">Workflow</a></li>
+          <li><a href="agents.html">Agents</a></li>
+          <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">CLI</a></li>
+        </ul>
+        <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="github-link" aria-label="GitHub">
+          <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">Features</h1>
+      <p class="page-subtitle">Powerful capabilities for modern feature management</p>
+    </div>
+  </div>
+
+  <main class="container">
+    <section>
+      <h2>Template Features</h2>
+      <div class="grid three">
+        <article>
+          <h3>🤖 AI Agent Ready</h3>
+          <p>Built-in support for multiple AI agents working concurrently on different features without conflicts. Includes role-specific prompts and rules of engagement.</p>
+        </article>
+        <article>
+          <h3>📝 Markdown First</h3>
+          <p>Everything important lives in Markdown files - easy to diff, parse, and index. Features are tracked as individual Markdown files that move through lifecycle folders.</p>
+        </article>
+        <article>
+          <h3>⚡ Zero Dependencies</h3>
+          <p>Pure bash scripts eliminate Node.js/npm dependencies. Fast execution, universal compatibility, and easy maintenance across all Unix-like systems.</p>
+        </article>
+        <article>
+          <h3>🔄 Lifecycle Management</h3>
+          <p>Clear state transitions: backlog → in-progress → review → done. Folder location is the source of truth, with automated validation and dependency checking.</p>
+        </article>
+        <article>
+          <h3>🛡️ Multi-Agent Safety</h3>
+          <p>Built-in concurrency controls with ownership locks, dependency validation, and collision prevention to ensure agents don't step on each other.</p>
+        </article>
+        <article>
+          <h3>🔧 CI/CD Integration</h3>
+          <p>Ready for continuous integration with validation rules, automated indexing, and GitHub Actions workflows. No build steps required.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Project Structure</h2>
+      <p>When you initialize a project with this template, you get a complete directory structure with all the necessary components:</p>
+
+      <pre><code>my-project/
+├── features/                        # Feature specifications
+│   ├── backlog/                    # Unassigned features
+│   ├── in-progress/                # Features being worked on
+│   ├── blocked/                    # Features waiting on dependencies
+│   ├── review/                     # Features ready for review
+│   ├── done/                       # Completed features
+│   └── INDEX.md                    # Auto-generated feature index
+├── templates/                      # Templates and configuration
+│   ├── spec.md                     # Feature spec template
+│   ├── pr-template.md              # Pull request template
+│   └── rules.yml                   # Agent rules configuration
+├── schemas/                        # Validation schemas
+│   └── frontmatter.schema.json     # Frontmatter validation schema
+├── agents/                         # Agent documentation and role prompts
+│   ├── AGENTS.md                   # Agent system overview
+│   ├── RULES.md                    # Rules of engagement for agents
+│   ├── pm.md                       # Project manager prompt
+│   ├── architect.md                # System architect prompt
+│   ├── ux_product_designer.md      # UX/Product designer prompt
+│   ├── backend_dev.md              # Backend developer prompt
+│   ├── frontend_dev.md             # Frontend developer prompt
+│   ├── fullstack_dev.md            # Fullstack developer prompt
+│   ├── devops_engineer.md          # DevOps engineer prompt
+│   ├── security_compliance_engineer.md  # Security compliance prompt
+│   ├── data_analytics_engineer.md  # Data analytics prompt
+│   └── qa.md                       # QA engineer prompt
+├── scripts/                        # Automation scripts
+│   ├── ftr-new.sh                  # Create new feature
+│   ├── ftr-move.sh                 # Move feature between states
+│   ├── ftr-validate.sh             # Validate features
+│   └── ftr-index.sh                # Generate feature index
+├── .pre-commit-config.yaml         # Pre-commit hooks configuration
+├── .pymarkdown.json                # PyMarkdown linting rules
+├── .typos.toml                     # Spell checking configuration
+├── AGENTS.md                       # Agent system documentation
+├── CHANGELOG.md                    # Version history
+├── README.md                       # Project documentation
+└── version.txt                     # Current version</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    <p>VirtualBoard Template · Released under the MIT License</p>
+  </footer>
+</body>
+</html>
