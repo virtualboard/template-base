@@ -39,7 +39,7 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 3. **Use CLI commands:**
    ```bash
    # Create a new feature
-   vb new "Feature Title" --labels "label1,label2"
+   vb new "Feature Title" label1 label2
 
    # Move a feature through lifecycle
    vb move FTR-0001 in-progress --owner agent-cursor-1
@@ -166,7 +166,7 @@ The virtual team is defined in `agents/`:
 # Check if vb CLI is available
 if command -v vb &> /dev/null; then
     # Use CLI commands
-    vb new "Feature Title" --labels "label1,label2"
+    vb new "Feature Title" label1 label2
     vb move FTR-0001 in-progress --owner agent-cursor-1
     vb validate
     vb index
@@ -280,7 +280,7 @@ vb version
 vb --help
 
 # Feature management
-vb new "Feature Title" --labels "label1,label2"
+vb new "Feature Title" label1 label2
 vb move FTR-0001 in-progress --owner agent-cursor-1
 vb validate
 vb index

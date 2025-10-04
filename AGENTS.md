@@ -251,7 +251,7 @@ Before using any automation, agents should first check if the `vb` CLI tool is a
 if command -v vb &> /dev/null; then
     echo "Virtual Board CLI found"
     vb version
-    vb --help
+    vb help
     # Use vb commands for task management
 else
     echo "Virtual Board CLI not found, using shell scripts"
@@ -265,7 +265,7 @@ If `vb` CLI is available, use it for all task management:
 
 ```bash
 # Create new feature
-vb new "Feature Title" --labels "label1,label2"
+vb new "Feature Title" label1 label2
 
 # Move feature through lifecycle
 vb move FTR-0001 in-progress --owner agent-cursor-1
