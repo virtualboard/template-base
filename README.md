@@ -20,14 +20,20 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 
 1. **Install the Virtual Board CLI:**
    ```bash
-   # Clone the repository
-   git clone https://github.com/virtualboard/vb-cli.git
+   # Download the latest release from GitHub
+   # Visit: https://github.com/virtualboard/vb-cli/releases
 
-   # Navigate to the directory
-   cd vb-cli
+   # For macOS (example):
+   curl -L -o vb https://github.com/virtualboard/vb-cli/releases/latest/download/vb-darwin-amd64
 
-   # Install the CLI
-   ./install.sh
+   # For Linux (example):
+   # curl -L -o vb https://github.com/virtualboard/vb-cli/releases/latest/download/vb-linux-amd64
+
+   # Make executable
+   chmod +x vb
+
+   # Move to PATH (optional)
+   sudo mv vb /usr/local/bin/
    ```
 
 2. **Check CLI installation:**
@@ -42,7 +48,7 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
    vb new "Feature Title" label1 label2
 
    # Move a feature through lifecycle
-   vb move FTR-0001 in-progress --owner agent-cursor-1
+   vb move FTR-0001 in-progress --owner fullstack_dev
 
    # Validate all features
    vb validate
@@ -65,7 +71,7 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 
 3. **Move a feature through lifecycle:**
    ```bash
-   ./scripts/ftr-move.sh FTR-0001 in-progress agent-cursor-1
+   ./scripts/ftr-move.sh FTR-0001 in-progress frontend_dev
    ```
 
 4. **Validate all features:**
@@ -119,7 +125,7 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 The system includes sample features in different states to demonstrate the workflow:
 
 - **FTR-0001** (backlog): User Authentication - Ready to be claimed
-- **FTR-0002** (in-progress): Dashboard Widgets - Being worked on by agent-cursor-1
+- **FTR-0002** (in-progress): Dashboard Widgets - Being worked on by fullstack_dev
 - **FTR-0003** (blocked): External API Integration - Waiting for API keys
 - **FTR-0004** (review): Notification System - Ready for review
 - **FTR-0005** (done): Basic Application Layout - Completed
@@ -167,14 +173,14 @@ The virtual team is defined in `agents/`:
 if command -v vb &> /dev/null; then
     # Use CLI commands
     vb new "Feature Title" label1 label2
-    vb move FTR-0001 in-progress --owner agent-cursor-1
+    vb move FTR-0001 in-progress --owner fullstack_dev
     vb validate
     vb index
 else
     # Fall back to shell scripts
     chmod +x .virtualboard/scripts/*.sh
     ./.virtualboard/scripts/ftr-new.sh "Feature Title" label1 label2
-    ./.virtualboard/scripts/ftr-move.sh FTR-0001 in-progress agent-cursor-1
+    ./.virtualboard/scripts/ftr-move.sh FTR-0001 in-progress fullstack_dev
     ./.virtualboard/scripts/ftr-validate.sh
     ./.virtualboard/scripts/ftr-index.sh
 fi
@@ -262,14 +268,20 @@ For enhanced task management, we recommend using the [Virtual Board CLI (`vb`)](
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/virtualboard/vb-cli.git
+# Download the latest release from GitHub
+# Visit: https://github.com/virtualboard/vb-cli/releases
 
-# Navigate to the directory
-cd vb-cli
+# For macOS (example):
+curl -L -o vb https://github.com/virtualboard/vb-cli/releases/latest/download/vb-darwin-amd64
 
-# Install the CLI
-./install.sh
+# For Linux (example):
+# curl -L -o vb https://github.com/virtualboard/vb-cli/releases/latest/download/vb-linux-amd64
+
+# Make executable
+chmod +x vb
+
+# Move to PATH (optional)
+sudo mv vb /usr/local/bin/
 ```
 
 ### CLI Commands
@@ -281,7 +293,7 @@ vb --help
 
 # Feature management
 vb new "Feature Title" label1 label2
-vb move FTR-0001 in-progress --owner agent-cursor-1
+vb move FTR-0001 in-progress --owner fullstack_dev
 vb validate
 vb index
 
