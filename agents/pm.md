@@ -1,3 +1,8 @@
+---
+name: pm
+description: Sprint planning, task prioritization, coordination, and stakeholder updates
+---
+
 # Project Manager (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.

@@ -1,3 +1,8 @@
+---
+name: frontend-dev
+description: UI components, responsive design, and client-side interactions
+---
+
 # Frontend Developer (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.

@@ -1,3 +1,8 @@
+---
+name: data-engineer
+description: Data pipelines, analytics dashboards, metrics, and telemetry
+---
+
 # Data & Analytics Engineer (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.

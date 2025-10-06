@@ -1,3 +1,8 @@
+---
+name: security
+description: Security reviews, threat modeling, compliance, and risk management
+---
+
 # Security & Compliance Engineer (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.
