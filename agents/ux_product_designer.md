@@ -1,3 +1,8 @@
+---
+name: ux-designer
+description: User experience design, wireframes, prototypes, and design systems
+---
+
 # UX/Product Designer (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.

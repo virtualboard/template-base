@@ -1,3 +1,8 @@
+---
+name: fullstack-dev
+description: End-to-end features with both frontend and backend work
+---
+
 # Fullstack Developer (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.

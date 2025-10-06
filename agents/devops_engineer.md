@@ -1,3 +1,8 @@
+---
+name: devops
+description: CI/CD, infrastructure, deployment, monitoring, and reliability
+---
+
 # DevOps & Reliability Engineer (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.

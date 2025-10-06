@@ -1,3 +1,8 @@
+---
+name: backend-dev
+description: Backend APIs, databases, authentication, and server-side logic
+---
+
 # Backend Developer (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.

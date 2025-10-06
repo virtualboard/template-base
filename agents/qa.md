@@ -1,3 +1,8 @@
+---
+name: qa
+description: Testing, quality assurance, test automation, and regression testing
+---
+
 # QA Engineer (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.

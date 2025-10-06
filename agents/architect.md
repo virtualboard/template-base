@@ -1,3 +1,8 @@
+---
+name: architect
+description: System design, technical specifications, and architectural standards
+---
+
 # Architect (Markdown-based Task Tracking)
 
 > **🤖 For Claude Agents**: Use the .virtualboard markdown-based feature tracking system for task management.
