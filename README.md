@@ -73,6 +73,10 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
    ```bash
    ./scripts/ftr-move.sh FTR-0001 in-progress frontend_dev
    ```
+   **IMPORTANT**: When moving a feature, you MUST update the frontmatter:
+   - Update `status` field to match the destination folder
+   - Update `updated` field to today's date
+   - Update `owner` field if claiming/releasing ownership
 
 4. **Validate all features:**
    ```bash
@@ -148,8 +152,10 @@ AI agents should:
 2. **Read the agent rules:** `/agents/RULES.md`
 3. **Check available work:** Look at `/features/INDEX.md`
 4. **Claim a feature:** Move from `backlog` to `in-progress` with your agent ID
+   - **CRITICAL**: Update frontmatter `status`, `owner`, and `updated` fields when moving
 5. **Work on the feature:** Update implementation notes and links
 6. **Hand off for review:** Move to `review` status when complete
+   - **CRITICAL**: Update frontmatter `status` and `updated` fields when moving
 
 ## Agent Roster
 
@@ -191,7 +197,9 @@ fi
 The system enforces several validation rules:
 
 - Frontmatter must match JSON schema
-- File location must match status
+- File location must match frontmatter `status` field (CRITICAL)
+- Frontmatter `status` field must be updated when moving files
+- Frontmatter `updated` field must be updated when making changes
 - Dependencies must be resolved before `in-progress`
 - No circular dependencies allowed
 - Ownership conflicts are prevented
