@@ -75,6 +75,7 @@ validator = "validator"
 validators = "validators"
 indexer = "indexer"
 indexers = "indexers"
+GIR = "GIR"
 
 # Common technical abbreviations
 ui = "ui"

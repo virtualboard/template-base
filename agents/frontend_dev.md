@@ -50,3 +50,13 @@ You are a frontend developer responsible for:
 - **junior**: Simple UI changes, styling fixes, basic components
 - **senior**: Complex components, state management, API integration
 - **principal**: Architecture decisions, framework choices, performance optimization
+
+## Special Commands & Actions
+**IMPORTANT**: This agent has access to specialized commands and workflows.
+
+Read `prompts/agents/frontend_dev.md` for detailed command documentation including:
+- Component generation workflows
+- UI testing procedures
+- Performance analysis workflows
+
+When you receive a trigger phrase for frontend-specific commands, refer to the command file for step-by-step execution instructions.
