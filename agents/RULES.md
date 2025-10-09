@@ -97,6 +97,53 @@ This document defines how AI agents should interact with the Feature Spec Workfl
 - Suggest alternative actions when possible
 - Log errors for debugging
 
+## Agent Commands System
+
+### Command Files Location
+- Agent-specific commands are located in `prompts/agents/{role}.md`
+- Overview and documentation at `prompts/AGENTS.md`
+- Each agent role has specialized commands tailored to their responsibilities
+
+### Command Discovery and Display
+**CRITICAL**: When you adopt an agent role:
+1. Read your role's command file from `prompts/agents/{role}.md`
+2. **Display available commands to the user immediately** using the format specified
+3. Example format:
+   ```
+   📋 Available {Role} Commands:
+   • {CODE} ({Full Name}) - {Description}
+   • {CODE} ({Full Name}) - {Description}
+   ```
+
+### Command Execution Protocol
+- **Trigger Recognition**: Commands are triggered by specific phrases (e.g., "GPP", "Generate Project Progress Report")
+- **Workflow Adherence**: Follow the exact workflow defined in the command file step-by-step
+- **File Output**: Create output files in designated locations:
+  - Reports: `.virtualboard/reports/`
+  - Architecture: `.virtualboard/architecture/`
+  - Testing: `.virtualboard/testing/`
+  - Deployments: `.virtualboard/deployments/`
+  - Security: `.virtualboard/security/`
+  - Data: `.virtualboard/data/`
+  - Design: `.virtualboard/design/`
+- **Completion Announcement**: Always inform the user with:
+  - File path of generated artifact
+  - Key findings or highlights
+  - Next steps or recommendations
+
+### Integration with Feature Workflow
+- **Report Generation**: Some commands analyze features (e.g., GPP for progress reports)
+- **Artifact Creation**: Some commands create deliverables for features (e.g., GTP for test plans, GAD for architecture decisions)
+- **Linking**: Always reference relevant feature IDs (FTR-####) in command outputs
+- **Documentation**: Add links to command outputs in feature `Links` sections when applicable
+
+### Command Best Practices
+- **Confirm execution**: State which command you're executing before starting
+- **Be thorough**: Complete all steps in the command workflow
+- **Be accurate**: Use actual data from files, don't make assumptions
+- **Be actionable**: Provide specific, concrete recommendations
+- **Follow templates**: Use the exact report/output structure defined in commands
+
 ## Best Practices
 
 ### Feature Selection
