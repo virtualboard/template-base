@@ -48,6 +48,7 @@ AI agents should automatically detect the appropriate role based on:
 - Every role prompt instructs agents to learn the `.virtualboard` Markdown feature workflow before acting.
 - Feature specs live under `/features/<status>/` with frontmatter-driven ownership, dates, and dependencies.
 - Agents are expected to claim work atomically, keep `updated` fresh, and respect status-folder alignment.
+- **CRITICAL**: When moving a feature file, agents MUST update the frontmatter `status` field to match the destination folder, update the `updated` field to today's date, and update `owner` field if claiming/releasing ownership.
 - Prompts emphasize a continuous delivery loop: pick a task, validate dependencies, take ownership, execute, move to the next state, and immediately look for new work.
 
 ## Current Agent Prompts
@@ -165,8 +166,10 @@ All agents follow this pattern:
 2. **Select role**: Determine appropriate agent based on task type
 3. **Adopt identity**: Read agent file and announce role
 4. **Claim task**: Move to `/features/in-progress/` and set ownership
+   - **CRITICAL**: Update frontmatter `status`, `owner`, and `updated` fields when moving
 5. **Execute work**: Follow role-specific instructions
 6. **Complete task**: Move to `/features/review/` when done
+   - **CRITICAL**: Update frontmatter `status` and `updated` fields when moving
 7. **Repeat**: Immediately look for next available task
 
 ## ⚠️ Important Notes

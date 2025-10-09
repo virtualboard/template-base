@@ -27,22 +27,28 @@ This document defines how AI agents should interact with the Feature Spec Workfl
 - **Respect priority** - P0 > P1 > P2 > P3
 
 ### 3. Feature Claiming
-- Set `owner` field to your agent ID
-- Update `updated` date to today
+- **CRITICAL**: When moving a file, you MUST update the frontmatter:
+  - Set `owner` field to your agent ID
+  - Update `status` field to match the destination folder
+  - Update `updated` date to today's date (YYYY-MM-DD format)
 - Move file to appropriate folder if changing status
 - **Atomic operation** - claim and move in single transaction
+- **Validation**: File location MUST match frontmatter `status` field
 
 ### 4. Feature Work
 - Update `Implementation Notes` section as you work
 - Add links to PRs, commits, and artifacts in `Links` section
-- Keep `updated` date current
+- Keep `updated` date current (update to today's date when making changes)
 - **Never change** `id` or filename
+- **CRITICAL**: Always update frontmatter `updated` field when editing the file
 
 ### 5. Feature Handoff
-- Move to `review` status when ready
-- Set `owner` to reviewer or `unassigned`
-- Update `updated` date
-- Add completion notes
+- **CRITICAL**: When moving to `review`:
+  - Update frontmatter `status` field to `review`
+  - Update frontmatter `updated` field to today's date
+  - Set `owner` to reviewer or `unassigned`
+- Move file to `/features/review/` folder
+- Add completion notes in the file content
 
 ## State Transition Rules
 
@@ -71,9 +77,10 @@ This document defines how AI agents should interact with the Feature Spec Workfl
 - **Recovery**: Human must break the cycle manually
 
 ### State Mismatches
-- **Detection**: File location doesn't match frontmatter status
+- **Detection**: File location doesn't match frontmatter `status` field
 - **Action**: Abort and report the mismatch
-- **Recovery**: Human must fix the inconsistency
+- **Recovery**: Update frontmatter `status` to match folder location OR move file to match frontmatter
+- **Prevention**: ALWAYS update frontmatter `status` field when moving files between folders
 
 ## Error Handling
 
@@ -89,6 +96,53 @@ This document defines how AI agents should interact with the Feature Spec Workfl
 - Include the feature ID and current state
 - Suggest alternative actions when possible
 - Log errors for debugging
+
+## Agent Commands System
+
+### Command Files Location
+- Agent-specific commands are located in `prompts/agents/{role}.md`
+- Overview and documentation at `prompts/AGENTS.md`
+- Each agent role has specialized commands tailored to their responsibilities
+
+### Command Discovery and Display
+**CRITICAL**: When you adopt an agent role:
+1. Read your role's command file from `prompts/agents/{role}.md`
+2. **Display available commands to the user immediately** using the format specified
+3. Example format:
+   ```
+   📋 Available {Role} Commands:
+   • {CODE} ({Full Name}) - {Description}
+   • {CODE} ({Full Name}) - {Description}
+   ```
+
+### Command Execution Protocol
+- **Trigger Recognition**: Commands are triggered by specific phrases (e.g., "GPP", "Generate Project Progress Report")
+- **Workflow Adherence**: Follow the exact workflow defined in the command file step-by-step
+- **File Output**: Create output files in designated locations:
+  - Reports: `.virtualboard/reports/`
+  - Architecture: `.virtualboard/architecture/`
+  - Testing: `.virtualboard/testing/`
+  - Deployments: `.virtualboard/deployments/`
+  - Security: `.virtualboard/security/`
+  - Data: `.virtualboard/data/`
+  - Design: `.virtualboard/design/`
+- **Completion Announcement**: Always inform the user with:
+  - File path of generated artifact
+  - Key findings or highlights
+  - Next steps or recommendations
+
+### Integration with Feature Workflow
+- **Report Generation**: Some commands analyze features (e.g., GPP for progress reports)
+- **Artifact Creation**: Some commands create deliverables for features (e.g., GTP for test plans, GAD for architecture decisions)
+- **Linking**: Always reference relevant feature IDs (FTR-####) in command outputs
+- **Documentation**: Add links to command outputs in feature `Links` sections when applicable
+
+### Command Best Practices
+- **Confirm execution**: State which command you're executing before starting
+- **Be thorough**: Complete all steps in the command workflow
+- **Be accurate**: Use actual data from files, don't make assumptions
+- **Be actionable**: Provide specific, concrete recommendations
+- **Follow templates**: Use the exact report/output structure defined in commands
 
 ## Best Practices
 
@@ -116,8 +170,9 @@ This document defines how AI agents should interact with the Feature Spec Workfl
 - [ ] Feature is unassigned or owned by you
 - [ ] All dependencies are `done`
 - [ ] No circular dependencies
-- [ ] Feature is in `backlog` status
+- [ ] Feature is in `backlog` status (folder and frontmatter match)
 - [ ] You have the necessary permissions
+- [ ] Ready to update frontmatter `status`, `owner`, and `updated` fields when claiming
 
 ### Before Moving to Review
 - [ ] All acceptance criteria are implemented
@@ -125,6 +180,7 @@ This document defines how AI agents should interact with the Feature Spec Workfl
 - [ ] Documentation is updated
 - [ ] No breaking changes without migration plan
 - [ ] Feature is ready for human review
+- [ ] Frontmatter `status`, `updated`, and `owner` fields will be updated when moving
 
 ### Before Claiming Ownership
 - [ ] Check current owner in frontmatter

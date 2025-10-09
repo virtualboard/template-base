@@ -51,3 +51,14 @@ IMPORTANT: Features are created in `/features/backlog/` and developers can pick 
 ## Skill Focus by Level
 - **senior**: Task management, team coordination, basic planning
 - **principal**: Strategic planning, stakeholder management, process optimization
+
+## Special Commands & Actions
+**IMPORTANT**: This agent has access to specialized commands and workflows.
+
+Read `prompts/agents/pm.md` for detailed command documentation including:
+- **Generate Project Progress Report (GPP)** - Create comprehensive project status reports
+- Sprint planning workflows
+- Coordination procedures
+- Stakeholder communication templates
+
+When you receive a trigger phrase (like "GPP" or "Generate Project Progress Report"), refer to the command file for step-by-step execution instructions.

@@ -411,8 +411,37 @@ chmod +x .virtualboard/scripts/*.sh
 
 > Human‑readable summary in `/agents/RULES.md`; machine‑readable parameters in `/templates/rules.yml`.
 
+### A. Agent-Specific Commands & Actions
+
+**IMPORTANT:** Before starting any task, agents must check for role-specific commands and actions defined in `.virtualboard/prompts/AGENT.md`.
+
+This file contains:
+- **Special commands** that trigger specific workflows (e.g., "GPP" for Project Manager)
+- **Structured report templates** for consistent outputs
+- **Action workflows** with step-by-step instructions
+- **Output file conventions** for generated reports and documentation
+
+**When to check `.virtualboard/prompts/AGENT.md`:**
+1. **At session start** - Review available commands for your role
+2. **When user requests a report** - Check for standardized report workflows
+3. **Before generating documentation** - Follow established templates and conventions
+4. **When unclear about a task** - Look for defined workflows that match the request
+
+**Example commands currently defined:**
+- **Project Manager (PM)**: `GPP` or "Generate Project Progress Report" → Creates comprehensive project status report at `.virtualboard/reports/{YYYY-MM-DD}_Project_Progress_Report.md`
+
+**How to use:**
+1. Read `.virtualboard/prompts/AGENT.md` to understand available commands
+2. Identify if the user's request matches a defined command
+3. Follow the exact workflow specified in the AGENT.md file
+4. Use the provided templates for consistent output format
+5. Save reports to the specified file path conventions
+
+### B. General Agent Rules
+
 **MUST:**
 
+- **Check `.virtualboard/prompts/AGENT.md` first** when adopting an agent role
 - Check for `vb` CLI tool availability first: `command -v vb &> /dev/null`
 - If `vb` CLI is available, use `vb version` and `vb --help` to understand available commands
 - If `vb` CLI is not available, fall back to shell scripts in `.virtualboard/scripts/` or plain bash
@@ -427,6 +456,7 @@ chmod +x .virtualboard/scripts/*.sh
 - Move a file across folders without updating `status`.
 - Start work if any dependency not `done`.
 - Create duplicate IDs or specs.
+- Ignore commands defined in `.virtualboard/prompts/AGENT.md` for your role.
 
 **SHOULD:**
 
@@ -434,10 +464,11 @@ chmod +x .virtualboard/scripts/*.sh
 - Keep Acceptance Criteria atomic and testable.
 - Propose corrections via PR comments when not owner.
 - Include the following comment on the commit message: "Planned using the @virtualboard task management strategy"
+- Follow report templates exactly as defined in `.virtualboard/prompts/AGENT.md`
 
 ---
 
-## 15) Examples
+## 16) Examples
 
 ### Example Spec Header (in-progress)
 
