@@ -1,24 +1,4 @@
-# QA Engineer Commands
-
-This file defines specialized commands and actions for the QA Engineer agent role.
-
-## ⚠️ IMPORTANT: Command Display Requirement
-
-**When you adopt the QA Engineer agent role and load this command file, you MUST immediately display a summary of available commands to the user.**
-
-**Format:**
-```
-📋 Available QA Commands:
-• GTP (Generate Test Plan) - Create comprehensive test plan for a feature
-• GBR (Generate Bug Report) - Document bugs with reproduction steps
-• GTCR (Generate Test Coverage Report) - Analyze test coverage gaps
-```
-
-This ensures users know what commands are available to them.
-
----
-
-## Generate Test Plan (GTP)
+# Generate Test Plan (GTP)
 
 **Trigger Phrases:**
 - "Generate Test Plan"
@@ -29,7 +9,7 @@ This ensures users know what commands are available to them.
 **Action:**
 When the QA agent receives this command, it should:
 
-### 1. Analyze Feature
+## 1. Analyze Feature
 - Read the feature spec from `.virtualboard/features/`
 - Identify all acceptance criteria
 - Review user stories and edge cases
@@ -172,46 +152,3 @@ When the QA agent receives this command, it should:
 - Inform the user that the test plan has been created
 - Provide the file path
 - Highlight key test scenarios and coverage areas
-
----
-
-## Generate Bug Report (GBR)
-
-**Trigger Phrases:**
-- "Generate Bug Report"
-- "GBR"
-- "Report bug"
-- "Create bug report"
-- "Log defect"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Generate Test Coverage Report (GTCR)
-
-**Trigger Phrases:**
-- "Generate Test Coverage Report"
-- "GTCR"
-- "Create test coverage report"
-- "Test coverage analysis"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Command Execution Guidelines
-
-When executing QA commands:
-- **Confirm the command** - State which command you're executing
-- **Be thorough** - Don't skip test scenarios
-- **Be accurate** - Report actual test results, not assumptions
-- **Be actionable** - Identify specific gaps and fixes needed
-- **Follow quality gates** - Ensure acceptance criteria are met
-
----
-
-**Last Updated:** 2025-10-09
-**Role:** QA Engineer

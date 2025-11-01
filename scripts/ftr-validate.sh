@@ -8,7 +8,7 @@ set -e
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FEATURES_DIR="${SCRIPT_DIR}/../features"
-SCHEMA_FILE="${SCRIPT_DIR}/../schemas/frontmatter.schema.json"
+SCHEMA_FILE="${SCRIPT_DIR}/frontmatter.schema.json"
 
 # Color codes for output
 RED='\033[0;31m'

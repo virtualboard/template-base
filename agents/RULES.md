@@ -100,13 +100,14 @@ This document defines how AI agents should interact with the Feature Spec Workfl
 ## Agent Commands System
 
 ### Command Files Location
-- Agent-specific commands are located in `prompts/agents/{role}.md`
+- Agent-specific commands are located in `prompts/agents/{role}/README.md`
+- Individual command files are in `prompts/agents/{role}/{COMMAND}.md`
 - Overview and documentation at `prompts/AGENTS.md`
 - Each agent role has specialized commands tailored to their responsibilities
 
 ### Command Discovery and Display
 **CRITICAL**: When you adopt an agent role:
-1. Read your role's command file from `prompts/agents/{role}.md`
+1. Read your role's command file from `prompts/agents/{role}/README.md`
 2. **Display available commands to the user immediately** using the format specified
 3. Example format:
    ```

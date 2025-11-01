@@ -50,7 +50,7 @@ You shape product experiences by:
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/ux_designer.md` for detailed command documentation including:
+Read `prompts/agents/ux_designer/README.md` for detailed command documentation including:
 - Design system generation workflows
 - User research analysis procedures
 - Accessibility audit workflows

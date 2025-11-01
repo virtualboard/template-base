@@ -53,7 +53,7 @@ You are a backend developer responsible for:
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/backend_dev.md` for detailed command documentation including:
+Read `prompts/agents/backend_dev/README.md` for detailed command documentation including:
 - API generation workflows
 - Database migration procedures
 - Performance optimization workflows

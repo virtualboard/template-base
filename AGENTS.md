@@ -47,16 +47,16 @@
 
 ```
 /features
-  /backlog
-  /in-progress
-  /review
-  /done
+  /backlog           # features not yet started
+  /blocked           # features blocked by dependencies or external factors
+  /in-progress       # features currently being worked on
+  /review            # features awaiting review/approval
+  /done              # completed features
+  INDEX.md           # auto-generated, do not edit
 /templates
   spec.md            # canonical feature spec template
   pr-template.md     # pull request template
   rules.yml          # machine-readable agent rules & validation parameters
-/schemas
-  frontmatter.schema.json
 /agents
   AGENTS.md          # catalog of agent prompts and responsibilities
   RULES.md           # human-readable rules of engagement for agents
@@ -70,12 +70,33 @@
   security_compliance_engineer.md # security & compliance engineer prompt
   data_analytics_engineer.md # data & analytics engineer prompt
   qa.md              # QA engineer prompt
+/prompts
+  AGENTS.md          # catalog of agent prompts (mirrors /agents/AGENTS.md)
+  /agents            # agent-specific prompt files
+    architect.md
+    backend_dev.md
+    data_engineer.md
+    devops.md
+    frontend_dev.md
+    fullstack_dev.md
+    pm.md
+    qa.md
+    security.md
+    ux_designer.md
+  /common            # common prompt templates and utilities
+    session-handoff.md
 /scripts
   ftr-new.sh         # create a new feature spec from template
   ftr-move.sh        # move feature across lifecycle w/ checks
   ftr-index.sh       # generate /features/INDEX.md
   ftr-validate.sh    # validate schema, status-folder match, deps, links
-features/INDEX.md     # auto-generated, do not edit
+  install-vb-cli.sh   # install Virtual Board CLI tool
+  frontmatter.schema.json # frontmatter validation schema
+/reports             # where vb creates reports
+AGENTS.md            # this file - feature spec workflow guide
+CHANGELOG.md         # project changelog
+README.md            # project README
+version.txt          # version tracking
 ```
 
 > **Optional**: `/locks` for ephemeral lock files (see §10), `/archive` for long‑term storage of `done` after N days.
@@ -264,6 +285,10 @@ fi
 If `vb` CLI is available, use it for all task management:
 
 ```bash
+# Check version and upgrade
+vb version
+vb upgrade  # Upgrade to latest version (use sudo if in system directory)
+
 # Create new feature
 vb new "Feature Title" label1 label2
 
@@ -381,7 +406,7 @@ chmod +x .virtualboard/scripts/*.sh
 
 **CI must enforce:**
 
-1. Frontmatter validates against `/schemas/frontmatter.schema.json`.
+1. Frontmatter validates against `/scripts/frontmatter.schema.json`.
 2. File’s folder matches `status`.
 3. `id` unique; filename matches `id` & short description pattern.
 4. Dependencies exist and are `done` before `in-progress`.
@@ -443,7 +468,7 @@ This file contains:
 
 - **Check `.virtualboard/prompts/AGENT.md` first** when adopting an agent role
 - Check for `vb` CLI tool availability first: `command -v vb &> /dev/null`
-- If `vb` CLI is available, use `vb version` and `vb --help` to understand available commands
+- If `vb` CLI is available, use `vb version` and `vb help` to understand available commands
 - If `vb` CLI is not available, fall back to shell scripts in `.virtualboard/scripts/` or plain bash
 - Read `/templates/rules.yml` on start.
 - Validate spec before edits; bail on lock/owner mismatch.

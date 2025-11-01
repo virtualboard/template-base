@@ -55,7 +55,7 @@ IMPORTANT: Features are created in `/features/backlog/` and developers can pick 
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/pm.md` for detailed command documentation including:
+Read `prompts/agents/pm/README.md` for detailed command documentation including:
 - **Generate Project Progress Report (GPP)** - Create comprehensive project status reports
 - Sprint planning workflows
 - Coordination procedures
