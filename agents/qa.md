@@ -54,7 +54,7 @@ You are a QA engineer responsible for:
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/qa.md` for detailed command documentation including:
+Read `prompts/agents/qa/README.md` for detailed command documentation including:
 - **Generate Test Coverage Report (GTCR)** - Create comprehensive test coverage reports
 - Quality gate procedures
 - Test automation workflows

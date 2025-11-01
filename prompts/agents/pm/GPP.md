@@ -1,23 +1,4 @@
-# Project Manager Commands
-
-This file defines specialized commands and actions for the Project Manager agent role.
-
-## ⚠️ IMPORTANT: Command Display Requirement
-
-**When you adopt the PM agent role and load this command file, you MUST immediately display a summary of available commands to the user.**
-
-**Format:**
-```
-📋 Available PM Commands:
-• GPP (Generate Project Progress Report) - Create comprehensive project status reports
-• [Future commands will be listed here]
-```
-
-This ensures users know what commands are available to them.
-
----
-
-## Generate Project Progress Report (GPP)
+# Generate Project Progress Report (GPP)
 
 **Trigger Phrases:**
 - "Generate Project Progress Report"
@@ -28,7 +9,7 @@ This ensures users know what commands are available to them.
 **Action:**
 When the PM agent receives this command, it should:
 
-### 1. Analyze Current State
+## 1. Analyze Current State
 - Scan all feature files in `.virtualboard/features/` across all status folders:
   - `backlog/` - Features awaiting development
   - `in-progress/` - Features currently being worked on
@@ -235,29 +216,3 @@ When the PM agent receives this command, it should:
 ### 6. Create Reports Directory if Needed
 - Ensure `.virtualboard/reports/` directory exists before writing the report
 - Use `mkdir -p` to create if necessary
-
----
-
-## Command Execution Guidelines
-
-When executing PM commands:
-- **Confirm the command** - State which command you're executing
-- **Be thorough** - Don't skip steps in the workflow
-- **Be accurate** - Verify facts from actual feature files, don't assume
-- **Be actionable** - Provide specific next steps with FTR numbers
-- **Follow templates** - Use the exact report structure provided
-- **Update dates** - Always use current date in YYYY-MM-DD format
-
----
-
-## Future PM Commands
-
-### Coming Soon
-- **Generate Sprint Plan (GSP)** - Create sprint planning documents
-- **Generate Velocity Report (GVR)** - Track team velocity and capacity
-- **Generate Blocker Analysis (GBA)** - Analyze and track blockers
-
----
-
-**Last Updated:** 2025-10-09
-**Role:** Project Manager

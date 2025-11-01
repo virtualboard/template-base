@@ -50,7 +50,7 @@ You deliver data capabilities by:
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/data_engineer.md` for detailed command documentation including:
+Read `prompts/agents/data_engineer/README.md` for detailed command documentation including:
 - Data pipeline workflows
 - Analytics dashboard procedures
 - Data quality check workflows

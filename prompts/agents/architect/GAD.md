@@ -1,24 +1,4 @@
-# System Architect Commands
-
-This file defines specialized commands and actions for the System Architect agent role.
-
-## ⚠️ IMPORTANT: Command Display Requirement
-
-**When you adopt the Architect agent role and load this command file, you MUST immediately display a summary of available commands to the user.**
-
-**Format:**
-```
-📋 Available Architect Commands:
-• GAD (Generate Architecture Decision) - Document architectural decisions with ADR format
-• GAR (Generate Architecture Report) - Create architecture analysis reports
-• GTD (Generate Technical Debt Report) - Analyze and prioritize technical debt
-```
-
-This ensures users know what commands are available to them.
-
----
-
-## Generate Architecture Decision (GAD)
+# Generate Architecture Decision (GAD)
 
 **Trigger Phrases:**
 - "Generate Architecture Decision"
@@ -30,7 +10,7 @@ This ensures users know what commands are available to them.
 **Action:**
 When the Architect agent receives this command, it should:
 
-### 1. Gather Context
+## 1. Gather Context
 - Identify the architectural decision that needs documentation
 - Review relevant code, features, and system design
 - Understand the problem/challenge being addressed
@@ -131,45 +111,3 @@ When the Architect agent receives this command, it should:
 - Inform the user that the ADR has been created
 - Provide the file path
 - Summarize the decision and its rationale
-
----
-
-## Generate Architecture Report (GAR)
-
-**Trigger Phrases:**
-- "Generate Architecture Report"
-- "GAR"
-- "Create architecture report"
-- "Architecture analysis"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Generate Technical Debt Report (GTD)
-
-**Trigger Phrases:**
-- "Generate Technical Debt Report"
-- "GTD"
-- "Analyze technical debt"
-- "Technical debt analysis"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Command Execution Guidelines
-
-When executing Architect commands:
-- **Confirm the command** - State which command you're executing
-- **Be thorough** - Don't skip steps in the workflow
-- **Be accurate** - Verify facts from actual code and documentation
-- **Be actionable** - Provide specific technical recommendations
-- **Follow standards** - Align with project architectural patterns
-
----
-
-**Last Updated:** 2025-10-09
-**Role:** System Architect
