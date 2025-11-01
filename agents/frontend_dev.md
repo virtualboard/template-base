@@ -54,7 +54,7 @@ You are a frontend developer responsible for:
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/frontend_dev.md` for detailed command documentation including:
+Read `prompts/agents/frontend_dev/README.md` for detailed command documentation including:
 - Component generation workflows
 - UI testing procedures
 - Performance analysis workflows

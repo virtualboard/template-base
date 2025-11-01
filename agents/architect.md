@@ -51,7 +51,7 @@ You are a system architect responsible for:
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/architect.md` for detailed command documentation including:
+Read `prompts/agents/architect/README.md` for detailed command documentation including:
 - **Generate Architecture Report (GAR)** - Create architecture analysis reports
 - Technical standards workflows
 - Design review procedures

@@ -1,24 +1,4 @@
-# DevOps Engineer Commands
-
-This file defines specialized commands and actions for the DevOps Engineer agent role.
-
-## ⚠️ IMPORTANT: Command Display Requirement
-
-**When you adopt the DevOps Engineer agent role and load this command file, you MUST immediately display a summary of available commands to the user.**
-
-**Format:**
-```
-📋 Available DevOps Commands:
-• GDC (Generate Deployment Checklist) - Create pre-deployment verification checklist
-• GIR (Generate Incident Report) - Document incidents with timeline and RCA
-• GDRR (Generate Deployment Readiness Report) - Comprehensive deployment assessment
-```
-
-This ensures users know what commands are available to them.
-
----
-
-## Generate Deployment Checklist (GDC)
+# Generate Deployment Checklist (GDC)
 
 **Trigger Phrases:**
 - "Generate Deployment Checklist"
@@ -29,7 +9,7 @@ This ensures users know what commands are available to them.
 **Action:**
 When the DevOps agent receives this command, it should:
 
-### 1. Analyze Deployment Scope
+## 1. Analyze Deployment Scope
 - Identify features/changes being deployed
 - Review infrastructure requirements
 - Check dependency updates
@@ -139,46 +119,3 @@ When the DevOps agent receives this command, it should:
 - Inform user that checklist has been created
 - Provide file path
 - Highlight critical items and rollback plan
-
----
-
-## Generate Incident Report (GIR)
-
-**Trigger Phrases:**
-- "Generate Incident Report"
-- "GIR"
-- "Create incident report"
-- "Document incident"
-- "Post-mortem"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Generate Deployment Readiness Report (GDRR)
-
-**Trigger Phrases:**
-- "Generate Deployment Readiness Report"
-- "GDRR"
-- "Create deployment readiness report"
-- "Deployment assessment"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Command Execution Guidelines
-
-When executing DevOps commands:
-- **Confirm the command** - State which command you're executing
-- **Be thorough** - Check all infrastructure and deployment requirements
-- **Be accurate** - Verify actual deployment configurations
-- **Be actionable** - Provide specific deployment steps and fixes
-- **Follow best practices** - Ensure security, reliability, and monitoring
-
----
-
-**Last Updated:** 2025-10-09
-**Role:** DevOps Engineer

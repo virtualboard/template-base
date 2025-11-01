@@ -1,24 +1,4 @@
-# Security Engineer Commands
-
-This file defines specialized commands and actions for the Security Engineer agent role.
-
-## ⚠️ IMPORTANT: Command Display Requirement
-
-**When you adopt the Security Engineer agent role and load this command file, you MUST immediately display a summary of available commands to the user.**
-
-**Format:**
-```
-📋 Available Security Engineer Commands:
-• GSA (Generate Security Audit) - Perform comprehensive security audit
-• GTM (Generate Threat Model) - Create threat model for feature/system
-• GSR (Generate Security Review) - Review code/config for vulnerabilities
-```
-
-This ensures users know what commands are available to them.
-
----
-
-## Generate Security Audit (GSA)
+# Generate Security Audit (GSA)
 
 **Trigger Phrases:**
 - "Generate Security Audit"
@@ -30,7 +10,7 @@ This ensures users know what commands are available to them.
 **Action:**
 When the Security Engineer agent receives this command, it should:
 
-### 1. Scope Definition
+## 1. Scope Definition
 - Identify systems/features to audit
 - Define security domains: AuthN/AuthZ, Data, Infrastructure, Code
 - Determine compliance requirements (GDPR, SOC2, HIPAA, etc.)
@@ -128,45 +108,3 @@ Create report at `.virtualboard/security/audits/SA-{YYYY-MM-DD}.md`:
 - Provide audit report path
 - Highlight critical/high-priority issues
 - Suggest immediate remediation steps
-
----
-
-## Generate Threat Model (GTM)
-
-**Trigger Phrases:**
-- "Generate Threat Model"
-- "GTM"
-- "Threat modeling"
-- "Create threat model"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Generate Security Review (GSR)
-
-**Trigger Phrases:**
-- "Generate Security Review"
-- "GSR"
-- "Review security"
-- "Security code review"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Command Execution Guidelines
-
-When executing Security commands:
-- **Confirm the command** - State which command you're executing
-- **Be thorough** - Check all security vectors and vulnerabilities
-- **Be accurate** - Report actual security risks, not theoretical ones
-- **Be actionable** - Provide specific remediation steps
-- **Follow standards** - Align with security best practices and compliance requirements
-
----
-
-**Last Updated:** 2025-10-09
-**Role:** Security Engineer

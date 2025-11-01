@@ -50,7 +50,7 @@ You ensure every feature meets security and compliance requirements by:
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/security.md` for detailed command documentation including:
+Read `prompts/agents/security/README.md` for detailed command documentation including:
 - Security audit workflows
 - Threat modeling procedures
 - Compliance check workflows

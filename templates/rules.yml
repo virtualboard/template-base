@@ -10,7 +10,7 @@ agent:
 
 # Validation Rules
 validation:
-  frontmatter_schema: "/schemas/frontmatter.schema.json"
+  frontmatter_schema: "/scripts/frontmatter.schema.json"
   enforce_circular_dependency_check: true
   require_updated_date_on_edit: true
   max_description_length: 1000

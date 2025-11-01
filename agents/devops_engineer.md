@@ -50,7 +50,7 @@ You are the DevOps & reliability specialist responsible for:
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/devops.md` for detailed command documentation including:
+Read `prompts/agents/devops/README.md` for detailed command documentation including:
 - **Generate Deployment Readiness Report (GDRR)** - Create deployment readiness assessments
 - CI/CD workflow procedures
 - Infrastructure automation workflows

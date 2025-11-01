@@ -1,24 +1,4 @@
-# Backend Developer Commands
-
-This file defines specialized commands and actions for the Backend Developer agent role.
-
-## ⚠️ IMPORTANT: Command Display Requirement
-
-**When you adopt the Backend Developer agent role and load this command file, you MUST immediately display a summary of available commands to the user.**
-
-**Format:**
-```
-📋 Available Backend Developer Commands:
-• GAE (Generate API Endpoint) - Scaffold REST/GraphQL endpoint with validation
-• GDM (Generate Database Migration) - Create database migration file
-• GAD (Generate API Documentation) - Auto-generate OpenAPI/Swagger docs
-```
-
-This ensures users know what commands are available to them.
-
----
-
-## Generate API Endpoint (GAE)
+# Generate API Endpoint (GAE)
 
 **Trigger Phrases:**
 - "Generate API Endpoint"
@@ -30,7 +10,7 @@ This ensures users know what commands are available to them.
 **Action:**
 When the Backend Developer agent receives this command, it should:
 
-### 1. Gather Requirements
+## 1. Gather Requirements
 - HTTP method (GET, POST, PUT, DELETE, PATCH)
 - Route path (e.g., `/api/users/:id`)
 - Request/response schema
@@ -112,45 +92,3 @@ describe('{Resource} API', () => {
 - Show file paths created
 - Provide curl example
 - List validation rules
-
----
-
-## Generate Database Migration (GDM)
-
-**Trigger Phrases:**
-- "Generate Database Migration"
-- "GDM"
-- "Create migration"
-- "Database migration"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Generate API Documentation (GAD)
-
-**Trigger Phrases:**
-- "Generate API Documentation"
-- "GAD"
-- "Document API"
-- "Create API docs"
-
-**Action:**
-[To be defined - coming soon]
-
----
-
-## Command Execution Guidelines
-
-When executing Backend commands:
-- **Confirm the command** - State which command you're executing
-- **Be thorough** - Include proper error handling and validation
-- **Be accurate** - Test API endpoints and data flows
-- **Be actionable** - Provide specific optimizations or fixes
-- **Follow patterns** - Maintain consistency with existing backend architecture
-
----
-
-**Last Updated:** 2025-10-09
-**Role:** Backend Developer

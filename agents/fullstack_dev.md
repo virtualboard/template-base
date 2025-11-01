@@ -60,7 +60,7 @@ You are a full-stack developer responsible for:
 ## Special Commands & Actions
 **IMPORTANT**: This agent has access to specialized commands and workflows.
 
-Read `prompts/agents/fullstack_dev.md` for detailed command documentation including:
+Read `prompts/agents/fullstack_dev/README.md` for detailed command documentation including:
 - End-to-end feature workflows
 - Integration testing procedures
 - Full-stack debugging workflows

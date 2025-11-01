@@ -20,26 +20,28 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 
 1. **Install the Virtual Board CLI:**
    ```bash
-   # Download the latest release from GitHub
-   # Visit: https://github.com/virtualboard/vb-cli/releases
+   # Quick install (recommended):
+   ./scripts/install-vb-cli.sh
 
-   # For macOS (example):
-   curl -L -o vb https://github.com/virtualboard/vb-cli/releases/latest/download/vb-darwin-amd64
+   # Or install to current directory:
+   ./scripts/install-vb-cli.sh --local
 
-   # For Linux (example):
-   # curl -L -o vb https://github.com/virtualboard/vb-cli/releases/latest/download/vb-linux-amd64
-
-   # Make executable
-   chmod +x vb
-
-   # Move to PATH (optional)
-   sudo mv vb /usr/local/bin/
+   # For help:
+   ./scripts/install-vb-cli.sh --help
    ```
+
+   The installer automatically:
+   - Checks if `vb` is already installed and compares versions
+   - If you already have the latest version, it will inform you and exit
+   - If an older version is installed, it suggests using `vb upgrade` instead
+   - Detects your OS (macOS/Linux) and architecture (amd64/arm64)
+   - Downloads the appropriate binary from the latest GitHub release
+   - Guides you through the installation with confirmation prompts
 
 2. **Check CLI installation:**
    ```bash
    vb version
-   vb --help
+   vb help
    ```
 
 3. **Use CLI commands:**
@@ -102,8 +104,6 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 │   ├── spec.md              # Feature spec template
 │   ├── pr-template.md       # Pull request template
 │   └── rules.yml            # Agent rules configuration
-├── schemas/                 # Validation schemas
-│   └── frontmatter.schema.json
 ├── agents/                  # Agent documentation and role prompts
 │   ├── AGENTS.md            # Catalog of agent system prompts
 │   ├── RULES.md             # Shared rules of engagement
@@ -121,7 +121,9 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
     ├── ftr-new.sh           # Create new feature
     ├── ftr-move.sh          # Move feature between states
     ├── ftr-validate.sh      # Validate features
-    └── ftr-index.sh         # Generate feature index
+    ├── ftr-index.sh         # Generate feature index
+    ├── install-vb-cli.sh     # Install Virtual Board CLI tool
+    └── frontmatter.schema.json # Frontmatter validation schema
 ```
 
 ## Sample Features
@@ -143,9 +145,11 @@ AI agents should:
    if command -v vb &> /dev/null; then
        echo "Virtual Board CLI found"
        vb version
-       vb --help
+       vb help
+       # Use CLI commands for task management
    else
        echo "Virtual Board CLI not found, using shell scripts"
+       # Fall back to shell scripts
    fi
    ```
 
@@ -171,26 +175,6 @@ The virtual team is defined in `agents/`:
 - Data & Analytics Engineer (`agents/data_analytics_engineer.md`)
 - QA Engineer (`agents/qa.md`)
 - Shared Rules of Engagement (`agents/RULES.md`)
-
-### CLI Detection Workflow
-
-```bash
-# Check if vb CLI is available
-if command -v vb &> /dev/null; then
-    # Use CLI commands
-    vb new "Feature Title" label1 label2
-    vb move FTR-0001 in-progress --owner fullstack_dev
-    vb validate
-    vb index
-else
-    # Fall back to shell scripts
-    chmod +x .virtualboard/scripts/*.sh
-    ./.virtualboard/scripts/ftr-new.sh "Feature Title" label1 label2
-    ./.virtualboard/scripts/ftr-move.sh FTR-0001 in-progress fullstack_dev
-    ./.virtualboard/scripts/ftr-validate.sh
-    ./.virtualboard/scripts/ftr-index.sh
-fi
-```
 
 ## Validation
 
@@ -254,6 +238,7 @@ Add these steps to your CI pipeline:
 - Use CLI or shell scripts to validate: `vb validate` or `./scripts/ftr-validate.sh`
 - Review the agent rules in `/agents/RULES.md`
 - Ensure CLI is properly installed: `vb version`
+- To install or upgrade the CLI: `./scripts/install-vb-cli.sh` or `vb upgrade`
 
 ## Contributing
 
@@ -273,37 +258,15 @@ For enhanced task management, we recommend using the [Virtual Board CLI (`vb`)](
 - **Enhanced features**: Additional functionality beyond basic shell scripts
 - **Consistent experience**: Standardized interface across different environments
 
-### Installation
+See the [Quick Start](#quick-start) section above for installation instructions and basic usage.
+
+### Additional CLI Commands
 
 ```bash
-# Download the latest release from GitHub
-# Visit: https://github.com/virtualboard/vb-cli/releases
-
-# For macOS (example):
-curl -L -o vb https://github.com/virtualboard/vb-cli/releases/latest/download/vb-darwin-amd64
-
-# For Linux (example):
-# curl -L -o vb https://github.com/virtualboard/vb-cli/releases/latest/download/vb-linux-amd64
-
-# Make executable
-chmod +x vb
-
-# Move to PATH (optional)
-sudo mv vb /usr/local/bin/
-```
-
-### CLI Commands
-
-```bash
-# Check version and help
-vb version
-vb --help
-
-# Feature management
-vb new "Feature Title" label1 label2
-vb move FTR-0001 in-progress --owner fullstack_dev
-vb validate
-vb index
+# Upgrade to latest version
+vb upgrade
+# Or use sudo if installed to system directory:
+sudo vb upgrade
 
 # List available features
 vb list
