@@ -36,7 +36,7 @@ When you receive this command, read the full instructions in [devops/GDC.md](GDC
 
 ---
 
-### 🚧 Generate Incident Report (GIR)
+### ✅ Generate Incident Report (GIR)
 
 **Location:** [devops/GIR.md](GIR.md)
 
@@ -49,11 +49,11 @@ When you receive this command, read the full instructions in [devops/GDC.md](GDC
 - "Document incident"
 - "Post-mortem"
 
-**Status:** Coming soon - See [devops/GIR.md](GIR.md) for placeholder
+When you receive this command, read the full instructions in [devops/GIR.md](GIR.md).
 
 ---
 
-### 🚧 Generate Deployment Readiness Report (GDRR)
+### ✅ Generate Deployment Readiness Report (GDRR)
 
 **Location:** [devops/GDRR.md](GDRR.md)
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [devops/GDC.md](GDC
 - "Create deployment readiness report"
 - "Deployment assessment"
 
-**Status:** Coming soon - See [devops/GDRR.md](GDRR.md) for placeholder
+When you receive this command, read the full instructions in [devops/GDRR.md](GDRR.md).
 
 ---
 

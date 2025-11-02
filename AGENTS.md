@@ -71,18 +71,57 @@
   data_analytics_engineer.md # data & analytics engineer prompt
   qa.md              # QA engineer prompt
 /prompts
-  AGENTS.md          # catalog of agent prompts (mirrors /agents/AGENTS.md)
-  /agents            # agent-specific prompt files
-    architect.md
-    backend_dev.md
-    data_engineer.md
-    devops.md
-    frontend_dev.md
-    fullstack_dev.md
-    pm.md
-    qa.md
-    security.md
-    ux_designer.md
+  AGENTS.md          # catalog of agent commands system (commands overview)
+  /agents            # agent-specific command files organized by role
+    /pm              # Project Manager commands
+      README.md      # PM command catalog
+      GPP.md         # Generate Project Progress Report
+    /architect       # Architect commands
+      README.md      # Architect command catalog
+      GAD.md         # Generate Architecture Diagram
+      GAR.md         # Generate Architecture Review
+      GTD.md         # Generate Technical Debt Report
+    /backend_dev     # Backend Developer commands
+      README.md      # Backend command catalog
+      GAD.md         # Generate API Documentation
+      GAE.md         # Generate API Endpoint
+      GDM.md         # Generate Data Migration
+    /frontend_dev    # Frontend Developer commands
+      README.md      # Frontend command catalog
+      GAA.md         # Generate Accessibility Audit
+      GC.md          # Generate Component
+      GCS.md         # Generate Component Storybook
+    /fullstack_dev   # Fullstack Developer commands
+      README.md      # Fullstack command catalog
+      GFF.md         # Generate Full Feature
+      GIC.md         # Generate Integration Contract
+      GETE.md        # Generate End-to-End Test
+    /data_engineer   # Data Engineer commands
+      README.md      # Data Engineer command catalog
+      GDP.md         # Generate Data Pipeline
+      GMD.md         # Generate Metrics Dashboard
+      GDQ.md         # Generate Data Quality Check
+      ERD.md         # Entity Relationship Diagram
+    /devops          # DevOps Engineer commands
+      README.md      # DevOps command catalog
+      GDC.md         # Generate Deployment Checklist
+      GDRR.md        # Generate Deployment Readiness Report
+      GIR.md         # Generate Incident Response
+    /security        # Security Engineer commands
+      README.md      # Security command catalog
+      GSA.md         # Generate Security Audit
+      GSR.md         # Generate Security Review
+      GTM.md         # Generate Threat Model
+    /qa              # QA Engineer commands
+      README.md      # QA command catalog
+      GBR.md         # Generate Bug Report
+      GTCR.md        # Generate Test Coverage Report
+      GTP.md         # Generate Test Plan
+    /ux_designer     # UX Designer commands
+      README.md      # UX Designer command catalog
+      GDS.md         # Generate Design System
+      GUJ.md         # Generate User Journey
+      GWF.md         # Generate Wireframe
   /common            # common prompt templates and utilities
     session-handoff.md
 /scripts
@@ -319,7 +358,66 @@ chmod +x .virtualboard/scripts/*.sh
 
 ---
 
-## 10) Step‑by‑Step Usage
+## 10) Agent Commands & Prompts System
+
+The `/prompts/` directory contains specialized commands and workflows for each agent role. This system provides:
+
+- **Standardized commands** with clear trigger phrases
+- **Detailed workflows** for common tasks
+- **Report templates** for consistent output
+- **File path conventions** for generated artifacts
+
+### Directory Organization
+
+```
+/prompts
+  AGENTS.md                    # Commands system overview
+  /agents
+    /{role}/                   # Each agent has their own directory
+      README.md                # Command catalog for that role
+      {COMMAND}.md             # Individual command workflows
+  /common
+    session-handoff.md         # Common templates
+```
+
+### Command File Structure
+
+Each command file (e.g., `prompts/agents/pm/GPP.md`) contains:
+
+1. **Trigger Phrases** - Keywords that activate the command
+2. **Description** - What the command does
+3. **Workflow** - Step-by-step instructions
+4. **Output Format** - Required structure and file paths
+5. **Prerequisites** - Dependencies or required context
+
+### Available Command Categories
+
+| Category | Description | Examples |
+|----------|-------------|----------|
+| **Reports** | Generate status and analysis reports | GPP (Progress), GTCR (Test Coverage) |
+| **Documentation** | Create technical documentation | GAD (API Docs), GTD (Tech Debt) |
+| **Architecture** | Design and review system architecture | GAD (Architecture Diagram), GAR (Architecture Review) |
+| **Testing** | Test planning and coverage | GTP (Test Plan), GETE (E2E Tests) |
+| **Security** | Security analysis and threat modeling | GSA (Security Audit), GTM (Threat Model) |
+| **Development** | Code generation and scaffolding | GFF (Full Feature), GC (Component) |
+| **Data** | Data modeling and pipelines | ERD (Data Model), GDP (Data Pipeline) |
+| **DevOps** | Deployment and operations | GDC (Deployment Checklist), GIR (Incident Response) |
+| **Design** | UX and visual design | GWF (Wireframe), GDS (Design System) |
+
+### Using Commands
+
+1. **Agent adopts role** - Reads `agents/{role}.md`
+2. **Loads command catalog** - Reads `prompts/agents/{role}/README.md`
+3. **Displays available commands** - Shows user what's available
+4. **User triggers command** - Via trigger phrase (e.g., "GPP")
+5. **Agent executes workflow** - Follows `prompts/agents/{role}/{COMMAND}.md`
+6. **Generates output** - Creates report/artifact at specified path
+
+See `/prompts/AGENTS.md` for complete documentation.
+
+---
+
+## 11) Step‑by‑Step Usage
 
 ### A. Create a New Feature
 
@@ -383,7 +481,7 @@ chmod +x .virtualboard/scripts/*.sh
 
 ---
 
-## 11) Concurrency & Locking (Multi‑Agent Safety)
+## 12) Concurrency & Locking (Multi‑Agent Safety)
 
 - **Soft lock via owner:** Only the current `owner` may edit a spec outside of trivial fixes.
 - **Optional hard lock:** Create `/locks/FTR-0123.lock` containing `{ owner, started_at, ttl_minutes }`. CI warns if TTL expired.
@@ -392,7 +490,7 @@ chmod +x .virtualboard/scripts/*.sh
 
 ---
 
-## 12) Git & PR Conventions
+## 13) Git & PR Conventions
 
 - **Branch:** `feat/FTR-####-short-description`
 - **Commits:** Prefix with `FTR-####:`; keep changes cohesive to that feature.
@@ -402,7 +500,7 @@ chmod +x .virtualboard/scripts/*.sh
 
 ---
 
-## 13) Validation & Automation (CI)
+## 14) Validation & Automation (CI)
 
 **CI must enforce:**
 
@@ -432,44 +530,58 @@ chmod +x .virtualboard/scripts/*.sh
 
 ---
 
-## 14) Agent Rules of Engagement (RoE)
+## 15) Agent Rules of Engagement (RoE)
 
 > Human‑readable summary in `/agents/RULES.md`; machine‑readable parameters in `/templates/rules.yml`.
 
 ### A. Agent-Specific Commands & Actions
 
-**IMPORTANT:** Before starting any task, agents must check for role-specific commands and actions defined in `.virtualboard/prompts/AGENT.md`.
+**IMPORTANT:** Before starting any task, agents must check for role-specific commands and actions defined in the `/prompts/agents/{role}/` directory.
 
-This file contains:
-- **Special commands** that trigger specific workflows (e.g., "GPP" for Project Manager)
+Each agent role has:
+- **README.md** - Catalog of available commands for that role
+- **Command files** (e.g., `GPP.md`, `GAD.md`) - Detailed workflow for each command
+- **Special trigger phrases** that activate specific workflows
 - **Structured report templates** for consistent outputs
-- **Action workflows** with step-by-step instructions
 - **Output file conventions** for generated reports and documentation
 
-**When to check `.virtualboard/prompts/AGENT.md`:**
-1. **At session start** - Review available commands for your role
-2. **When user requests a report** - Check for standardized report workflows
-3. **Before generating documentation** - Follow established templates and conventions
-4. **When unclear about a task** - Look for defined workflows that match the request
+**When to check `/prompts/agents/{role}/`:**
+1. **At session start** - Read `README.md` to review available commands for your role
+2. **Display available commands** - Show users what commands you can execute
+3. **When user requests a command** - Check for matching trigger phrases (e.g., "GPP", "GAD")
+4. **Before executing** - Read the full command file for step-by-step workflow
+5. **When generating documentation** - Follow established templates and conventions
 
-**Example commands currently defined:**
-- **Project Manager (PM)**: `GPP` or "Generate Project Progress Report" → Creates comprehensive project status report at `.virtualboard/reports/{YYYY-MM-DD}_Project_Progress_Report.md`
+**Example commands by role:**
+- **Project Manager (PM)**: `GPP` → Generate Project Progress Report at `reports/{YYYY-MM-DD}_Project_Progress_Report.md`
+- **Architect**: `GAD` → Generate Architecture Diagram, `GAR` → Generate Architecture Review, `GTD` → Generate Technical Debt Report
+- **Data Engineer**: `ERD` → Entity Relationship Diagram, `GDP` → Generate Data Pipeline
+- **Fullstack Dev**: `GFF` → Generate Full Feature, `GIC` → Generate Integration Contract
+- **Frontend Dev**: `GC` → Generate Component, `GAA` → Generate Accessibility Audit
+- **Backend Dev**: `GAE` → Generate API Endpoint, `GDM` → Generate Data Migration
+- **DevOps**: `GDC` → Generate Deployment Checklist, `GIR` → Generate Incident Response
+- **Security**: `GSA` → Generate Security Audit, `GTM` → Generate Threat Model
+- **QA**: `GTP` → Generate Test Plan, `GTCR` → Generate Test Coverage Report
+- **UX Designer**: `GWF` → Generate Wireframe, `GUJ` → Generate User Journey
 
 **How to use:**
-1. Read `.virtualboard/prompts/AGENT.md` to understand available commands
-2. Identify if the user's request matches a defined command
-3. Follow the exact workflow specified in the AGENT.md file
-4. Use the provided templates for consistent output format
-5. Save reports to the specified file path conventions
+1. Read `/prompts/agents/{role}/README.md` to understand available commands
+2. Display command summary to the user when adopting role
+3. Identify if the user's request matches a defined command/trigger phrase
+4. Read the full command file (e.g., `/prompts/agents/pm/GPP.md`) for detailed workflow
+5. Follow the exact workflow specified in the command file
+6. Use the provided templates for consistent output format
+7. Save reports to the specified file path conventions
 
 ### B. General Agent Rules
 
 **MUST:**
 
-- **Check `.virtualboard/prompts/AGENT.md` first** when adopting an agent role
+- **Check `/prompts/agents/{role}/README.md` first** when adopting an agent role
+- **Display available commands** to user when starting a session
 - Check for `vb` CLI tool availability first: `command -v vb &> /dev/null`
 - If `vb` CLI is available, use `vb version` and `vb help` to understand available commands
-- If `vb` CLI is not available, fall back to shell scripts in `.virtualboard/scripts/` or plain bash
+- If `vb` CLI is not available, fall back to shell scripts in `scripts/` or plain bash
 - Read `/templates/rules.yml` on start.
 - Validate spec before edits; bail on lock/owner mismatch.
 - Only modify specs where `owner == agent-id`.
@@ -481,7 +593,7 @@ This file contains:
 - Move a file across folders without updating `status`.
 - Start work if any dependency not `done`.
 - Create duplicate IDs or specs.
-- Ignore commands defined in `.virtualboard/prompts/AGENT.md` for your role.
+- Ignore commands defined in `/prompts/agents/{role}/` for your role.
 
 **SHOULD:**
 
@@ -489,7 +601,7 @@ This file contains:
 - Keep Acceptance Criteria atomic and testable.
 - Propose corrections via PR comments when not owner.
 - Include the following comment on the commit message: "Planned using the @virtualboard task management strategy"
-- Follow report templates exactly as defined in `.virtualboard/prompts/AGENT.md`
+- Follow report templates exactly as defined in command files under `/prompts/agents/{role}/`
 
 ---
 

@@ -53,7 +53,7 @@ When you receive this command, read the full instructions in [ux_designer/GWF.md
 
 ---
 
-### 🚧 Generate Design System Component (GDS)
+### ✅ Generate Design System Component (GDS)
 
 **Location:** [ux_designer/GDS.md](GDS.md)
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [ux_designer/GWF.md
 - "Document design component"
 - "Design system update"
 
-**Status:** Coming soon - See [ux_designer/GDS.md](GDS.md) for placeholder
+When you receive this command, read the full instructions in [ux_designer/GDS.md](GDS.md).
 
 ---
 

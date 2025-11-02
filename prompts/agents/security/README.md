@@ -37,7 +37,7 @@ When you receive this command, read the full instructions in [security/GSA.md](G
 
 ---
 
-### 🚧 Generate Threat Model (GTM)
+### ✅ Generate Threat Model (GTM)
 
 **Location:** [security/GTM.md](GTM.md)
 
@@ -49,11 +49,11 @@ When you receive this command, read the full instructions in [security/GSA.md](G
 - "Threat modeling"
 - "Create threat model"
 
-**Status:** Coming soon - See [security/GTM.md](GTM.md) for placeholder
+When you receive this command, read the full instructions in [security/GTM.md](GTM.md).
 
 ---
 
-### 🚧 Generate Security Review (GSR)
+### ✅ Generate Security Review (GSR)
 
 **Location:** [security/GSR.md](GSR.md)
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [security/GSA.md](G
 - "Review security"
 - "Security code review"
 
-**Status:** Coming soon - See [security/GSR.md](GSR.md) for placeholder
+When you receive this command, read the full instructions in [security/GSR.md](GSR.md).
 
 ---
 
