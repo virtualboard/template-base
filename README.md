@@ -132,12 +132,13 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 │   │   └── ux_designer/     # UX Designer commands (GDS, GUJ, GWF)
 │   └── common/              # Common templates and utilities
 │       └── session-handoff.md # Session handoff template
-└── scripts/                 # Automation scripts
-    ├── ftr-new.sh           # Create new feature
-    ├── ftr-move.sh          # Move feature between states
-    ├── ftr-validate.sh      # Validate features
-    ├── ftr-index.sh         # Generate feature index
-    ├── install-vb-cli.sh    # Install Virtual Board CLI tool
+├── scripts/                 # Automation scripts
+│   ├── ftr-new.sh           # Create new feature
+│   ├── ftr-move.sh          # Move feature between states
+│   ├── ftr-validate.sh      # Validate features
+│   ├── ftr-index.sh         # Generate feature index
+│   └── install-vb-cli.sh    # Install Virtual Board CLI tool
+└── schemas/                 # Schema definitions
     └── frontmatter.schema.json # Frontmatter validation schema
 ```
 
