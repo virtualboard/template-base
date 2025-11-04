@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Feature specification template (`templates/spec.md`) with comprehensive sections for problem statement, requirements, acceptance criteria, and implementation notes.
 - Pull request template (`templates/pr-template.md`) aligned with feature spec workflow.
 - Machine-readable agent rules configuration (`templates/rules.yml`) for validation parameters, state transitions, and dependencies.
-- Frontmatter JSON Schema validation (`scripts/frontmatter.schema.json`) for feature metadata consistency.
+- Frontmatter JSON Schema validation (`schemas/frontmatter.schema.json`) for feature metadata consistency.
 - Bash automation scripts in `scripts/`:
   - `ftr-new.sh` - Create new feature specifications from template
   - `ftr-move.sh` - Move features across lifecycle with validation checks

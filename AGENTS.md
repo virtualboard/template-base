@@ -130,6 +130,7 @@
   ftr-index.sh       # generate /features/INDEX.md
   ftr-validate.sh    # validate schema, status-folder match, deps, links
   install-vb-cli.sh   # install Virtual Board CLI tool
+/schemas
   frontmatter.schema.json # frontmatter validation schema
 /reports             # where vb creates reports
 AGENTS.md            # this file - feature spec workflow guide
@@ -504,7 +505,7 @@ See `/prompts/AGENTS.md` for complete documentation.
 
 **CI must enforce:**
 
-1. Frontmatter validates against `/scripts/frontmatter.schema.json`.
+1. Frontmatter validates against `/schemas/frontmatter.schema.json`.
 2. File’s folder matches `status`.
 3. `id` unique; filename matches `id` & short description pattern.
 4. Dependencies exist and are `done` before `in-progress`.
