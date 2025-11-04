@@ -38,7 +38,7 @@ When you receive this command, read the full instructions in [data_engineer/GDP.
 
 ---
 
-### 🚧 Generate Metrics Dashboard (GMD)
+### ✅ Generate Metrics Dashboard (GMD)
 
 **Location:** [data_engineer/GMD.md](GMD.md)
 
@@ -50,11 +50,11 @@ When you receive this command, read the full instructions in [data_engineer/GDP.
 - "Create dashboard"
 - "Build analytics dashboard"
 
-**Status:** Coming soon - See [data_engineer/GMD.md](GMD.md) for placeholder
+When you receive this command, read the full instructions in [data_engineer/GMD.md](GMD.md).
 
 ---
 
-### 🚧 Generate Data Quality Check (GDQ)
+### ✅ Generate Data Quality Check (GDQ)
 
 **Location:** [data_engineer/GDQ.md](GDQ.md)
 
@@ -66,7 +66,7 @@ When you receive this command, read the full instructions in [data_engineer/GDP.
 - "Create data validation"
 - "Quality rules"
 
-**Status:** Coming soon - See [data_engineer/GDQ.md](GDQ.md) for placeholder
+When you receive this command, read the full instructions in [data_engineer/GDQ.md](GDQ.md).
 
 ---
 

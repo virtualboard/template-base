@@ -38,16 +38,16 @@ The agent commands system provides standardized workflows for common project man
 
 | Agent Role | Command File | Description |
 |------------|--------------|-------------|
-| **Project Manager** | [`prompts/agents/pm.md`](agents/pm.md) | Sprint planning, progress reports, coordination |
-| **Architect** | [`prompts/agents/architect.md`](agents/architect.md) | Architecture reports, technical standards *(coming soon)* |
-| **QA Engineer** | [`prompts/agents/qa.md`](agents/qa.md) | Test coverage reports, quality gates *(coming soon)* |
-| **DevOps Engineer** | [`prompts/agents/devops.md`](agents/devops.md) | Deployment readiness reports *(coming soon)* |
-| **Frontend Developer** | [`prompts/agents/frontend_dev.md`](agents/frontend_dev.md) | Frontend-specific workflows *(coming soon)* |
-| **Backend Developer** | [`prompts/agents/backend_dev.md`](agents/backend_dev.md) | Backend-specific workflows *(coming soon)* |
-| **Fullstack Developer** | [`prompts/agents/fullstack_dev.md`](agents/fullstack_dev.md) | Full-stack workflows *(coming soon)* |
-| **Security Engineer** | [`prompts/agents/security.md`](agents/security.md) | Security reviews, threat modeling *(coming soon)* |
-| **Data Engineer** | [`prompts/agents/data_engineer.md`](agents/data_engineer.md) | Data pipeline workflows *(coming soon)* |
-| **UX/Product Designer** | [`prompts/agents/ux_designer.md`](agents/ux_designer.md) | Design systems, user research *(coming soon)* |
+| **Project Manager** | [`prompts/agents/pm/README.md`](agents/pm/README.md) | Sprint planning, progress reports, coordination |
+| **Architect** | [`prompts/agents/architect/README.md`](agents/architect/README.md) | Architecture decisions, architecture reports, technical debt |
+| **QA Engineer** | [`prompts/agents/qa/README.md`](agents/qa/README.md) | Test plans, bug reports, test coverage analysis |
+| **DevOps Engineer** | [`prompts/agents/devops/README.md`](agents/devops/README.md) | Deployment checklists, incident reports, deployment readiness |
+| **Frontend Developer** | [`prompts/agents/frontend_dev/README.md`](agents/frontend_dev/README.md) | Component generation, Storybook stories, accessibility audits |
+| **Backend Developer** | [`prompts/agents/backend_dev/README.md`](agents/backend_dev/README.md) | API endpoints, database migrations, API documentation |
+| **Fullstack Developer** | [`prompts/agents/fullstack_dev/README.md`](agents/fullstack_dev/README.md) | Full features, integration contracts, end-to-end tests |
+| **Security Engineer** | [`prompts/agents/security/README.md`](agents/security/README.md) | Security audits, threat models, security reviews |
+| **Data Engineer** | [`prompts/agents/data_engineer/README.md`](agents/data_engineer/README.md) | Data pipelines, metrics dashboards, data quality, ERDs |
+| **UX/Product Designer** | [`prompts/agents/ux_designer/README.md`](agents/ux_designer/README.md) | User journeys, wireframes, design system components |
 
 ---
 

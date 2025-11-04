@@ -37,7 +37,7 @@ When you receive this command, read the full instructions in [backend_dev/GAE.md
 
 ---
 
-### 🚧 Generate Database Migration (GDM)
+### ✅ Generate Database Migration (GDM)
 
 **Location:** [backend_dev/GDM.md](GDM.md)
 
@@ -49,11 +49,11 @@ When you receive this command, read the full instructions in [backend_dev/GAE.md
 - "Create migration"
 - "Database migration"
 
-**Status:** Coming soon - See [backend_dev/GDM.md](GDM.md) for placeholder
+When you receive this command, read the full instructions in [backend_dev/GDM.md](GDM.md).
 
 ---
 
-### 🚧 Generate API Documentation (GAD)
+### ✅ Generate API Documentation (GAD)
 
 **Location:** [backend_dev/GAD.md](GAD.md)
 
@@ -67,7 +67,7 @@ When you receive this command, read the full instructions in [backend_dev/GAE.md
 - "Document API"
 - "Create API docs"
 
-**Status:** Coming soon - See [backend_dev/GAD.md](GAD.md) for placeholder
+When you receive this command, read the full instructions in [backend_dev/GAD.md](GAD.md).
 
 ---
 

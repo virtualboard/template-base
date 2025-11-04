@@ -36,7 +36,7 @@ When you receive this command, read the full instructions in [qa/GTP.md](GTP.md)
 
 ---
 
-### 🚧 Generate Bug Report (GBR)
+### ✅ Generate Bug Report (GBR)
 
 **Location:** [qa/GBR.md](GBR.md)
 
@@ -49,11 +49,11 @@ When you receive this command, read the full instructions in [qa/GTP.md](GTP.md)
 - "Create bug report"
 - "Log defect"
 
-**Status:** Coming soon - See [qa/GBR.md](GBR.md) for placeholder
+When you receive this command, read the full instructions in [qa/GBR.md](GBR.md).
 
 ---
 
-### 🚧 Generate Test Coverage Report (GTCR)
+### ✅ Generate Test Coverage Report (GTCR)
 
 **Location:** [qa/GTCR.md](GTCR.md)
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [qa/GTP.md](GTP.md)
 - "Create test coverage report"
 - "Test coverage analysis"
 
-**Status:** Coming soon - See [qa/GTCR.md](GTCR.md) for placeholder
+When you receive this command, read the full instructions in [qa/GTCR.md](GTCR.md).
 
 ---
 

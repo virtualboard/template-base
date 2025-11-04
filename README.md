@@ -117,12 +117,27 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 │   ├── security_compliance_engineer.md # Security & compliance prompt
 │   ├── data_analytics_engineer.md # Data & analytics prompt
 │   └── qa.md                # QA engineer prompt
+├── prompts/                 # Agent commands and specialized actions
+│   ├── AGENTS.md            # Command system overview and catalog
+│   ├── agents/              # Role-specific command files
+│   │   ├── pm/              # Project Manager commands (GPP, etc.)
+│   │   ├── architect/       # Architect commands (GAD, GAR, GTD)
+│   │   ├── backend_dev/     # Backend commands (GAD, GAE, GDM)
+│   │   ├── frontend_dev/    # Frontend commands (GAA, GC, GCS)
+│   │   ├── fullstack_dev/   # Fullstack commands (GFF, GIC, GETE)
+│   │   ├── data_engineer/   # Data Engineer commands (GDP, GMD, GDQ, ERD)
+│   │   ├── devops/          # DevOps commands (GDC, GDRR, GIR)
+│   │   ├── security/        # Security commands (GSA, GSR, GTM)
+│   │   ├── qa/              # QA commands (GBR, GTCR, GTP)
+│   │   └── ux_designer/     # UX Designer commands (GDS, GUJ, GWF)
+│   └── common/              # Common templates and utilities
+│       └── session-handoff.md # Session handoff template
 └── scripts/                 # Automation scripts
     ├── ftr-new.sh           # Create new feature
     ├── ftr-move.sh          # Move feature between states
     ├── ftr-validate.sh      # Validate features
     ├── ftr-index.sh         # Generate feature index
-    ├── install-vb-cli.sh     # Install Virtual Board CLI tool
+    ├── install-vb-cli.sh    # Install Virtual Board CLI tool
     └── frontmatter.schema.json # Frontmatter validation schema
 ```
 
@@ -153,12 +168,14 @@ AI agents should:
    fi
    ```
 
-2. **Read the agent rules:** `/agents/RULES.md`
-3. **Check available work:** Look at `/features/INDEX.md`
-4. **Claim a feature:** Move from `backlog` to `in-progress` with your agent ID
+2. **Adopt an agent role:** Read `/agents/AGENTS.md` to understand available roles, then read the specific role file (e.g., `/agents/pm.md`)
+3. **Load agent commands:** Check `/prompts/agents/{role}/README.md` for specialized commands available to your role
+4. **Read the agent rules:** `/agents/RULES.md`
+5. **Check available work:** Look at `/features/INDEX.md`
+6. **Claim a feature:** Move from `backlog` to `in-progress` with your agent ID
    - **CRITICAL**: Update frontmatter `status`, `owner`, and `updated` fields when moving
-5. **Work on the feature:** Update implementation notes and links
-6. **Hand off for review:** Move to `review` status when complete
+7. **Work on the feature:** Update implementation notes and links
+8. **Hand off for review:** Move to `review` status when complete
    - **CRITICAL**: Update frontmatter `status` and `updated` fields when moving
 
 ## Agent Roster
@@ -175,6 +192,36 @@ The virtual team is defined in `agents/`:
 - Data & Analytics Engineer (`agents/data_analytics_engineer.md`)
 - QA Engineer (`agents/qa.md`)
 - Shared Rules of Engagement (`agents/RULES.md`)
+
+## Agent Commands System
+
+Each agent role has access to specialized commands for common tasks. Commands are organized by role in the `prompts/agents/` directory.
+
+### Available Command Sets
+
+| Agent Role | Commands Directory | Key Commands |
+|------------|-------------------|--------------|
+| **Project Manager** | `prompts/agents/pm/` | GPP (Project Progress Report) |
+| **Architect** | `prompts/agents/architect/` | GAD (Architecture Diagram), GAR (Architecture Review), GTD (Technical Debt) |
+| **Backend Developer** | `prompts/agents/backend_dev/` | GAD (API Documentation), GAE (API Endpoint), GDM (Data Migration) |
+| **Frontend Developer** | `prompts/agents/frontend_dev/` | GAA (Accessibility Audit), GC (Component), GCS (Component Storybook) |
+| **Fullstack Developer** | `prompts/agents/fullstack_dev/` | GFF (Full Feature), GIC (Integration Contract), GETE (E2E Test) |
+| **Data Engineer** | `prompts/agents/data_engineer/` | GDP (Data Pipeline), GMD (Metrics Dashboard), GDQ (Data Quality), ERD (Entity Relationship Diagram) |
+| **DevOps Engineer** | `prompts/agents/devops/` | GDC (Deployment Checklist), GDRR (Deployment Readiness), GIR (Incident Response) |
+| **Security Engineer** | `prompts/agents/security/` | GSA (Security Audit), GSR (Security Review), GTM (Threat Model) |
+| **QA Engineer** | `prompts/agents/qa/` | GBR (Bug Report), GTCR (Test Coverage), GTP (Test Plan) |
+| **UX Designer** | `prompts/agents/ux_designer/` | GDS (Design System), GUJ (User Journey), GWF (Wireframe) |
+
+### Using Agent Commands
+
+When adopting an agent role:
+
+1. **Read your role's README:** Check `prompts/agents/{role}/README.md` for available commands
+2. **Display available commands:** Agents should show users what commands they can execute
+3. **Execute commands:** Follow the detailed workflow in each command file (e.g., `prompts/agents/pm/GPP.md`)
+4. **Follow templates:** Use the exact report structure and file paths specified in each command
+
+See `prompts/AGENTS.md` for complete documentation on the command system.
 
 ## Validation
 

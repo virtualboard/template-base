@@ -37,7 +37,7 @@ When you receive this command, read the full instructions in [architect/GAD.md](
 
 ---
 
-### 🚧 Generate Architecture Report (GAR)
+### ✅ Generate Architecture Report (GAR)
 
 **Location:** [architect/GAR.md](GAR.md)
 
@@ -49,11 +49,11 @@ When you receive this command, read the full instructions in [architect/GAD.md](
 - "Create architecture report"
 - "Architecture analysis"
 
-**Status:** Coming soon - See [architect/GAR.md](GAR.md) for placeholder
+When you receive this command, read the full instructions in [architect/GAR.md](GAR.md).
 
 ---
 
-### 🚧 Generate Technical Debt Report (GTD)
+### ✅ Generate Technical Debt Report (GTD)
 
 **Location:** [architect/GTD.md](GTD.md)
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [architect/GAD.md](
 - "Analyze technical debt"
 - "Technical debt analysis"
 
-**Status:** Coming soon - See [architect/GTD.md](GTD.md) for placeholder
+When you receive this command, read the full instructions in [architect/GTD.md](GTD.md).
 
 ---
 

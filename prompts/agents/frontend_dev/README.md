@@ -37,7 +37,7 @@ When you receive this command, read the full instructions in [frontend_dev/GC.md
 
 ---
 
-### 🚧 Generate Component Story (GCS)
+### ✅ Generate Component Story (GCS)
 
 **Location:** [frontend_dev/GCS.md](GCS.md)
 
@@ -49,11 +49,11 @@ When you receive this command, read the full instructions in [frontend_dev/GC.md
 - "Create Storybook story"
 - "Add story"
 
-**Status:** Coming soon - See [frontend_dev/GCS.md](GCS.md) for placeholder
+When you receive this command, read the full instructions in [frontend_dev/GCS.md](GCS.md).
 
 ---
 
-### 🚧 Generate Accessibility Audit (GAA)
+### ✅ Generate Accessibility Audit (GAA)
 
 **Location:** [frontend_dev/GAA.md](GAA.md)
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [frontend_dev/GC.md
 - "Accessibility check"
 - "A11y audit"
 
-**Status:** Coming soon - See [frontend_dev/GAA.md](GAA.md) for placeholder
+When you receive this command, read the full instructions in [frontend_dev/GAA.md](GAA.md).
 
 ---
 

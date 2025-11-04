@@ -331,7 +331,7 @@
       <h2>Project Structure</h2>
       <p>When you initialize a project with this template, you get a complete directory structure with all the necessary components:</p>
 
-      <pre><code>my-project/
+      <pre><code>.virtualboard/
 ├── features/                        # Feature specifications
 │   ├── backlog/                    # Unassigned features
 │   ├── in-progress/                # Features being worked on
@@ -343,19 +343,73 @@
 │   ├── spec.md                     # Feature spec template
 │   ├── pr-template.md              # Pull request template
 │   └── rules.yml                   # Agent rules configuration
-├── agents/                         # Agent documentation and role prompts
+├── agents/                         # Agent role definitions
 │   ├── AGENTS.md                   # Agent system overview
 │   ├── RULES.md                    # Rules of engagement for agents
-│   ├── pm.md                       # Project manager prompt
-│   ├── architect.md                # System architect prompt
-│   ├── ux_product_designer.md      # UX/Product designer prompt
-│   ├── backend_dev.md              # Backend developer prompt
-│   ├── frontend_dev.md             # Frontend developer prompt
-│   ├── fullstack_dev.md            # Fullstack developer prompt
-│   ├── devops_engineer.md          # DevOps engineer prompt
-│   ├── security_compliance_engineer.md  # Security compliance prompt
-│   ├── data_analytics_engineer.md  # Data analytics prompt
-│   └── qa.md                       # QA engineer prompt
+│   ├── pm.md                       # Project manager role
+│   ├── architect.md                # System architect role
+│   ├── ux_product_designer.md      # UX/Product designer role
+│   ├── backend_dev.md              # Backend developer role
+│   ├── frontend_dev.md             # Frontend developer role
+│   ├── fullstack_dev.md            # Fullstack developer role
+│   ├── devops_engineer.md          # DevOps engineer role
+│   ├── security_compliance_engineer.md  # Security compliance role
+│   ├── data_analytics_engineer.md  # Data analytics engineer role
+│   └── qa.md                       # QA engineer role
+├── prompts/                        # Agent commands and specialized actions
+│   ├── AGENTS.md                   # Command system overview
+│   ├── agents/                     # Role-specific command files
+│   │   ├── pm/                     # Project Manager commands
+│   │   │   ├── README.md           # PM command catalog
+│   │   │   └── GPP.md              # Generate Project Progress Report
+│   │   ├── architect/              # Architect commands
+│   │   │   ├── README.md           # Architect command catalog
+│   │   │   ├── GAD.md              # Generate Architecture Diagram
+│   │   │   ├── GAR.md              # Generate Architecture Review
+│   │   │   └── GTD.md              # Generate Technical Debt Report
+│   │   ├── backend_dev/            # Backend Developer commands
+│   │   │   ├── README.md           # Backend command catalog
+│   │   │   ├── GAD.md              # Generate API Documentation
+│   │   │   ├── GAE.md              # Generate API Endpoint
+│   │   │   └── GDM.md              # Generate Database Migration
+│   │   ├── frontend_dev/           # Frontend Developer commands
+│   │   │   ├── README.md           # Frontend command catalog
+│   │   │   ├── GAA.md              # Generate Accessibility Audit
+│   │   │   ├── GC.md               # Generate Component
+│   │   │   └── GCS.md              # Generate Component Storybook
+│   │   ├── fullstack_dev/          # Fullstack Developer commands
+│   │   │   ├── README.md           # Fullstack command catalog
+│   │   │   ├── GFF.md              # Generate Full Feature
+│   │   │   ├── GIC.md              # Generate Integration Contract
+│   │   │   └── GETE.md             # Generate End-to-End Test
+│   │   ├── data_engineer/          # Data Engineer commands
+│   │   │   ├── README.md           # Data Engineer command catalog
+│   │   │   ├── ERD.md              # Entity Relationship Diagram
+│   │   │   ├── GDP.md              # Generate Data Pipeline
+│   │   │   ├── GMD.md              # Generate Metrics Dashboard
+│   │   │   └── GDQ.md              # Generate Data Quality Check
+│   │   ├── devops/                 # DevOps Engineer commands
+│   │   │   ├── README.md           # DevOps command catalog
+│   │   │   ├── GDC.md              # Generate Deployment Checklist
+│   │   │   ├── GDRR.md             # Generate Deployment Readiness
+│   │   │   └── GIR.md              # Generate Incident Response
+│   │   ├── security/               # Security Engineer commands
+│   │   │   ├── README.md           # Security command catalog
+│   │   │   ├── GSA.md              # Generate Security Audit
+│   │   │   ├── GSR.md              # Generate Security Review
+│   │   │   └── GTM.md              # Generate Threat Model
+│   │   ├── qa/                     # QA Engineer commands
+│   │   │   ├── README.md           # QA command catalog
+│   │   │   ├── GBR.md              # Generate Bug Report
+│   │   │   ├── GTCR.md             # Generate Test Coverage Report
+│   │   │   └── GTP.md              # Generate Test Plan
+│   │   └── ux_designer/            # UX Designer commands
+│   │       ├── README.md           # UX Designer command catalog
+│   │       ├── GDS.md              # Generate Design System
+│   │       ├── GUJ.md              # Generate User Journey
+│   │       └── GWF.md              # Generate Wireframe
+│   └── common/                     # Common templates and utilities
+│       └── session-handoff.md      # Session handoff template
 ├── scripts/                        # Automation scripts
 │   ├── ftr-new.sh                  # Create new feature
 │   ├── ftr-move.sh                 # Move feature between states
@@ -363,9 +417,7 @@
 │   ├── ftr-index.sh                # Generate feature index
 │   ├── install-vb-cli.sh           # Install Virtual Board CLI tool
 │   └── frontmatter.schema.json     # Frontmatter validation schema
-├── .pre-commit-config.yaml         # Pre-commit hooks configuration
-├── .pymarkdown.json                # PyMarkdown linting rules
-├── .typos.toml                     # Spell checking configuration
+├── reports/                        # Generated reports (created by vb CLI)
 ├── AGENTS.md                       # Agent system documentation
 ├── CHANGELOG.md                    # Version history
 ├── README.md                       # Project documentation
