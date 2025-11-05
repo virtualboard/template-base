@@ -10,6 +10,7 @@ This file defines specialized commands and actions for the Project Manager agent
 ```
 📋 Available PM Commands:
 • GPP (Generate Project Progress Report) - Create comprehensive project status reports - See [pm/GPP.md](GPP.md)
+• GBG (Generate Backlog Grooming) - Perform comprehensive backlog refinement session - See [pm/GBG.md](GBG.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -34,6 +35,32 @@ When you receive this command, read the full instructions in [pm/GPP.md](GPP.md)
 
 ---
 
+### ✅ Generate Backlog Grooming (GBG)
+
+**Location:** [pm/GBG.md](GBG.md)
+
+**Description:** Perform comprehensive backlog refinement session
+
+**Trigger Phrases:**
+- "Generate Backlog Grooming"
+- "GBG"
+- "Groom backlog"
+- "Backlog grooming session"
+- "Refine backlog"
+- "Backlog refinement"
+
+When you receive this command, read the full instructions in [pm/GBG.md](GBG.md).
+
+**What it does:**
+- Assesses implementation status of all backlog features
+- Interactively checks with user for next steps on each feature
+- Analyzes relevance and identifies obsolete features
+- Validates spec quality and dependency health
+- Recommends prioritization changes
+- Generates comprehensive grooming report with actionable insights
+
+---
+
 ## Command Execution Guidelines
 
 When executing PM commands:
@@ -48,10 +75,12 @@ When executing PM commands:
 
 ## Future PM Commands
 
-### Coming Soon
+### Planned
 - **Generate Sprint Plan (GSP)** - Create sprint planning documents
 - **Generate Velocity Report (GVR)** - Track team velocity and capacity
 - **Generate Blocker Analysis (GBA)** - Analyze and track blockers
+- **Generate Release Notes (GRN)** - Compile release notes from completed features
+- **Generate Risk Assessment (GRA)** - Assess project risks and mitigation strategies
 
 ---
 

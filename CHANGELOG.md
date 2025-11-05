@@ -5,8 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.1] - 2025-11-01
+## [0.1.0] - 2025-11-04
+
 ### Added
+- **GBG (Generate Backlog Grooming)** command for Project Manager agent (`prompts/agents/pm/GBG.md`)
+  - Comprehensive backlog refinement session with interactive decision-making
+  - Implementation status assessment (fully/partially/not implemented)
+  - Automated relevance analysis based on codebase evolution
+  - Spec quality validation and dependency hygiene checks
+  - Prioritization recommendations with quick wins identification
+  - Comprehensive grooming report generation with health scoring
+  - Interactive prompts for user decisions on each backlog feature
+  - Support for splitting features and moving completed work to review/done
+
+### Changed
+- Updated `prompts/agents/pm/README.md` to include GBG command
+- Updated `prompts/AGENTS.md` to reflect backlog grooming capability
+- Updated `docs/agents.html` to display GBG command in PM section
+- Bumped version from 0.0.1 to 0.1.0
+
+## [0.0.1] - 2025-11-01
+
+### Initial Release
 - VirtualBoard markdown-first feature workflow system for managing features with multiple AI agents.
 - Lifecycle-managed feature directories: `backlog/`, `blocked/`, `in-progress/`, `review/`, and `done/`.
 - Auto-generated feature index (`features/INDEX.md`) tracking all features across lifecycle stages.
