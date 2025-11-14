@@ -2,6 +2,16 @@
 
 This directory contains the complete implementation of the Feature Spec Workflow system for managing features with multiple AI agents.
 
+## Claude Code Plugin
+
+VirtualBoard is now available as a Claude Code plugin! Install it directly in Claude Code:
+
+```bash
+claude plugin install github:virtualboard/template-base
+```
+
+Or use the plugin marketplace. See [.claude-plugin/README.md](.claude-plugin/README.md) for full plugin documentation.
+
 ## Implementation
 
 The system is built entirely with bash scripts, eliminating the need for Node.js or npm dependencies. This approach provides:
