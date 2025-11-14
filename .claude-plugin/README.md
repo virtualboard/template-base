@@ -110,7 +110,8 @@ Each feature is a Markdown file with:
 
 1. Clone or install the plugin:
    ```bash
-   claude plugin install github:virtualboard/template-base
+   claude plugin marketplace add virtualboard/template-base
+   claude plugin install virtualboard
    ```
 
 ### Manual Installation

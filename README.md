@@ -7,7 +7,8 @@ This directory contains the complete implementation of the Feature Spec Workflow
 VirtualBoard is now available as a Claude Code plugin! Install it directly in Claude Code:
 
 ```bash
-claude plugin install github:virtualboard/template-base
+claude plugin marketplace add virtualboard/template-base
+claude plugin install virtualboard
 ```
 
 Or use the plugin marketplace. See [.claude-plugin/README.md](.claude-plugin/README.md) for full plugin documentation.
