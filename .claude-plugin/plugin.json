@@ -1,0 +1,63 @@
+{
+  "name": "virtualboard",
+  "description": "Feature Spec Workflow system with multi-agent collaboration, feature lifecycle management, and specialized agent commands",
+  "version": "0.1.0",
+  "author": {
+    "name": "VibeCoding"
+  },
+  "homepage": "https://github.com/virtualboard/template-base",
+  "license": "MIT",
+  "keywords": [
+    "feature-management",
+    "workflow",
+    "agents",
+    "project-management",
+    "collaboration",
+    "markdown"
+  ],
+  "category": "productivity",
+  "agents": [
+    "./agents/pm.md",
+    "./agents/architect.md",
+    "./agents/backend_dev.md",
+    "./agents/frontend_dev.md",
+    "./agents/fullstack_dev.md",
+    "./agents/qa.md",
+    "./agents/devops_engineer.md",
+    "./agents/security_compliance_engineer.md",
+    "./agents/data_analytics_engineer.md",
+    "./agents/ux_product_designer.md"
+  ],
+  "commands": [
+    "./prompts/agents/pm/GPP.md",
+    "./prompts/agents/pm/GBG.md",
+    "./prompts/agents/architect/GAD.md",
+    "./prompts/agents/architect/GAR.md",
+    "./prompts/agents/architect/GTD.md",
+    "./prompts/agents/backend_dev/GAD.md",
+    "./prompts/agents/backend_dev/GAE.md",
+    "./prompts/agents/backend_dev/GDM.md",
+    "./prompts/agents/frontend_dev/GAA.md",
+    "./prompts/agents/frontend_dev/GC.md",
+    "./prompts/agents/frontend_dev/GCS.md",
+    "./prompts/agents/fullstack_dev/GFF.md",
+    "./prompts/agents/fullstack_dev/GIC.md",
+    "./prompts/agents/fullstack_dev/GETE.md",
+    "./prompts/agents/qa/GBR.md",
+    "./prompts/agents/qa/GTCR.md",
+    "./prompts/agents/qa/GTP.md",
+    "./prompts/agents/devops/GDC.md",
+    "./prompts/agents/devops/GDRR.md",
+    "./prompts/agents/devops/GIR.md",
+    "./prompts/agents/security/GSA.md",
+    "./prompts/agents/security/GSR.md",
+    "./prompts/agents/security/GTM.md",
+    "./prompts/agents/data_engineer/GDP.md",
+    "./prompts/agents/data_engineer/GMD.md",
+    "./prompts/agents/data_engineer/GDQ.md",
+    "./prompts/agents/data_engineer/ERD.md",
+    "./prompts/agents/ux_designer/GDS.md",
+    "./prompts/agents/ux_designer/GUJ.md",
+    "./prompts/agents/ux_designer/GWF.md"
+  ]
+}

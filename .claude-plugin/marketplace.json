@@ -1,0 +1,31 @@
+{
+  "name": "virtualboard-marketplace",
+  "owner": {
+    "name": "Ernesto Ruy Sanchez"
+  },
+  "metadata": {
+    "description": "Official marketplace for VirtualBoard - Feature Spec Workflow system with multi-agent collaboration",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "virtualboard",
+      "source": "./",
+      "description": "Feature Spec Workflow system with multi-agent collaboration, feature lifecycle management, and specialized agent commands",
+      "version": "0.1.0",
+      "homepage": "https://github.com/virtualboard/template-base",
+      "repository": "https://github.com/virtualboard/template-base",
+      "license": "MIT",
+      "keywords": [
+        "feature-management",
+        "workflow",
+        "agents",
+        "project-management",
+        "collaboration",
+        "markdown"
+      ],
+      "category": "productivity",
+      "tags": ["project-management", "workflow", "agents", "collaboration"]
+    }
+  ]
+}
