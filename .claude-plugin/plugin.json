@@ -15,7 +15,6 @@
     "collaboration",
     "markdown"
   ],
-  "category": "productivity",
   "agents": [
     "./agents/pm.md",
     "./agents/architect.md",
