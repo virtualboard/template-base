@@ -1,0 +1,8 @@
+---
+description: Virtualboard Task Tracker
+alwaysApply: true
+---
+
+You will use the Virtualboard strategy defined on @.virtualboard/AGENTS.md to keep track of tasks and progress
+
+Workspace for the Virtualboard is the @.virtualboard/features folder

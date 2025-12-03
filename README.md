@@ -13,6 +13,46 @@ claude plugin install virtualboard
 
 Or use the plugin marketplace. See [.claude-plugin/README.md](.claude-plugin/README.md) for full plugin documentation.
 
+## Cursor IDE Integration
+
+VirtualBoard includes a `.cursor/rules/virtualboard.mdc` file that enables automatic integration with [Cursor](https://cursor.sh/) IDE. This rule tells Cursor to use the VirtualBoard workflow and agent system.
+
+### Option 1: Project-Level Installation (Recommended)
+
+Copy the `.cursor` folder to your project root to enable VirtualBoard for that specific project:
+
+```bash
+# If you're using this template
+cp -r .cursor /path/to/your/project/
+
+# Or if you're cloning this repository
+git clone https://github.com/virtualboard/template-base.git
+cp -r template-base/.cursor /path/to/your/project/
+```
+
+### Option 2: Global Installation
+
+To enable VirtualBoard across all your projects in Cursor, add the rule globally:
+
+1. Open Cursor Settings (Cmd/Ctrl + ,)
+2. Navigate to "Cursor Settings" → "Rules for AI"
+3. Click "Edit in settings.json"
+4. Add the VirtualBoard rule:
+
+```json
+{
+  "cursor.rules": [
+    {
+      "description": "Virtualboard Task Tracker",
+      "alwaysApply": true,
+      "content": "You will use the Virtualboard strategy defined on @.virtualboard/AGENTS.md to keep track of tasks and progress\n\nWorkspace for the Virtualboard is the @.virtualboard/features folder"
+    }
+  ]
+}
+```
+
+**Note:** Project-level rules (`.cursor/rules/`) take precedence over global rules. If you have both, the project-level rule will be used.
+
 ## Implementation
 
 The system is built entirely with bash scripts, eliminating the need for Node.js or npm dependencies. This approach provides:
