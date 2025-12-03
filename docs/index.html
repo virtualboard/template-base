@@ -482,6 +482,35 @@
     </section>
 
     <section>
+      <h2>Cursor IDE Integration</h2>
+      <p>VirtualBoard includes a <code>.cursor/rules/virtualboard.mdc</code> file that enables automatic integration with <a href="https://cursor.sh/" target="_blank" rel="noreferrer" style="color: var(--accent);">Cursor IDE</a>. This rule tells Cursor to use the VirtualBoard workflow and agent system.</p>
+
+      <div class="grid two">
+        <article>
+          <h3>Project-Level Installation</h3>
+          <p>Copy the <code>.cursor</code> folder to your project root to enable VirtualBoard for that specific project:</p>
+          <div style="background: var(--bg-alt); border-radius: 0.5rem; padding: 1rem; margin: 1rem 0; border: 1px solid var(--border); font-family: monospace; font-size: 0.9rem;">
+            cp -r .cursor /path/to/your/project/
+          </div>
+          <p><strong>Recommended for:</strong> Single project or project-specific customizations</p>
+        </article>
+
+        <article>
+          <h3>Global Installation</h3>
+          <p>Add the VirtualBoard rule globally in Cursor Settings:</p>
+          <ol style="font-size: 0.95rem; line-height: 1.7;">
+            <li>Open Cursor Settings (Cmd/Ctrl + ,)</li>
+            <li>Navigate to "Cursor Settings" → "Rules for AI"</li>
+            <li>Click "Edit in settings.json"</li>
+            <li>Add the VirtualBoard rule configuration</li>
+          </ol>
+          <p><strong>Recommended for:</strong> Using VirtualBoard across all your projects</p>
+        </article>
+      </div>
+      <p style="margin-top: 1.5rem; padding: 1rem; background: rgba(0, 212, 255, 0.1); border-left: 3px solid var(--accent); border-radius: 0.5rem;"><strong>Note:</strong> Project-level rules (<code>.cursor/rules/</code>) take precedence over global rules.</p>
+    </section>
+
+    <section>
       <h2>What is this Template?</h2>
       <div class="grid two">
         <article>

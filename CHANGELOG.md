@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-12-03
+
+### Added
+- **Cursor IDE Integration** documentation in README.md
+  - Project-level installation instructions for `.cursor` folder
+  - Global installation instructions with Cursor Settings configuration
+  - Documentation for `.cursor/rules/virtualboard.mdc` file
+- **Cursor IDE Integration** section in `docs/index.html`
+  - Visual two-column grid layout for installation options
+  - Step-by-step instructions for both project-level and global setup
+  - Highlighted notes about rule precedence
+
+### Changed
+- Updated README.md with comprehensive Cursor IDE integration guide
+- Updated `docs/index.html` with Cursor integration section
+
 ## [0.1.0] - 2025-11-04
 
 ### Added
