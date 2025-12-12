@@ -40,7 +40,7 @@ The agent commands system provides standardized workflows for common project man
 |------------|--------------|-------------|
 | **Project Manager** | [`prompts/agents/pm/README.md`](agents/pm/README.md) | Sprint planning, progress reports, backlog grooming, coordination |
 | **Architect** | [`prompts/agents/architect/README.md`](agents/architect/README.md) | Architecture decisions, architecture reports, technical debt |
-| **QA Engineer** | [`prompts/agents/qa/README.md`](agents/qa/README.md) | Test plans, bug reports, test coverage analysis |
+| **QA Engineer** | [`prompts/agents/qa/README.md`](agents/qa/README.md) | Test plans, bug reports, test coverage analysis, browser automation tests |
 | **DevOps Engineer** | [`prompts/agents/devops/README.md`](agents/devops/README.md) | Deployment checklists, incident reports, deployment readiness |
 | **Frontend Developer** | [`prompts/agents/frontend_dev/README.md`](agents/frontend_dev/README.md) | Component generation, Storybook stories, accessibility audits |
 | **Backend Developer** | [`prompts/agents/backend_dev/README.md`](agents/backend_dev/README.md) | API endpoints, database migrations, API documentation |

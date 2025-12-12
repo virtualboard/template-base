@@ -52,7 +52,7 @@ Each feature is a Markdown file with:
 
 ### Agent Commands
 
-29+ specialized commands across all roles:
+30+ specialized commands across all roles:
 
 **Project Manager Commands:**
 - `GPP` - Generate Project Progress Report
@@ -82,6 +82,7 @@ Each feature is a Markdown file with:
 - `GBR` - Generate Bug Report
 - `GTCR` - Generate Test Coverage Report
 - `GTP` - Generate Test Plan
+- `GBAT` - Generate Browser Automation Tests (Playwright)
 
 **DevOps Commands:**
 - `GDC` - Generate Deployment Checklist
