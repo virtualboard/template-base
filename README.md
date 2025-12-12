@@ -95,7 +95,19 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
    vb help
    ```
 
-3. **Use CLI commands:**
+3. **Initialize VirtualBoard workspace:**
+   ```bash
+   # Initialize a new VirtualBoard workspace
+   vb init
+
+   # Update existing workspace to latest template
+   vb init --update
+
+   # Update specific files only
+   vb init --update --files agents/pm.md,templates/spec.md
+   ```
+
+4. **Use CLI commands:**
    ```bash
    # Create a new feature
    vb new "Feature Title" label1 label2
@@ -362,7 +374,19 @@ See the [Quick Start](#quick-start) section above for installation instructions 
 ### Additional CLI Commands
 
 ```bash
-# Upgrade to latest version
+# Initialize workspace (first time setup)
+vb init
+
+# Update workspace to latest template
+vb init --update
+
+# Update specific template files
+vb init --update --files agents/pm.md,templates/spec.md
+
+# Auto-apply updates without prompting
+vb init --update --yes
+
+# Upgrade CLI to latest version
 vb upgrade
 # Or use sudo if installed to system directory:
 sudo vb upgrade
@@ -372,4 +396,14 @@ vb list
 
 # Show feature details
 vb show FTR-0001
+
+# Delete a feature
+vb delete FTR-0001
+
+# Manage feature locks
+vb lock FTR-0001
+vb lock --release FTR-0001
+
+# Update feature metadata
+vb update FTR-0001 --priority P1 --complexity H
 ```

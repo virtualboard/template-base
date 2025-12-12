@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-12-12
+
+### Added
+- **GBAT (Generate Browser Automation Tests)** command for QA Engineer agent (`prompts/agents/qa/GBAT.md`)
+  - Comprehensive 4-phase browser automation testing workflow using Playwright
+  - Phase 1: Test case generation in markdown format (`.virtualboard/docs/browser-test-cases/`)
+  - Phase 2: Playwright automation script generation with Page Object Model pattern
+  - Phase 3: Test execution across multiple browsers (Chrome, Firefox, Safari)
+  - Phase 4: Detailed test execution reports in markdown and HTML formats
+  - Support for test directories, browser selection, and report customization via user prompts
+  - Integration with Page Object Model for maintainable test automation
+  - Accessibility testing integration in browser test cases
+  - Cross-browser compatibility validation
+  - Screenshot and video capture for failed tests
+  - Playwright trace generation for debugging
+  - Test utilities and helper functions generation
+  - Comprehensive example documentation with real-world scenarios
+- **CLAUDE.md** file providing comprehensive repository guidance for Claude Code
+  - Agent-first design pattern documentation
+  - Feature lifecycle and workflow overview
+  - Complete directory structure explanation
+  - Common commands for both Virtual Board CLI and shell scripts
+  - Integration points for Cursor IDE and Claude Code plugin
+  - Troubleshooting guide and quick reference
+- Examples directory for QA commands (`prompts/agents/qa/examples/`)
+  - `GBAT-example.md` - Complete walkthrough of GBAT command with sample inputs/outputs
+  - `README.md` - Guide for using and contributing examples
+
+### Changed
+- Updated `prompts/agents/qa/README.md` to include GBAT command with detailed description
+- Updated `prompts/AGENTS.md` to reflect browser automation testing capability
+- Updated `.claude-plugin/README.md` to include GBAT in QA commands list (30+ commands total)
+- Updated `.claude-plugin/plugin.json` to register GBAT command
+- Bumped version from 0.1.1 to 0.2.0
+
+### Documentation
+- Added comprehensive Playwright test automation workflow documentation
+- Documented four-phase testing approach (generate, automate, execute, report)
+- Included Page Object Model pattern examples
+- Added test data management and selector strategy documentation
+- Documented integration with existing QA commands (GTP, GBR, GTCR)
+
 ## [0.1.1] - 2025-12-03
 
 ### Added

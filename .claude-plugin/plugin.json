@@ -1,7 +1,7 @@
 {
   "name": "virtualboard",
   "description": "Feature Spec Workflow system with multi-agent collaboration, feature lifecycle management, and specialized agent commands",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "VibeCoding"
   },
@@ -45,6 +45,7 @@
     "./prompts/agents/qa/GBR.md",
     "./prompts/agents/qa/GTCR.md",
     "./prompts/agents/qa/GTP.md",
+    "./prompts/agents/qa/GBAT.md",
     "./prompts/agents/devops/GDC.md",
     "./prompts/agents/devops/GDRR.md",
     "./prompts/agents/devops/GIR.md",
