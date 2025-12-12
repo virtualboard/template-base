@@ -115,6 +115,18 @@ schemas/             # Validation schemas
 # Check if CLI is available
 vb version
 
+# Initialize VirtualBoard workspace (first time setup)
+vb init
+
+# Update existing workspace to latest template
+vb init --update
+
+# Update specific files only
+vb init --update --files agents/pm.md,templates/spec.md
+
+# Auto-apply updates without prompting
+vb init --update --yes
+
 # Create new feature
 vb new "Feature Title" label1 label2
 
@@ -331,11 +343,23 @@ Add validation to your pipeline:
 
 ## Quick Reference
 
+**First time setting up VirtualBoard?**
+1. Install the VirtualBoard CLI: `./scripts/install-vb-cli.sh`
+2. Initialize workspace: `vb init`
+3. Read `agents/AGENTS.md` to understand agent system
+4. Check `features/INDEX.md` for available work
+
 **First time in this repo?**
 1. Read `agents/AGENTS.md` to understand agent system
 2. Check `features/INDEX.md` for available work
 3. Adopt appropriate agent role
 4. Follow agent-specific workflow
+
+**Updating workspace template?**
+1. Run `vb init --update` to update to latest template
+2. Review changes before applying
+3. Use `vb init --update --yes` for auto-apply
+4. Use `vb init --update --files <files>` for selective updates
 
 **Starting a task?**
 1. Determine appropriate agent role from task type
