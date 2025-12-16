@@ -67,7 +67,7 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 
 ## System Specification Templates
 
-Beyond feature files, the template ships with a `/specs` catalog of reusable system blueprints. Copy any Markdown file to document foundational decisions before (or alongside) feature work:
+Beyond feature files, the template ships with a `/templates/specs` catalog of reusable system blueprints. Copy any Markdown file to your project's `/specs` directory to document foundational decisions before (or alongside) feature work:
 
 - `tech-stack.md` – Languages, runtimes, frameworks, third-party services, and guiding principles.
 - `local-development.md` – Environment setup, tooling, secrets, seeding, and troubleshooting checklists.
@@ -78,7 +78,7 @@ Beyond feature files, the template ships with a `/specs` catalog of reusable sys
 - `security-and-compliance.md` – Threat model, controls, logging/audit needs, and incident workflows.
 - `observability-and-incident-response.md` – Telemetry coverage, alerting, runbooks, and postmortems.
 
-Each template includes frontmatter compatible with `schemas/system-spec.schema.json`, so `vb validate` (or `./scripts/ftr-validate.sh`) enforces required metadata just like feature specs. See `specs/README.md` for usage tips.
+Each template includes frontmatter compatible with `schemas/system-spec.schema.json`, so `vb validate` (or `./scripts/ftr-validate.sh`) enforces required metadata just like feature specs. See `templates/specs/README.md` for usage tips.
 
 ## Quick Start
 
@@ -181,17 +181,19 @@ Each template includes frontmatter compatible with `schemas/system-spec.schema.j
 ├── templates/               # Templates and configuration
 │   ├── feature.md           # Feature spec template
 │   ├── pr-template.md       # Pull request template
-│   └── rules.yml            # Agent rules configuration
-├── specs/                   # System specification templates
-│   ├── README.md            # Catalog + usage instructions
-│   ├── tech-stack.md        # Tech stack blueprint
-│   ├── local-development.md # Local dev environment spec
-│   ├── hosting-and-infrastructure.md
-│   ├── ci-cd-pipeline.md
-│   ├── database-schema.md
-│   ├── caching-and-performance.md
-│   ├── security-and-compliance.md
-│   └── observability-and-incident-response.md
+│   ├── rules.yml            # Agent rules configuration
+│   └── specs/               # System specification templates
+│       ├── README.md        # Catalog + usage instructions
+│       ├── tech-stack.md    # Tech stack blueprint
+│       ├── local-development.md # Local dev environment spec
+│       ├── hosting-and-infrastructure.md
+│       ├── ci-cd-pipeline.md
+│       ├── database-schema.md
+│       ├── caching-and-performance.md
+│       ├── security-and-compliance.md
+│       └── observability-and-incident-response.md
+├── specs/                   # Project-specific system specifications
+│   └── (copy templates here for your project)
 ├── agents/                  # Agent documentation and role prompts
 │   ├── AGENTS.md            # Catalog of agent system prompts
 │   ├── RULES.md             # Shared rules of engagement

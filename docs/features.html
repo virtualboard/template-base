@@ -413,7 +413,7 @@
         </article>
         <article>
           <h3>📚 System Blueprints</h3>
-          <p>An opinionated <code>specs/</code> catalog covers tech stack, local dev, hosting, CI/CD, database, caching, security, and observability so every project starts with the same baseline docs. <a href="specs.html" style="color: var(--accent-dark); font-weight: 600; text-decoration: none;">See details</a></p>
+          <p>An opinionated <code>templates/specs/</code> catalog provides reusable templates covering tech stack, local dev, hosting, CI/CD, database, caching, security, and observability. Copy templates to your project's <code>specs/</code> directory. <a href="specs.html" style="color: var(--accent-dark); font-weight: 600; text-decoration: none;">See details</a></p>
         </article>
         <article>
           <h3>🔧 CI/CD Integration</h3>
@@ -437,17 +437,19 @@
 ├── templates/                      # Templates and configuration
 │   ├── feature.md                  # Feature spec template
 │   ├── pr-template.md              # Pull request template
-│   └── rules.yml                   # Agent rules configuration
-├── specs/                          # System blueprint templates
-│   ├── README.md                   # Catalog of reusable specs
-│   ├── tech-stack.md               # Tech stack blueprint
-│   ├── local-development.md        # Local dev environment
-│   ├── hosting-and-infrastructure.md
-│   ├── ci-cd-pipeline.md
-│   ├── database-schema.md
-│   ├── caching-and-performance.md
-│   ├── security-and-compliance.md
-│   └── observability-and-incident-response.md
+│   ├── rules.yml                   # Agent rules configuration
+│   └── specs/                      # System blueprint templates
+│       ├── README.md               # Catalog of reusable specs
+│       ├── tech-stack.md           # Tech stack blueprint
+│       ├── local-development.md    # Local dev environment
+│       ├── hosting-and-infrastructure.md
+│       ├── ci-cd-pipeline.md
+│       ├── database-schema.md
+│       ├── caching-and-performance.md
+│       ├── security-and-compliance.md
+│       └── observability-and-incident-response.md
+├── specs/                          # Project-specific system specs
+│   └── (copy templates here)
 ├── agents/                         # Agent role definitions
 │   ├── AGENTS.md                   # Agent system overview
 │   ├── RULES.md                    # Rules of engagement for agents
