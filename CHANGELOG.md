@@ -100,7 +100,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - VirtualBoard markdown-first feature workflow system for managing features with multiple AI agents.
 - Lifecycle-managed feature directories: `backlog/`, `blocked/`, `in-progress/`, `review/`, and `done/`.
 - Auto-generated feature index (`features/INDEX.md`) tracking all features across lifecycle stages.
-- Feature specification template (`templates/spec.md`) with comprehensive sections for problem statement, requirements, acceptance criteria, and implementation notes.
+- Feature specification template (`templates/feature.md`) with comprehensive sections for problem statement, requirements, acceptance criteria, and implementation notes.
 - Pull request template (`templates/pr-template.md`) aligned with feature spec workflow.
 - Machine-readable agent rules configuration (`templates/rules.yml`) for validation parameters, state transitions, and dependencies.
 - Frontmatter JSON Schema validation (`schemas/frontmatter.schema.json`) for feature metadata consistency.

@@ -55,7 +55,7 @@
   /done              # completed features
   INDEX.md           # auto-generated, do not edit
 /templates
-  spec.md            # canonical feature spec template
+  feature.md         # canonical feature spec template
   pr-template.md     # pull request template
   rules.yml          # machine-readable agent rules & validation parameters
 /specs
@@ -216,7 +216,7 @@ risk_notes: "Password policy and migration risk."
 
 ## 7) Spec Body Template (Markdown)
 
-> Copy from `/templates/spec.md` when creating a new feature.
+> Copy from `/templates/feature.md` when creating a new feature.
 
 ```markdown
 # Feature Spec: <Title>

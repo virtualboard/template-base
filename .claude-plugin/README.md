@@ -229,7 +229,7 @@ your-project/
 │   ├── ftr-index.sh
 │   └── install-vb-cli.sh
 ├── templates/               # Templates
-│   ├── spec.md              # Feature spec template
+│   ├── feature.md           # Feature spec template
 │   ├── pr-template.md       # Pull request template
 │   └── rules.yml            # Agent rules configuration
 └── schemas/                 # Validation schemas
@@ -292,7 +292,7 @@ Edit agent files in `agents/` to customize:
 
 ### Modifying Feature Template
 
-Edit `templates/spec.md` to customize:
+Edit `templates/feature.md` to customize:
 - Frontmatter fields
 - Section structure
 - Acceptance criteria format
