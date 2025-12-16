@@ -299,7 +299,7 @@
   <main>
     <section>
       <h2>Why System Specs?</h2>
-      <p>Feature specs capture user-facing value, but large projects also need durable references for architecture, tooling, and compliance. The <code>specs/</code> directory gives every team a consistent starting point so onboarding, audits, and cross-team coordination stay predictable.</p>
+      <p>Feature specs capture user-facing value, but large projects also need durable references for architecture, tooling, and compliance. The <code>templates/specs/</code> directory provides reusable templates that teams can copy to their project's <code>specs/</code> directory for a consistent starting point, making onboarding, audits, and cross-team coordination predictable.</p>
       <div class="grid two" style="margin-top: 1.5rem;">
         <article>
           <h3>Cross-cutting Clarity</h3>
@@ -371,42 +371,42 @@
         <article>
           <h3>Tech Stack</h3>
           <p>Languages, frameworks, runtimes, build tooling, messaging, storage, and principles for evolving the stack.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/specs/tech-stack.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/tech-stack.md" target="_blank" rel="noreferrer">View template &rarr;</a>
         </article>
         <article>
           <h3>Local Development</h3>
           <p>Onboarding checklist, OS support matrix, tooling prerequisites, secrets, seed data, and troubleshooting playbooks.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/specs/local-development.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/local-development.md" target="_blank" rel="noreferrer">View template &rarr;</a>
         </article>
         <article>
           <h3>Hosting & Infrastructure</h3>
           <p>Environment inventory, provider rationale, network topology, DR targets, cost governance, and runbooks.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/specs/hosting-and-infrastructure.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/hosting-and-infrastructure.md" target="_blank" rel="noreferrer">View template &rarr;</a>
         </article>
         <article>
           <h3>CI/CD Pipeline</h3>
           <p>Triggers, branching, build/test/deploy stages, security gates, artifact strategy, and rollback practices.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/specs/ci-cd-pipeline.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/ci-cd-pipeline.md" target="_blank" rel="noreferrer">View template &rarr;</a>
         </article>
         <article>
           <h3>Database Schema</h3>
           <p>Entity inventory, relationships, migrations, retention, performance budgets, and access patterns.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/specs/database-schema.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/database-schema.md" target="_blank" rel="noreferrer">View template &rarr;</a>
         </article>
         <article>
           <h3>Caching & Performance</h3>
           <p>SLIs/SLOs, cache layers, invalidation strategies, perf testing, and instrumentation guidance.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/specs/caching-and-performance.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/caching-and-performance.md" target="_blank" rel="noreferrer">View template &rarr;</a>
         </article>
         <article>
           <h3>Security & Compliance</h3>
           <p>Threat model, authz/authn patterns, data protection controls, logging, and audit evidence tracking.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/specs/security-and-compliance.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/security-and-compliance.md" target="_blank" rel="noreferrer">View template &rarr;</a>
         </article>
         <article>
           <h3>Observability & IR</h3>
           <p>Telemetry coverage, dashboards, alert routing, incident lifecycle, and postmortem workflow.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/specs/observability-and-incident-response.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/observability-and-incident-response.md" target="_blank" rel="noreferrer">View template &rarr;</a>
         </article>
       </div>
     </section>
@@ -466,13 +466,13 @@ fi</code></pre>
     <section>
       <h2>Working with Specs</h2>
       <ol style="font-size: 0.95rem; line-height: 1.8;">
-        <li>Copy the relevant file from <code>specs/</code> into <code>docs/</code>, a wiki, or feature branch folder.</li>
+        <li>Copy the relevant template from <code>templates/specs/</code> into your project's <code>specs/</code>, <code>docs/</code>, a wiki, or feature branch folder.</li>
         <li>Update frontmatter fields (owner, status, applicability, last_updated) and remove placeholders.</li>
         <li>Fill in the Markdown sections with project context, diagrams, and links.</li>
         <li>Add references from feature specs (Implementation Notes + Links) so readers can find the canonical doc.</li>
         <li>Run <code>vb validate</code> (or <code>./scripts/ftr-validate.sh</code>) before opening a PR.</li>
       </ol>
-      <p style="margin-top: 1rem;">Need a new template? Add it under <code>specs/</code>, extend <code>schemas/system-spec.schema.json</code>, and mention it here.</p>
+      <p style="margin-top: 1rem;">Need a new template? Add it under <code>templates/specs/</code>, extend <code>schemas/system-spec.schema.json</code>, and mention it here.</p>
     </section>
   </main>
 
