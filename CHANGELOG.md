@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-12-16
+
+### Added
+- **System specification catalog** in `specs/` with eight reusable templates (tech stack, local development, hosting & infrastructure, CI/CD pipeline, database schema, caching & performance, security & compliance, observability & incident response).
+- `schemas/system-spec.schema.json` describing the shared frontmatter contract for those templates.
+- Validation support in `scripts/ftr-validate.sh` so `vb validate` now checks system specs alongside feature files.
+
+### Changed
+- Updated `README.md`, `AGENTS.md`, and `specs/README.md` with guidance on using and validating the new templates.
+- Refreshed docs (`docs/index.html`, `docs/features.html`, `docs/workflow.html`) to highlight the specs catalog and schematized validation.
+- Bumped version from 0.2.0 to 0.3.0.
+
 ## [0.2.0] - 2025-12-12
 
 ### Added

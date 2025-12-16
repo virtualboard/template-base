@@ -9,6 +9,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FEATURES_DIR="${SCRIPT_DIR}/../features"
 SCHEMA_FILE="${SCRIPT_DIR}/../schemas/frontmatter.schema.json"
+SPECS_DIR="${SCRIPT_DIR}/../specs"
 
 # Color codes for output
 RED='\033[0;31m'
@@ -52,6 +53,86 @@ extract_array() {
             }
         }
     " | sed 's/|$//'
+}
+
+spec_extract_field() {
+    local file="$1"
+    local field="$2"
+    local in_fm=0
+    while IFS= read -r line; do
+        if [[ "$line" == "---" ]]; then
+            if [[ $in_fm -eq 0 ]]; then
+                in_fm=1
+                continue
+            else
+                break
+            fi
+        fi
+        [[ $in_fm -eq 0 ]] && continue
+        if [[ "$line" == ${field}:* ]]; then
+            local value=${line#${field}:}
+            value=${value%%#*}
+            value=$(printf '%s\n' "$value" | sed 's/^ *//;s/ *$//' | tr -d '"' | tr -d "'")
+            echo "$value"
+            return
+        fi
+    done < "$file"
+    echo ""
+}
+
+spec_extract_array() {
+    local file="$1"
+    local field="$2"
+    local in_fm=0
+    local collecting=0
+    local result=""
+
+    while IFS= read -r line; do
+        if [[ "$line" == "---" ]]; then
+            if [[ $in_fm -eq 0 ]]; then
+                in_fm=1
+                continue
+            else
+                break
+            fi
+        fi
+        [[ $in_fm -eq 0 ]] && continue
+
+        if [[ $collecting -eq 1 ]]; then
+            if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*(.*)$ ]]; then
+                local val=${BASH_REMATCH[1]}
+                val=${val%%#*}
+                val=$(printf '%s\n' "$val" | sed 's/^ *//;s/ *$//' | tr -d '"' | tr -d "'")
+                result+="${result:+|}$val"
+                continue
+            else
+                collecting=0
+            fi
+        fi
+
+        if [[ "$line" == ${field}:* ]]; then
+            local value=${line#${field}:}
+            value=${value%%#*}
+            value=$(printf '%s\n' "$value" | sed 's/^ *//;s/ *$//')
+            if [[ "$value" == \[*\] ]]; then
+                value=${value#\[}
+                value=${value%\]}
+                value=$(printf '%s\n' "$value" | tr -d '"' | tr -d "'" | sed 's/, */,/g')
+                value=${value//,/|}
+                echo "$value"
+                return
+            elif [[ -z "$value" ]]; then
+                collecting=1
+                result=""
+            else
+                value=$(printf '%s\n' "$value" | tr -d '"' | tr -d "'")
+                echo "$value"
+                return
+            fi
+        fi
+    done < "$file"
+
+    echo "$result"
 }
 
 # Function to check if frontmatter exists
@@ -150,8 +231,8 @@ validate_feature() {
 
         # Validate dependencies
         if [[ -n "$dependencies" ]]; then
-            IFS='|' read -ra DEPS <<< "$dependencies"
-            for dep in "${DEPS[@]}"; do
+            local deps_list=${dependencies//|/ }
+            for dep in $deps_list; do
                 # Check dependency ID format
                 if ! [[ "$dep" =~ ^FTR-[0-9]{4}$ ]]; then
                     errors+=("Invalid dependency format: $dep")
@@ -223,8 +304,8 @@ check_circular_deps() {
     # Get dependencies
     local dependencies=$(extract_array "$file" "dependencies")
     if [[ -n "$dependencies" ]]; then
-        IFS='|' read -ra DEPS <<< "$dependencies"
-        for dep in "${DEPS[@]}"; do
+        local deps_list=${dependencies//|/ }
+        for dep in $deps_list; do
             if ! check_circular_deps "$dep" "$new_visited"; then
                 return 1
             fi
@@ -232,6 +313,98 @@ check_circular_deps() {
     fi
 
     return 0
+}
+
+validate_system_spec() {
+    local file="$1"
+    local errors=()
+
+    if [[ ! -f "$file" ]]; then
+        echo -e "${RED}File not found: $file${NC}"
+        return 1
+    fi
+
+    if ! has_frontmatter "$file"; then
+        errors+=("Missing frontmatter section")
+    else
+        local spec_type=$(spec_extract_field "$file" "spec_type")
+        local title=$(spec_extract_field "$file" "title")
+        local status=$(spec_extract_field "$file" "status")
+        local last_updated=$(spec_extract_field "$file" "last_updated")
+        local applicability=$(spec_extract_array "$file" "applicability")
+        local initiatives=$(spec_extract_array "$file" "related_initiatives")
+
+        [[ -z "$spec_type" ]] && errors+=("Missing required field: spec_type")
+        [[ -z "$title" ]] && errors+=("Missing required field: title")
+        [[ -z "$status" ]] && errors+=("Missing required field: status")
+        [[ -z "$last_updated" ]] && errors+=("Missing required field: last_updated")
+        [[ -z "$applicability" ]] && errors+=("Missing required field: applicability")
+
+        if [[ -n "$spec_type" ]]; then
+            case "$spec_type" in
+                tech-stack|local-development|hosting-infrastructure|ci-cd-pipeline|database-schema|caching-performance|security-and-compliance|observability-and-incident-response)
+                    ;;
+                *)
+                    errors+=("Invalid spec_type: $spec_type")
+                    ;;
+            esac
+        fi
+
+        if [[ -n "$status" ]]; then
+            case "$status" in
+                draft|approved|deprecated)
+                    ;;
+                *)
+                    errors+=("Invalid status for spec: $status")
+                    ;;
+            esac
+        fi
+
+        if [[ -n "$last_updated" ]]; then
+            if [[ ! "$last_updated" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2}|YYYY-MM-DD)$ ]]; then
+                errors+=("Invalid last_updated date: $last_updated (expected YYYY-MM-DD or placeholder)")
+            fi
+        fi
+
+        if [[ -n "$applicability" ]]; then
+            local appl_list=${applicability//|/ }
+            local APP=()
+            for platform in $appl_list; do
+                APP+=("$platform")
+            done
+            if [[ ${#APP[@]} -eq 0 ]]; then
+                errors+=("Applicability must include at least one platform")
+            else
+                for platform in "${APP[@]}"; do
+                    if [[ -z "$platform" ]]; then
+                        errors+=("Applicability contains empty entry")
+                    elif [[ ! "$platform" =~ ^[a-z0-9-]+$ ]]; then
+                        errors+=("Invalid applicability entry: $platform")
+                    fi
+                done
+            fi
+        fi
+
+        if [[ -n "$initiatives" ]]; then
+            local init_list=${initiatives//|/ }
+            for initiative in $init_list; do
+                if [[ -n "$initiative" ]] && [[ ! "$initiative" =~ ^[A-Za-z0-9_-]+$ ]]; then
+                    errors+=("Invalid related initiative tag: $initiative")
+                fi
+            done
+        fi
+    fi
+
+    if [[ ${#errors[@]} -gt 0 ]]; then
+        echo -e "\n${RED}Validation errors in $file:${NC}"
+        for error in "${errors[@]}"; do
+            echo -e "  - $error"
+        done
+        return 1
+    else
+        echo -e "${GREEN}✓ $file${NC}"
+        return 0
+    fi
 }
 
 # Main execution
@@ -246,7 +419,8 @@ main() {
         for subdir in backlog in-progress blocked review done; do
             local dir_path="${FEATURES_DIR}/${subdir}"
             if [[ -d "$dir_path" ]]; then
-                for file in "${dir_path}"/*.md 2>/dev/null; do
+                for file in "${dir_path}"/*.md; do
+                    [[ -e "$file" ]] || continue
                     if [[ -f "$file" ]]; then
                         files_to_validate+=("$file")
                     fi
@@ -255,12 +429,27 @@ main() {
         done
     fi
 
-    # Validate each file
+    # Validate each feature file
     for file in "${files_to_validate[@]}"; do
         if ! validate_feature "$file"; then
             HAS_ERRORS=1
         fi
     done
+
+    # Validate system spec templates
+    if [[ -d "$SPECS_DIR" ]]; then
+        echo -e "\n${GREEN}Validating system spec templates...${NC}"
+        for file in "${SPECS_DIR}"/*.md; do
+            [[ -e "$file" ]] || continue
+            [[ ! -f "$file" ]] && continue
+            if [[ "$(basename "$file")" == "README.md" ]]; then
+                continue
+            fi
+            if ! validate_system_spec "$file"; then
+                HAS_ERRORS=1
+            fi
+        done
+    fi
 
     # Check for circular dependencies
     echo -e "\n${GREEN}Checking for circular dependencies...${NC}"
