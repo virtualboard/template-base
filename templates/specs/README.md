@@ -7,7 +7,7 @@ last_updated: YYYY-MM-DD
 
 # System Specification Templates
 
-This directory contains cross-cutting specification templates that complement feature specs in `/features`. Each Markdown file provides a repeatable structure you can clone (`cp specs/<template>.md docs/<project>-<area>.md`) or reference when drafting foundational documentation.
+This directory contains cross-cutting specification templates that complement feature specs in `/features`. Each Markdown file provides a repeatable structure you can clone (`cp templates/specs/<template>.md specs/<project>-<area>.md`) or reference when drafting foundational documentation.
 
 | Template | Purpose |
 | -------- | ------- |
