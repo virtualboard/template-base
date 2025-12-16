@@ -408,6 +408,7 @@
         <ul class="nav-links">
           <li><a href="index.html" class="active">Home</a></li>
           <li><a href="features.html">Features</a></li>
+          <li><a href="specs.html">Specs</a></li>
           <li><a href="workflow.html">Workflow</a></li>
           <li><a href="agents.html">Agents</a></li>
           <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">CLI</a></li>
@@ -436,7 +437,7 @@
         <a class="secondary" href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer">View on GitHub</a>
       </div>
       <div class="badge-row">
-        <span class="badge">Template · v0.1.0</span>
+        <span class="badge">Template · v0.3.0</span>
         <span class="badge">Claude Code Plugin</span>
         <span class="badge">Zero Dependencies</span>
         <span class="badge">AI Ready</span>
@@ -529,6 +530,37 @@
           </ul>
         </article>
       </div>
+    </section>
+
+    <section>
+      <h2>System Specification Templates</h2>
+      <p>The new <code>specs/</code> directory ships with eight reusable blueprints so every project can document foundational architecture decisions before stories start moving.</p>
+      <div class="grid two">
+        <article>
+          <h3>Architecture & Delivery</h3>
+          <ul>
+            <li><strong>Tech Stack:</strong> Languages, runtimes, frameworks, third-parties.</li>
+            <li><strong>Hosting & Infrastructure:</strong> Cloud/on-prem topology, networking, DR.</li>
+            <li><strong>CI/CD Pipeline:</strong> Build/test/deploy stages, gates, approvals.</li>
+            <li><strong>Observability & Incident Response:</strong> Telemetry coverage, alerting, playbooks.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Data & Safety</h3>
+          <ul>
+            <li><strong>Local Development:</strong> Toolchain requirements, secrets, seeding, troubleshooting.</li>
+            <li><strong>Database Schema:</strong> Entity catalog, migrations, lifecycle & retention.</li>
+            <li><strong>Caching & Performance:</strong> Cache layers, SLIs/SLOs, invalidation strategy.</li>
+            <li><strong>Security & Compliance:</strong> Threat model, controls, audit requirements.</li>
+          </ul>
+        </article>
+      </div>
+      <p style="margin-top: 1rem; padding: 1rem; background: rgba(50, 215, 75, 0.1); border-left: 3px solid var(--accent-secondary); border-radius: 0.5rem;">
+        Each template carries validated frontmatter (<code>schemas/system-spec.schema.json</code>) so <code>vb validate</code> and <code>./scripts/ftr-validate.sh</code> enforce metadata just like feature specs.
+      </p>
+      <p style="margin-top: 1rem;">
+        <a href="specs.html" style="color: var(--accent-dark); font-weight: 600; text-decoration: none;">Explore the detailed specs catalog &rarr;</a>
+      </p>
     </section>
   </main>
 

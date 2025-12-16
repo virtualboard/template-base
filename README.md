@@ -65,6 +65,21 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 
 **CLI Tool Integration:** The system first checks for the `vb` (Virtual Board) CLI tool. If available, agents should use `vb` commands for task management. If not found, agents should fall back to the shell scripts in `.virtualboard/scripts/` or use plain bash commands according to the strategy definition.
 
+## System Specification Templates
+
+Beyond feature files, the template ships with a `/specs` catalog of reusable system blueprints. Copy any Markdown file to document foundational decisions before (or alongside) feature work:
+
+- `tech-stack.md` – Languages, runtimes, frameworks, third-party services, and guiding principles.
+- `local-development.md` – Environment setup, tooling, secrets, seeding, and troubleshooting checklists.
+- `hosting-and-infrastructure.md` – Cloud/on-prem topology, networking, DR, and cost governance.
+- `ci-cd-pipeline.md` – Build/test/deploy stages, gating, security checks, and ownership.
+- `database-schema.md` – Authoritative data model, migrations, lifecycle, and performance considerations.
+- `caching-and-performance.md` – Cache layers, SLIs/SLOs, invalidation strategy, and perf testing.
+- `security-and-compliance.md` – Threat model, controls, logging/audit needs, and incident workflows.
+- `observability-and-incident-response.md` – Telemetry coverage, alerting, runbooks, and postmortems.
+
+Each template includes frontmatter compatible with `schemas/system-spec.schema.json`, so `vb validate` (or `./scripts/ftr-validate.sh`) enforces required metadata just like feature specs. See `specs/README.md` for usage tips.
+
 ## Quick Start
 
 ### Option 1: Using Virtual Board CLI (Recommended)
@@ -167,6 +182,16 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 │   ├── spec.md              # Feature spec template
 │   ├── pr-template.md       # Pull request template
 │   └── rules.yml            # Agent rules configuration
+├── specs/                   # System specification templates
+│   ├── README.md            # Catalog + usage instructions
+│   ├── tech-stack.md        # Tech stack blueprint
+│   ├── local-development.md # Local dev environment spec
+│   ├── hosting-and-infrastructure.md
+│   ├── ci-cd-pipeline.md
+│   ├── database-schema.md
+│   ├── caching-and-performance.md
+│   ├── security-and-compliance.md
+│   └── observability-and-incident-response.md
 ├── agents/                  # Agent documentation and role prompts
 │   ├── AGENTS.md            # Catalog of agent system prompts
 │   ├── RULES.md             # Shared rules of engagement
@@ -202,7 +227,8 @@ The system is built entirely with bash scripts, eliminating the need for Node.js
 │   ├── ftr-index.sh         # Generate feature index
 │   └── install-vb-cli.sh    # Install Virtual Board CLI tool
 └── schemas/                 # Schema definitions
-    └── frontmatter.schema.json # Frontmatter validation schema
+    ├── frontmatter.schema.json     # Feature frontmatter validation schema
+    └── system-spec.schema.json     # System specification frontmatter schema
 ```
 
 ## Sample Features
@@ -298,6 +324,7 @@ The system enforces several validation rules:
 - Dependencies must be resolved before `in-progress`
 - No circular dependencies allowed
 - Ownership conflicts are prevented
+- System specs in `/specs` must satisfy `schemas/system-spec.schema.json` (status, spec_type, applicability, last_updated)
 
 ## Integration with CI/CD
 
