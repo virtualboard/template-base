@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "System Specification Frontmatter",
+  "type": "object",
+  "required": ["spec_type", "title", "status", "last_updated", "applicability"],
+  "properties": {
+    "spec_type": {
+      "type": "string",
+      "enum": [
+        "tech-stack",
+        "local-development",
+        "hosting-infrastructure",
+        "ci-cd-pipeline",
+        "database-schema",
+        "caching-performance",
+        "security-and-compliance",
+        "observability-and-incident-response"
+      ],
+      "description": "Template identifier for automation and cataloging"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Human-readable spec title"
+    },
+    "owner": {
+      "type": "string",
+      "description": "Team or role responsible for the spec"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "approved", "deprecated"],
+      "description": "Lifecycle state of the system specification"
+    },
+    "last_updated": {
+      "type": "string",
+      "pattern": "^(\\d{4}-\\d{2}-\\d{2}|YYYY-MM-DD)$",
+      "description": "Last update date or placeholder"
+    },
+    "applicability": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Platforms or surfaces covered by the spec"
+    },
+    "related_initiatives": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_-]+$"
+      },
+      "description": "Optional initiative IDs or tags linked to this spec"
+    }
+  },
+  "additionalProperties": false
+}

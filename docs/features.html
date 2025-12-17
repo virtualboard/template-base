@@ -276,6 +276,7 @@
         <ul class="nav-links">
           <li><a href="index.html">Home</a></li>
           <li><a href="features.html" class="active">Features</a></li>
+          <li><a href="specs.html">Specs</a></li>
           <li><a href="workflow.html">Workflow</a></li>
           <li><a href="agents.html">Agents</a></li>
           <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">CLI</a></li>
@@ -411,8 +412,12 @@
           <p>Built-in concurrency controls with ownership locks, dependency validation, and collision prevention to ensure agents don't step on each other.</p>
         </article>
         <article>
+          <h3>📚 System Blueprints</h3>
+          <p>An opinionated <code>templates/specs/</code> catalog provides reusable templates covering tech stack, local dev, hosting, CI/CD, database, caching, security, and observability. Copy templates to your project's <code>specs/</code> directory. <a href="specs.html" style="color: var(--accent-dark); font-weight: 600; text-decoration: none;">See details</a></p>
+        </article>
+        <article>
           <h3>🔧 CI/CD Integration</h3>
-          <p>Ready for continuous integration with validation rules, automated indexing, and GitHub Actions workflows. No build steps required.</p>
+          <p>Ready for continuous integration with validation rules, automated indexing, and GitHub Actions workflows. <code>vb validate</code> (or <code>./scripts/ftr-validate.sh</code>) now checks both features and system specs.</p>
         </article>
       </div>
     </section>
@@ -430,9 +435,21 @@
 │   ├── done/                       # Completed features
 │   └── INDEX.md                    # Auto-generated feature index
 ├── templates/                      # Templates and configuration
-│   ├── spec.md                     # Feature spec template
+│   ├── feature.md                  # Feature spec template
 │   ├── pr-template.md              # Pull request template
-│   └── rules.yml                   # Agent rules configuration
+│   ├── rules.yml                   # Agent rules configuration
+│   └── specs/                      # System blueprint templates
+│       ├── README.md               # Catalog of reusable specs
+│       ├── tech-stack.md           # Tech stack blueprint
+│       ├── local-development.md    # Local dev environment
+│       ├── hosting-and-infrastructure.md
+│       ├── ci-cd-pipeline.md
+│       ├── database-schema.md
+│       ├── caching-and-performance.md
+│       ├── security-and-compliance.md
+│       └── observability-and-incident-response.md
+├── specs/                          # Project-specific system specs
+│   └── (copy templates here)
 ├── agents/                         # Agent role definitions
 │   ├── AGENTS.md                   # Agent system overview
 │   ├── RULES.md                    # Rules of engagement for agents
@@ -503,11 +520,12 @@
 ├── scripts/                        # Automation scripts
 │   ├── ftr-new.sh                  # Create new feature
 │   ├── ftr-move.sh                 # Move feature between states
-│   ├── ftr-validate.sh             # Validate features
+│   ├── ftr-validate.sh             # Validate features + system specs
 │   ├── ftr-index.sh                # Generate feature index
 │   └── install-vb-cli.sh           # Install Virtual Board CLI tool
 ├── schemas/                        # Schema definitions
-│   └── frontmatter.schema.json     # Frontmatter validation schema
+│   ├── frontmatter.schema.json     # Feature frontmatter schema
+│   └── system-spec.schema.json     # System spec frontmatter schema
 ├── reports/                        # Generated reports (created by vb CLI)
 ├── AGENTS.md                       # Agent system documentation
 ├── CHANGELOG.md                    # Version history

@@ -277,6 +277,7 @@
         <ul class="nav-links">
           <li><a href="index.html">Home</a></li>
           <li><a href="features.html">Features</a></li>
+          <li><a href="specs.html">Specs</a></li>
           <li><a href="workflow.html" class="active">Workflow</a></li>
           <li><a href="agents.html">Agents</a></li>
           <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">CLI</a></li>
@@ -340,6 +341,35 @@
           <div class="step-description">Mark as done when merged and deployed, with full audit trail</div>
         </div>
       </div>
+    </section>
+
+    <section>
+      <h2>Foundation Specs</h2>
+      <p>The workflow now ships with a dedicated <code>templates/specs/</code> directory containing reusable templates. Copy these templates to your project's <code>specs/</code> directory to document cross-cutting architecture decisions before stories enter the backlog.</p>
+      <div class="grid two" style="margin-top: 1.25rem;">
+        <article>
+          <h3>Architecture</h3>
+          <ul>
+            <li>Tech Stack</li>
+            <li>Hosting & Infrastructure</li>
+            <li>CI/CD Pipeline</li>
+            <li>Observability & Incident Response</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Data & Safety</h3>
+          <ul>
+            <li>Local Development</li>
+            <li>Database Schema</li>
+            <li>Caching & Performance</li>
+            <li>Security & Compliance</li>
+          </ul>
+        </article>
+      </div>
+      <p style="margin-top: 1rem; padding: 1rem; background: rgba(0, 212, 255, 0.1); border-left: 3px solid var(--accent); border-radius: 0.5rem;">
+        The same <code>vb validate</code> command (or <code>./scripts/ftr-validate.sh</code>) ensures these templates satisfy <code>schemas/system-spec.schema.json</code>, keeping foundational docs consistent with feature specs.
+      </p>
+      <p style="margin-top: 1rem;"><a href="specs.html" style="color: var(--accent-dark); font-weight: 600; text-decoration: none;">Open the full specs page &rarr;</a></p>
     </section>
   </main>
 

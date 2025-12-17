@@ -23,9 +23,10 @@
 
 ## 2) Scope & Definitions
 
-- **Feature (FTR):** A discrete change delivering user‑visible value. Tracked as one Markdown file.
+- **Feature (FTR):** A discrete change delivering user-visible value. Tracked as one Markdown file.
 - **Spec:** The Markdown file describing problem, requirements, acceptance criteria, and implementation notes.
-- **Owner:** The current human/agent responsible for a feature’s next state transition.
+- **System Spec:** Cross-cutting blueprint (tech stack, CI/CD, security, etc.) that informs multiple features. Templates are in `/templates/specs/`; copy to `/specs/` for your project.
+- **Owner:** The current human/agent responsible for a feature's next state transition.
 - **Agent:** Any automated actor (e.g., Cursor, CI bot) executing rules defined here.
 - **FTR ID:** Stable identifier `FTR-####` (e.g., `FTR-0123`).
 - **Status:** One of `backlog | in-progress | review | done` (mirrored by the folder location).
@@ -54,9 +55,21 @@
   /done              # completed features
   INDEX.md           # auto-generated, do not edit
 /templates
-  spec.md            # canonical feature spec template
+  feature.md         # canonical feature spec template
   pr-template.md     # pull request template
   rules.yml          # machine-readable agent rules & validation parameters
+  /specs             # system specification templates
+    README.md        # catalog of system blueprint templates
+    tech-stack.md    # languages, runtimes, integrations
+    local-development.md
+    hosting-and-infrastructure.md
+    ci-cd-pipeline.md
+    database-schema.md
+    caching-and-performance.md
+    security-and-compliance.md
+    observability-and-incident-response.md
+/specs               # project-specific system specifications
+                     # (copy templates here for your project)
 /agents
   AGENTS.md          # catalog of agent prompts and responsibilities
   RULES.md           # human-readable rules of engagement for agents
@@ -132,6 +145,7 @@
   install-vb-cli.sh   # install Virtual Board CLI tool
 /schemas
   frontmatter.schema.json # frontmatter validation schema
+  system-spec.schema.json # system blueprint schema
 /reports             # where vb creates reports
 AGENTS.md            # this file - feature spec workflow guide
 CHANGELOG.md         # project changelog
@@ -204,7 +218,7 @@ risk_notes: "Password policy and migration risk."
 
 ## 7) Spec Body Template (Markdown)
 
-> Copy from `/templates/spec.md` when creating a new feature.
+> Copy from `/templates/feature.md` when creating a new feature.
 
 ```markdown
 # Feature Spec: <Title>
@@ -512,6 +526,7 @@ See `/prompts/AGENTS.md` for complete documentation.
 5. `updated` date is today for any content diff.
 6. All internal links resolve; labels are normalized (kebab‑case).
 7. Optional: lock TTL not expired.
+8. System specs in `/specs` validate against `/schemas/system-spec.schema.json`.
 
 **Index Generation:**
 

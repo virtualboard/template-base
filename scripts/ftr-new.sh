@@ -32,7 +32,7 @@ FTR_ID="FTR-$NEXT_ID"
 FILE_PATH="features/backlog/$FTR_ID-$FILENAME.md"
 
 # Create feature spec from template
-cp templates/spec.md "$FILE_PATH"
+cp templates/feature.md "$FILE_PATH"
 
 # Update frontmatter
 TODAY=$(date +%Y-%m-%d)

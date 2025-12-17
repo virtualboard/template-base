@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-12-16
+
+### Added
+- **System specification catalog** in `templates/specs/` with eight reusable templates (tech stack, local development, hosting & infrastructure, CI/CD pipeline, database schema, caching & performance, security & compliance, observability & incident response).
+- `schemas/system-spec.schema.json` describing the shared frontmatter contract for those templates.
+- Validation support in `scripts/ftr-validate.sh` so `vb validate` now checks system specs alongside feature files.
+
+### Changed
+- Updated `README.md`, `AGENTS.md`, and `templates/specs/README.md` with guidance on using and validating the new templates.
+- Refreshed docs (`docs/index.html`, `docs/features.html`, `docs/workflow.html`) to highlight the specs catalog and schematized validation.
+- Bumped version from 0.2.0 to 0.3.0.
+
 ## [0.2.0] - 2025-12-12
 
 ### Added
@@ -88,7 +100,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - VirtualBoard markdown-first feature workflow system for managing features with multiple AI agents.
 - Lifecycle-managed feature directories: `backlog/`, `blocked/`, `in-progress/`, `review/`, and `done/`.
 - Auto-generated feature index (`features/INDEX.md`) tracking all features across lifecycle stages.
-- Feature specification template (`templates/spec.md`) with comprehensive sections for problem statement, requirements, acceptance criteria, and implementation notes.
+- Feature specification template (`templates/feature.md`) with comprehensive sections for problem statement, requirements, acceptance criteria, and implementation notes.
 - Pull request template (`templates/pr-template.md`) aligned with feature spec workflow.
 - Machine-readable agent rules configuration (`templates/rules.yml`) for validation parameters, state transitions, and dependencies.
 - Frontmatter JSON Schema validation (`schemas/frontmatter.schema.json`) for feature metadata consistency.

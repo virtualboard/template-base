@@ -98,7 +98,7 @@ scripts/             # Automation scripts
 └── install-vb-cli.sh# Install Virtual Board CLI tool
 
 templates/           # Templates for features and PRs
-├── spec.md          # Feature spec template
+├── feature.md       # Feature spec template
 ├── pr-template.md   # Pull request template
 └── rules.yml        # Agent rules configuration
 
@@ -122,7 +122,7 @@ vb init
 vb init --update
 
 # Update specific files only
-vb init --update --files agents/pm.md,templates/spec.md
+vb init --update --files agents/pm.md,templates/feature.md
 
 # Auto-apply updates without prompting
 vb init --update --yes
