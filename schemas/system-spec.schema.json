@@ -9,10 +9,10 @@
       "enum": [
         "tech-stack",
         "local-development",
-        "hosting-infrastructure",
+        "hosting-and-infrastructure",
         "ci-cd-pipeline",
         "database-schema",
-        "caching-performance",
+        "caching-and-performance",
         "security-and-compliance",
         "observability-and-incident-response"
       ],
