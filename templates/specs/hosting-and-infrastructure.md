@@ -1,5 +1,5 @@
 ---
-spec_type: hosting-infrastructure
+spec_type: hosting-and-infrastructure
 title: <Hosting & Infrastructure Blueprint>
 owner: <platform-team>
 status: draft # draft | approved | deprecated

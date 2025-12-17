@@ -1,5 +1,5 @@
 ---
-spec_type: caching-performance
+spec_type: caching-and-performance
 title: <Caching & Performance Specification>
 owner: <platform-or-feature-team>
 status: draft # draft | approved | deprecated
