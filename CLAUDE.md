@@ -304,6 +304,17 @@ vb validate || ./scripts/ftr-validate.sh
 
 The `.cursor/rules/virtualboard.mdc` file enables automatic VirtualBoard integration in Cursor IDE.
 
+### OpenCode Integration
+
+VirtualBoard agents can be integrated into OpenCode:
+
+**Setup (one-time):**
+```bash
+mkdir -p .opencode/agent && cp -Rf .virtualboard/agents .opencode/agent
+```
+
+Then reload OpenCode to make the agents available. This copies all agent role definitions, commands, and shared rules to OpenCode's agent directory.
+
 ### Claude Code Plugin
 
 VirtualBoard is available as a Claude Code plugin. Install via:

@@ -53,6 +53,34 @@ To enable VirtualBoard across all your projects in Cursor, add the rule globally
 
 **Note:** Project-level rules (`.cursor/rules/`) take precedence over global rules. If you have both, the project-level rule will be used.
 
+## OpenCode Integration
+
+VirtualBoard agents can be easily integrated into [OpenCode](https://github.com/stackblitz/opencode), an open source AI coding tool.
+
+To enable VirtualBoard agents in OpenCode:
+
+1. **Copy agent files to OpenCode directory:**
+   ```bash
+   mkdir -p .opencode/agent && cp -Rf .virtualboard/agents .opencode/agent
+   ```
+
+2. **Reload OpenCode:**
+   Restart your OpenCode session to load the agents.
+
+3. **Use agents:**
+   Once reloaded, the VirtualBoard agents (PM, Architect, Frontend Dev, Backend Dev, QA, etc.) will be available in OpenCode.
+
+**What gets copied:**
+- All agent role definitions (`agents/*.md`)
+- Agent command system (`prompts/agents/`)
+- Shared rules of engagement (`agents/RULES.md`)
+
+**Benefits:**
+- Native agent integration
+- Quick access to specialized agent commands
+- Consistent agent behavior
+- No additional configuration needed
+
 ## Implementation
 
 The system is built entirely with bash scripts, eliminating the need for Node.js or npm dependencies. This approach provides:
