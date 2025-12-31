@@ -366,6 +366,85 @@
       font-weight: 600;
     }
 
+    /* Tab styles */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    .tab-button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-button:hover {
+      color: var(--text);
+      background: rgba(0, 212, 255, 0.05);
+    }
+
+    .tab-button.active {
+      color: var(--accent-dark);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .code-block {
+      background: var(--bg);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      color: var(--accent-dark);
+      font-weight: 600;
+    }
+
+    .info-box {
+      padding: 1rem;
+      background: rgba(0, 212, 255, 0.1);
+      border-left: 3px solid var(--accent);
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .success-box {
+      padding: 1rem;
+      background: rgba(50, 215, 75, 0.1);
+      border-left: 3px solid var(--accent-secondary);
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+    }
+
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0f172a;
@@ -448,67 +527,134 @@
 
   <main class="container">
     <section>
-      <h2>Claude Code Plugin</h2>
-      <p>VirtualBoard is now available as a <span class="highlight">Claude Code plugin</span>! Install it directly in Claude Code to get instant access to 10 specialized AI agent roles and 30+ specialized commands.</p>
-      <div style="background: var(--bg); border-radius: 0.75rem; padding: 1.25rem; margin: 1.5rem 0; border: 1px solid var(--border);">
-        <code style="color: var(--accent-dark); font-weight: 600;">claude plugin marketplace add virtualboard/template-base<br />claude plugin install virtualboard</code>
+      <h2>IDE Integration</h2>
+      <p>VirtualBoard integrates seamlessly with multiple AI-powered development tools. Choose your IDE below to get started:</p>
+
+      <div class="tabs">
+        <button class="tab-button active" onclick="switchTab(event, 'claude-code')">Claude Code</button>
+        <button class="tab-button" onclick="switchTab(event, 'cursor')">Cursor</button>
+        <button class="tab-button" onclick="switchTab(event, 'opencode')">OpenCode</button>
       </div>
-      <div class="grid two">
-        <article>
-          <h3>10 Specialized Agent Roles</h3>
-          <ul>
-            <li>Project Manager</li>
-            <li>System Architect</li>
-            <li>Backend/Frontend/Fullstack Developer</li>
-            <li>QA Engineer</li>
-            <li>DevOps Engineer</li>
-            <li>Security Engineer</li>
-            <li>Data Engineer</li>
-            <li>UX/Product Designer</li>
+
+      <div id="claude-code" class="tab-content active">
+        <h3>Claude Code Plugin</h3>
+        <p>VirtualBoard is available as a <span class="highlight">Claude Code plugin</span>! Install it directly to get instant access to 10 specialized AI agent roles and 30+ specialized commands.</p>
+
+        <div class="code-block">
+          <code>claude plugin marketplace add virtualboard/template-base<br>claude plugin install virtualboard</code>
+        </div>
+
+        <div class="grid two">
+          <article>
+            <h3>10 Specialized Agent Roles</h3>
+            <ul>
+              <li>Project Manager</li>
+              <li>System Architect</li>
+              <li>Backend/Frontend/Fullstack Developer</li>
+              <li>QA Engineer</li>
+              <li>DevOps Engineer</li>
+              <li>Security Engineer</li>
+              <li>Data Engineer</li>
+              <li>UX/Product Designer</li>
+            </ul>
+          </article>
+          <article>
+            <h3>30+ Agent Commands</h3>
+            <ul>
+              <li>GPP - Project Progress Report</li>
+              <li>GBG - Backlog Grooming</li>
+              <li>GAD - Architecture Diagram</li>
+              <li>GAE - API Endpoint</li>
+              <li>GC - Component Generation</li>
+              <li>GTP - Test Plan</li>
+              <li>And 23+ more specialized commands!</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="info-box">
+          <strong>Plugin Benefits:</strong> Automatic updates, built-in validation, and seamless integration with Claude Code's agent system.
+        </div>
+      </div>
+
+      <div id="cursor" class="tab-content">
+        <h3>Cursor IDE Integration</h3>
+        <p>VirtualBoard includes a <code>.cursor/rules/virtualboard.mdc</code> file that enables automatic integration with <a href="https://cursor.sh/" target="_blank" rel="noreferrer" style="color: var(--accent);">Cursor IDE</a>.</p>
+
+        <div class="grid two">
+          <article>
+            <h3>Project-Level Installation</h3>
+            <p>Copy the <code>.cursor</code> folder to your project root to enable VirtualBoard for that specific project:</p>
+            <div class="code-block">
+              <code>cp -r .cursor /path/to/your/project/</code>
+            </div>
+            <p><strong>Recommended for:</strong> Single project or project-specific customizations</p>
+          </article>
+
+          <article>
+            <h3>Global Installation</h3>
+            <p>Add the VirtualBoard rule globally in Cursor Settings:</p>
+            <ol style="font-size: 0.95rem; line-height: 1.7;">
+              <li>Open Cursor Settings (Cmd/Ctrl + ,)</li>
+              <li>Navigate to "Cursor Settings" → "Rules for AI"</li>
+              <li>Click "Edit in settings.json"</li>
+              <li>Add the VirtualBoard rule configuration</li>
+            </ol>
+            <p><strong>Recommended for:</strong> Using VirtualBoard across all your projects</p>
+          </article>
+        </div>
+
+        <div class="info-box">
+          <strong>Note:</strong> Project-level rules (<code>.cursor/rules/</code>) take precedence over global rules.
+        </div>
+      </div>
+
+      <div id="opencode" class="tab-content">
+        <h3>OpenCode Integration</h3>
+        <p>VirtualBoard agents can be easily integrated into <a href="https://github.com/stackblitz/opencode" target="_blank" rel="noreferrer" style="color: var(--accent);">OpenCode</a>, an open source AI coding tool.</p>
+
+        <h4>One-Time Setup</h4>
+        <p>Copy the VirtualBoard agent files to OpenCode's agent directory:</p>
+        <div class="code-block">
+          <code>mkdir -p .opencode/agent && cp -Rf .virtualboard/agents .opencode/agent</code>
+        </div>
+
+        <h4>Activate the Agents</h4>
+        <p>Restart your OpenCode session to load the agents.</p>
+
+        <div class="success-box">
+          <strong>What Gets Copied:</strong>
+          <ul style="margin: 0.5rem 0 0 0; padding-left: 1.5rem;">
+            <li>All agent role definitions (<code>agents/*.md</code>)</li>
+            <li>Agent command system (<code>prompts/agents/</code>)</li>
+            <li>Shared rules of engagement (<code>agents/RULES.md</code>)</li>
           </ul>
-        </article>
-        <article>
-          <h3>30+ Agent Commands</h3>
-          <ul>
-            <li>GPP - Project Progress Report</li>
-            <li>GBG - Backlog Grooming</li>
-            <li>GAD - Architecture Diagram</li>
-            <li>GAE - API Endpoint</li>
-            <li>GC - Component Generation</li>
-            <li>GTP - Test Plan</li>
-            <li>And 23+ more specialized commands!</li>
-          </ul>
-        </article>
+        </div>
+
+        <h4>Using the Agents</h4>
+        <p>Once reloaded, all VirtualBoard agents (PM, Architect, Frontend Dev, Backend Dev, QA, etc.) will be available in OpenCode.</p>
+
+        <div class="grid two">
+          <article>
+            <h3>Benefits</h3>
+            <ul>
+              <li>Native agent integration</li>
+              <li>Quick access to specialized commands</li>
+              <li>Consistent agent behavior</li>
+              <li>No additional configuration</li>
+            </ul>
+          </article>
+          <article>
+            <h3>Available Agents</h3>
+            <ul>
+              <li>All 10 specialized roles</li>
+              <li>30+ agent commands</li>
+              <li>Feature lifecycle management</li>
+              <li>Automated validation</li>
+            </ul>
+          </article>
+        </div>
       </div>
-    </section>
-
-    <section>
-      <h2>Cursor IDE Integration</h2>
-      <p>VirtualBoard includes a <code>.cursor/rules/virtualboard.mdc</code> file that enables automatic integration with <a href="https://cursor.sh/" target="_blank" rel="noreferrer" style="color: var(--accent);">Cursor IDE</a>. This rule tells Cursor to use the VirtualBoard workflow and agent system.</p>
-
-      <div class="grid two">
-        <article>
-          <h3>Project-Level Installation</h3>
-          <p>Copy the <code>.cursor</code> folder to your project root to enable VirtualBoard for that specific project:</p>
-          <div style="background: var(--bg-alt); border-radius: 0.5rem; padding: 1rem; margin: 1rem 0; border: 1px solid var(--border); font-family: monospace; font-size: 0.9rem;">
-            cp -r .cursor /path/to/your/project/
-          </div>
-          <p><strong>Recommended for:</strong> Single project or project-specific customizations</p>
-        </article>
-
-        <article>
-          <h3>Global Installation</h3>
-          <p>Add the VirtualBoard rule globally in Cursor Settings:</p>
-          <ol style="font-size: 0.95rem; line-height: 1.7;">
-            <li>Open Cursor Settings (Cmd/Ctrl + ,)</li>
-            <li>Navigate to "Cursor Settings" → "Rules for AI"</li>
-            <li>Click "Edit in settings.json"</li>
-            <li>Add the VirtualBoard rule configuration</li>
-          </ol>
-          <p><strong>Recommended for:</strong> Using VirtualBoard across all your projects</p>
-        </article>
-      </div>
-      <p style="margin-top: 1.5rem; padding: 1rem; background: rgba(0, 212, 255, 0.1); border-left: 3px solid var(--accent); border-radius: 0.5rem;"><strong>Note:</strong> Project-level rules (<code>.cursor/rules/</code>) take precedence over global rules.</p>
     </section>
 
     <section>
@@ -567,5 +713,21 @@
   <footer>
     <p>VirtualBoard Template · Released under the MIT License</p>
   </footer>
+
+  <script>
+    function switchTab(event, tabId) {
+      // Hide all tab contents
+      const tabContents = document.querySelectorAll('.tab-content');
+      tabContents.forEach(content => content.classList.remove('active'));
+
+      // Remove active class from all buttons
+      const tabButtons = document.querySelectorAll('.tab-button');
+      tabButtons.forEach(button => button.classList.remove('active'));
+
+      // Show selected tab and mark button as active
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+  </script>
 </body>
 </html>
