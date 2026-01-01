@@ -23,17 +23,16 @@
   <style>
     :root {
       color-scheme: light dark;
-      --bg: #f7f9fc;
-      --bg-alt: #ffffff;
-      --text: #121c2a;
-      --muted: #52606d;
-      --accent: #00d4ff;
-      --accent-dark: #00a8cc;
-      --accent-secondary: #32d74b;
-      --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #32d74b 100%);
-      --logo-bg: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
-      --border: #d0d7e2;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --background: oklch(0.13 0.01 240);
+      --foreground: oklch(0.95 0.005 240);
+      --primary: oklch(0.65 0.12 220);
+      --secondary: oklch(0.7 0.15 190);
+      --muted: oklch(0.25 0.01 240);
+      --muted-foreground: oklch(0.6 0.01 240);
+      --border: oklch(0.20 0.01 240);
+      --card: oklch(0.16 0.01 240);
+      --accent: oklch(0.75 0.18 160);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
     * {
@@ -42,15 +41,15 @@
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--background);
+      color: var(--foreground);
       line-height: 1.6;
     }
 
     /* Navbar Styles */
     nav {
-      background: var(--bg-alt);
-      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      border-bottom: 1px solid var(--border/50);
       padding: 0 1.5rem;
       position: sticky;
       top: 0;
@@ -73,7 +72,7 @@
       align-items: center;
       gap: 0.75rem;
       text-decoration: none;
-      color: var(--text);
+      color: var(--foreground);
       font-weight: 700;
       font-size: 1.2rem;
     }
@@ -89,12 +88,12 @@
     .github-link {
       display: flex;
       align-items: center;
-      color: var(--muted);
+      color: var(--muted-foreground);
       transition: color 0.2s ease;
     }
 
     .github-link:hover {
-      color: var(--accent-dark);
+      color: var(--primary);
     }
 
     .github-link svg {
@@ -125,7 +124,7 @@
 
     .nav-links a {
       text-decoration: none;
-      color: var(--muted);
+      color: var(--muted-foreground);
       font-weight: 500;
       transition: color 0.2s ease;
       position: relative;
@@ -133,7 +132,7 @@
 
     .nav-links a:hover,
     .nav-links a.active {
-      color: var(--accent-dark);
+      color: var(--primary);
     }
 
     .nav-links a.active::after {
@@ -143,7 +142,7 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: var(--accent-gradient);
+      background: var(--primary);
     }
 
     @media (max-width: 768px) {
@@ -160,9 +159,9 @@
     }
 
     header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--bg-alt);
+      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
       padding: 4rem 1.5rem 3rem;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--border/50);
       position: relative;
       overflow: hidden;
     }
@@ -202,7 +201,7 @@
     .logo-text {
       font-size: 2.5rem;
       font-weight: 700;
-      background: var(--accent-gradient);
+      background: var(--primary);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -246,7 +245,7 @@
     .hero-tagline {
       font-size: 1.2rem;
       margin: 1rem 0;
-      color: var(--muted);
+      color: var(--muted-foreground);
       max-width: 620px;
     }
 
@@ -271,27 +270,27 @@
     }
 
     .hero-actions a.primary {
-      background: var(--accent-gradient);
+      background: var(--primary);
       color: #fff;
       box-shadow: 0 12px 30px rgba(0, 212, 255, 0.25);
     }
 
     .hero-actions a.primary:hover {
-      background: linear-gradient(135deg, #00a8cc 0%, #28a745 100%);
+      background: var(--primary/90);
       transform: translateY(-1px);
       box-shadow: 0 16px 40px rgba(0, 212, 255, 0.35);
     }
 
     .hero-actions a.secondary {
       background: transparent;
-      border-color: var(--border);
-      color: var(--text);
+      border-color: var(--border/50);
+      color: var(--foreground);
     }
 
     main section {
       margin: 3.5rem 0;
-      background: var(--bg-alt);
-      border: 1px solid var(--border);
+      background: var(--card);
+      border: 1px solid var(--border/50);
       border-radius: 1rem;
       padding: 2.5rem;
       box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
@@ -321,21 +320,21 @@
     }
 
     article {
-      background: var(--bg);
+      background: var(--background);
       border-radius: 0.9rem;
       padding: 1.5rem;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border/50);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
 
     footer {
       text-align: center;
       padding: 3rem 1.5rem 4rem;
-      color: var(--muted);
+      color: var(--muted-foreground);
     }
 
     footer a {
-      color: var(--accent-dark);
+      color: var(--primary);
       text-decoration: none;
     }
 
@@ -351,7 +350,7 @@
       align-items: center;
       gap: 0.4rem;
       background: rgba(0, 212, 255, 0.1);
-      color: var(--accent-dark);
+      color: var(--primary);
       padding: 0.45rem 0.85rem;
       border-radius: 999px;
       font-size: 0.9rem;
@@ -359,7 +358,7 @@
     }
 
     .highlight {
-      background: var(--accent-gradient);
+      background: var(--primary);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -370,7 +369,7 @@
     .tabs {
       display: flex;
       gap: 0.5rem;
-      border-bottom: 2px solid var(--border);
+      border-bottom: 2px solid var(--border/50);
       margin-bottom: 2rem;
       overflow-x: auto;
     }
@@ -379,7 +378,7 @@
       padding: 0.75rem 1.5rem;
       border: none;
       background: transparent;
-      color: var(--muted);
+      color: var(--muted-foreground);
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
@@ -390,13 +389,13 @@
     }
 
     .tab-button:hover {
-      color: var(--text);
+      color: var(--foreground);
       background: rgba(0, 212, 255, 0.05);
     }
 
     .tab-button.active {
-      color: var(--accent-dark);
-      border-bottom-color: var(--accent);
+      color: var(--primary);
+      border-bottom-color: var(--primary);
     }
 
     .tab-content {
@@ -414,25 +413,25 @@
     }
 
     .code-block {
-      background: var(--bg);
+      background: var(--background);
       border-radius: 0.75rem;
       padding: 1.25rem;
       margin: 1.5rem 0;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border/50);
       font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
       font-size: 0.9rem;
       overflow-x: auto;
     }
 
     .code-block code {
-      color: var(--accent-dark);
+      color: var(--primary);
       font-weight: 600;
     }
 
     .info-box {
       padding: 1rem;
       background: rgba(0, 212, 255, 0.1);
-      border-left: 3px solid var(--accent);
+      border-left: 3px solid var(--primary);
       border-radius: 0.5rem;
       margin: 1.5rem 0;
     }
@@ -440,23 +439,18 @@
     .success-box {
       padding: 1rem;
       background: rgba(50, 215, 75, 0.1);
-      border-left: 3px solid var(--accent-secondary);
+      border-left: 3px solid var(--accent);
       border-radius: 0.5rem;
       margin: 1.5rem 0;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0f172a;
-        --bg-alt: #111c36;
-        --text: #f1f5f9;
-        --muted: #cbd5f5b3;
+        --background: #0f172a;
+        --card: #111c36;
+        --foreground: #f1f5f9;
+        --muted-foreground: #cbd5f5b3;
         --border: #1e2a44;
-        --accent: #00d4ff;
-        --accent-dark: #00a8cc;
-        --accent-secondary: #32d74b;
-        --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #32d74b 100%);
-        --logo-bg: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
       }
 
       main section {
@@ -538,7 +532,7 @@
 
       <div id="claude-code" class="tab-content active">
         <h3>Claude Code Plugin</h3>
-        <p>VirtualBoard is available as a <span class="highlight">Claude Code plugin</span>! Install it directly to get instant access to 10 specialized AI agent roles and 30+ specialized commands.</p>
+        <p>VirtualBoard is available as a <span class="highlight">Claude Code plugin</span>! Install it directly to get instant access to 10 specialized AI agent roles and 30+ commands.</p>
 
         <div class="code-block">
           <code>claude plugin marketplace add virtualboard/template-base<br>claude plugin install virtualboard</code>
@@ -579,7 +573,7 @@
 
       <div id="cursor" class="tab-content">
         <h3>Cursor IDE Integration</h3>
-        <p>VirtualBoard includes a <code>.cursor/rules/virtualboard.mdc</code> file that enables automatic integration with <a href="https://cursor.sh/" target="_blank" rel="noreferrer" style="color: var(--accent);">Cursor IDE</a>.</p>
+        <p>VirtualBoard includes a <code>.cursor/rules/virtualboard.mdc</code> file that enables automatic integration with <a href="https://cursor.sh/" target="_blank" rel="noreferrer" style="color: var(--primary);">Cursor IDE</a>.</p>
 
         <div class="grid two">
           <article>
@@ -611,7 +605,7 @@
 
       <div id="opencode" class="tab-content">
         <h3>OpenCode Integration</h3>
-        <p>VirtualBoard agents can be easily integrated into <a href="https://github.com/stackblitz/opencode" target="_blank" rel="noreferrer" style="color: var(--accent);">OpenCode</a>, an open source AI coding tool.</p>
+        <p>VirtualBoard agents can be easily integrated into <a href="https://github.com/stackblitz/opencode" target="_blank" rel="noreferrer" style="color: var(--primary);">OpenCode</a>, an open source AI coding tool.</p>
 
         <h4>One-Time Setup</h4>
         <p>Copy the VirtualBoard agent files to OpenCode's agent directory:</p>
@@ -662,7 +656,7 @@
       <div class="grid two">
         <article>
           <h3>Complete Implementation</h3>
-          <p>This is a <span class="highlight">template repository</span> that provides a complete implementation of the VirtualBoard Feature Spec Workflow system. It's designed to be used with the <a href="https://github.com/virtualboard/vb-cli" style="color: var(--accent);">Virtual Board CLI</a> to initialize new projects with a standardized feature management workflow.</p>
+          <p>This is a <span class="highlight">template repository</span> that provides a complete implementation of the VirtualBoard Feature Spec Workflow system. It's designed to be used with the <a href="https://github.com/virtualboard/vb-cli" style="color: var(--primary);">Virtual Board CLI</a> to initialize new projects with a standardized feature management workflow.</p>
         </article>
         <article>
           <h3>Key Benefits</h3>
@@ -701,11 +695,11 @@
           </ul>
         </article>
       </div>
-      <p style="margin-top: 1rem; padding: 1rem; background: rgba(50, 215, 75, 0.1); border-left: 3px solid var(--accent-secondary); border-radius: 0.5rem;">
+      <p style="margin-top: 1rem; padding: 1rem; background: rgba(50, 215, 75, 0.1); border-left: 3px solid var(--accent); border-radius: 0.5rem;">
         Each template carries validated frontmatter (<code>schemas/system-spec.schema.json</code>) so <code>vb validate</code> and <code>./scripts/ftr-validate.sh</code> enforce metadata just like feature specs.
       </p>
       <p style="margin-top: 1rem;">
-        <a href="specs.html" style="color: var(--accent-dark); font-weight: 600; text-decoration: none;">Explore the detailed specs catalog &rarr;</a>
+        <a href="specs.html" style="color: var(--primary); font-weight: 600; text-decoration: none;">Explore the detailed specs catalog &rarr;</a>
       </p>
     </section>
   </main>
