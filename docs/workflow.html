@@ -4,40 +4,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VirtualBoard Template · Workflow</title>
-  <meta name="description" content="Learn how the VirtualBoard Feature Spec Workflow manages features through their lifecycle.">
-  <meta name="keywords" content="feature management, AI agents, markdown, workflow, project management, virtualboard, template">
+  <meta name="description" content="VirtualBoard feature spec workflow: Markdown-first approach to AI agent collaboration and software development lifecycle.">
+  <meta name="keywords" content="workflow, AI agents, markdown, collaboration, virtualboard">
   <meta name="author" content="VirtualBoard">
 
   <style>
     :root {
       color-scheme: light dark;
-      --bg: #f7f9fc;
-      --bg-alt: #ffffff;
-      --text: #121c2a;
-      --muted: #52606d;
-      --accent: #00d4ff;
-      --accent-dark: #00a8cc;
-      --accent-secondary: #32d74b;
-      --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #32d74b 100%);
-      --border: #d0d7e2;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --background: oklch(0.13 0.01 240);
+      --foreground: oklch(0.95 0.005 240);
+      --primary: oklch(0.65 0.12 220);
+      --secondary: oklch(0.7 0.15 190);
+      --mred: oklch(0.6 0.01 240);
+      --muted-foreground: oklch(0.6 0.01 240);
+      --border: oklch(0.20 0.01 240);
+      --card: oklch(0.16 0.01 240);
+      --accent: oklch(0.75 0.18 160);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--background);
+      color: var(--foreground);
       line-height: 1.6;
     }
 
-    /* Navbar Styles */
     nav {
-      background: var(--bg-alt);
-      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      border-bottom: 1px solid var(--border/50);
       padding: 0 1.5rem;
       position: sticky;
       top: 0;
@@ -60,33 +57,9 @@
       align-items: center;
       gap: 0.75rem;
       text-decoration: none;
-      color: var(--text);
+      color: var(--foreground);
       font-weight: 700;
       font-size: 1.2rem;
-    }
-
-    .nav-main {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex: 1;
-      justify-content: flex-end;
-    }
-
-    .github-link {
-      display: flex;
-      align-items: center;
-      color: var(--muted);
-      transition: color 0.2s ease;
-    }
-
-    .github-link:hover {
-      color: var(--accent-dark);
-    }
-
-    .github-link svg {
-      width: 24px;
-      height: 24px;
     }
 
     .nav-brand .logo-small {
@@ -102,6 +75,14 @@
       object-fit: cover;
     }
 
+    .nav-main {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
     .nav-links {
       display: flex;
       gap: 2rem;
@@ -112,7 +93,7 @@
 
     .nav-links a {
       text-decoration: none;
-      color: var(--muted);
+      color: var(--muted-foreground);
       font-weight: 500;
       transition: color 0.2s ease;
       position: relative;
@@ -120,7 +101,7 @@
 
     .nav-links a:hover,
     .nav-links a.active {
-      color: var(--accent-dark);
+      color: var(--primary);
     }
 
     .nav-links a.active::after {
@@ -130,51 +111,70 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: var(--accent-gradient);
+      background: var(--primary);
     }
 
-    @media (max-width: 768px) {
-      nav .container {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .nav-links {
-        gap: 1rem;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
+    .github-link {
+      display: flex;
+      align-items: center;
+      color: var(--muted-foreground);
+      transition: color 0.2s ease;
     }
 
-    .container {
+    .github-link:hover { color: var(--primary); }
+
+    header {
+      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
+      padding: 4rem 1.5rem 3rem;
+      border-bottom: 1px solid var(--border/50);
+    }
+
+    .hero {
       max-width: 960px;
       margin: 0 auto;
-      padding: 0 1.5rem;
     }
 
-    .page-header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--bg-alt);
-      padding: 3rem 1.5rem 2rem;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 2rem;
-    }
-
-    .page-title {
-      font-size: 2.5rem;
+    .hero h1 {
+      font-size: 2.8rem;
       margin: 0;
       letter-spacing: -0.02em;
     }
 
-    .page-subtitle {
+    .hero p {
       font-size: 1.1rem;
-      color: var(--muted);
-      margin: 0.5rem 0 0;
+      color: var(--muted-foreground);
+      margin-top: 0.75rem;
     }
 
-    main section {
-      margin: 3.5rem 0;
-      background: var(--bg-alt);
-      border: 1px solid var(--border);
+    .badge-row {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--primary);
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    section {
+      margin: 3rem 0;
+      background: var(--card);
+      border: 1px solid var(--border/50);
       border-radius: 1rem;
       padding: 2.5rem;
       box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
@@ -182,85 +182,85 @@
 
     h2 {
       margin-top: 0;
-      font-size: 1.8rem;
+      font-size: 1.9rem;
       letter-spacing: -0.02em;
     }
 
-    p {
-      margin: 0.75rem 0;
-    }
-
-    .workflow-steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
+    h3 {
+      font-size: 1.4rem;
       margin-top: 2rem;
-    }
-
-    .workflow-step {
-      text-align: center;
-      padding: 1.5rem;
-      border-radius: 0.9rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-
-    .step-number {
-      display: inline-block;
-      width: 40px;
-      height: 40px;
-      background: var(--accent-gradient);
-      color: white;
-      border-radius: 50%;
-      line-height: 40px;
-      font-weight: bold;
       margin-bottom: 1rem;
     }
 
-    .step-title {
-      font-weight: 600;
-      color: var(--text);
+    ul, ol {
+      padding-left: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    li {
       margin-bottom: 0.5rem;
     }
 
-    .step-description {
-      color: var(--muted);
+    code, pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      background: rgba(0, 212, 255, 0.08);
+      border-radius: 0.5rem;
+    }
+
+    pre {
+      padding: 1rem;
+      overflow-x: auto;
       font-size: 0.9rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+    article {
+      background: var(--background);
+      border: 1px solid var(--border/50);
+      border-radius: 0.9rem;
+      padding: 1.5rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .cta-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 1rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
     }
 
     footer {
       text-align: center;
       padding: 3rem 1.5rem 4rem;
-      color: var(--muted);
+      color: var(--muted-foreground);
     }
 
     footer a {
-      color: var(--accent-dark);
+      color: var(--primary);
       text-decoration: none;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0f172a;
-        --bg-alt: #111c36;
-        --text: #f1f5f9;
-        --muted: #cbd5f5b3;
+        --background: #0f172a;
+        --card: #111c36;
+        --foreground: #f1f5f9;
+        --muted-foreground: #cbd5f5b3;
         --border: #1e2a44;
       }
 
-      main section {
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-      }
-
-      .workflow-step {
-        background: rgba(15, 23, 42, 0.6);
-        box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.12);
-      }
-
-      nav {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
+      section { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
+      article { background: rgba(15, 23, 42, 0.6); }
     }
   </style>
 </head>
@@ -291,85 +291,125 @@
     </div>
   </nav>
 
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Workflow</h1>
-      <p class="page-subtitle">How features move through their lifecycle</p>
+  <header>
+    <div class="hero">
+      <h1>Workflow</h1>
+      <p>Markdown-first approach to AI agent collaboration and software development lifecycle.</p>
+      <div class="badge-row">
+        <span class="badge">50+ Examples</span>
+        <span class="badge">Agent Ready</span>
+        <span class="badge">Workflow Integrated</span>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <main class="container">
+  <main>
     <section>
-      <h2>Claude Code Plugin Integration</h2>
-      <p>Install VirtualBoard as a Claude Code plugin to get AI agents that understand and follow this workflow automatically:</p>
-      <pre><code>claude plugin marketplace add virtualboard/template-base<br />claude plugin install virtualboard</code></pre>
-      <p>Once installed, AI agents will automatically adopt specialized roles (PM, Architect, Developer, QA, etc.) and have access to 29+ commands to manage features through the lifecycle.</p>
-    </section>
-
-    <section>
-      <h2>How It Works</h2>
-      <p>The VirtualBoard Feature Spec Workflow uses a simple but powerful system where features move through clearly defined states, with each state represented by a folder location. This makes it easy for both humans and AI agents to understand the current state of any feature.</p>
-
-      <div class="workflow-steps">
-        <div class="workflow-step">
-          <div class="step-number">1</div>
-          <div class="step-title">Create Feature</div>
-          <div class="step-description">New features start in the backlog with a unique FTR-ID and structured Markdown spec</div>
-        </div>
-
-        <div class="workflow-step">
-          <div class="step-number">2</div>
-          <div class="step-title">Assign & Start</div>
-          <div class="step-description">Agents claim features by moving them to in-progress with ownership tracking</div>
-        </div>
-
-        <div class="workflow-step">
-          <div class="step-number">3</div>
-          <div class="step-title">Implement</div>
-          <div class="step-description">Work on implementation, updating the spec with progress and links to PRs</div>
-        </div>
-
-        <div class="workflow-step">
-          <div class="step-number">4</div>
-          <div class="step-title">Review</div>
-          <div class="step-description">Move to review status when ready for human review and testing</div>
-        </div>
-
-        <div class="workflow-step">
-          <div class="step-number">5</div>
-          <div class="step-title">Complete</div>
-          <div class="step-description">Mark as done when merged and deployed, with full audit trail</div>
-        </div>
+      <h2>Feature Spec Workflow</h2>
+      <p>VirtualBoard's feature specification workflow provides a standardized approach for AI agents and humans to collaborate on software development:</p>
+      <div class="grid three">
+        <article>
+          <h3>Markdown-First</h3>
+          <p>All important information lives in Markdown files that are easy to diff, parse, and index for both humans and AI agents.</p>
+        </article>
+        <article>
+          <h3>Parallel Development</h3>
+          <p>Multiple agents can work on different features simultaneously without stepping on each other's toes.</p>
+        </article>
+        <article>
+          <h3>Automation Ready</h3>
+          <p>Simple rules that are trivially validated by CI and followed by agents to enable seamless automation.</p>
+        </article>
       </div>
     </section>
 
     <section>
-      <h2>Foundation Specs</h2>
-      <p>The workflow now ships with a dedicated <code>templates/specs/</code> directory containing reusable templates. Copy these templates to your project's <code>specs/</code> directory to document cross-cutting architecture decisions before stories enter the backlog.</p>
-      <div class="grid two" style="margin-top: 1.25rem;">
+      <h2>Feature Lifecycle</h2>
+      <p>Features follow a well-defined lifecycle that ensures proper tracking and coordination:</p>
+      <div class="grid three">
         <article>
-          <h3>Architecture</h3>
-          <ul>
-            <li>Tech Stack</li>
-            <li>Hosting & Infrastructure</li>
-            <li>CI/CD Pipeline</li>
-            <li>Observability & Incident Response</li>
-          </ul>
+          <h3>Backlog</h3>
+          <p>Features ready to be claimed and worked on. These features are not assigned to any specific agent or human yet.</p>
+          <p class="cta-link">View backlog features →</p>
         </article>
         <article>
-          <h3>Data & Safety</h3>
-          <ul>
-            <li>Local Development</li>
-            <li>Database Schema</li>
-            <li>Caching & Performance</li>
-            <li>Security & Compliance</li>
-          </ul>
+          <h3>In Progress</h3>
+          <p>Features being actively worked on by an agent or human. These features have an assigned owner and are in the process of implementation.</p>
+          <p class="cta-link">View in-progress features →</p>
+        </article>
+        <article>
+          <h3>Review</h3>
+          <p>Features ready for review and approval. These features have completed implementation and are awaiting feedback or merge.</p>
+          <p class="cta-link">View review features →</p>
         </article>
       </div>
-      <p style="margin-top: 1rem; padding: 1rem; background: rgba(0, 212, 255, 0.1); border-left: 3px solid var(--accent); border-radius: 0.5rem;">
-        The same <code>vb validate</code> command (or <code>./scripts/ftr-validate.sh</code>) ensures these templates satisfy <code>schemas/system-spec.schema.json</code>, keeping foundational docs consistent with feature specs.
-      </p>
-      <p style="margin-top: 1rem;"><a href="specs.html" style="color: var(--accent-dark); font-weight: 600; text-decoration: none;">Open the full specs page &rarr;</a></p>
+    </section>
+
+    <section>
+      <h2>Workflow Implementation</h2>
+      <p>VirtualBoard provides both CLI tool integration and shell script fallbacks for managing the workflow:</p>
+      <div class="grid two">
+        <article>
+          <h3>CLI Tool Integration</h3>
+          <p>Use the <code>vb</code> CLI tool when available:</p>
+          <pre><code># Check for Virtual Board CLI
+if command -v vb &gt; /dev/null; then
+    echo "Virtual Board CLI found"
+    vb version
+    vb help
+    # Use vb commands for task management
+else
+    echo "Virtual Board CLI not found, using shell scripts"
+    # Fall back to shell scripts or plain bash
+fi</code></pre>
+        </article>
+        <article>
+          <h3>Fallback to Shell Scripts</h3>
+          <p>When the CLI tool is not available, use shell scripts:</p>
+          <pre><code># Make scripts executable
+chmod +x .virtualboard/scripts/*.sh
+
+# Use shell scripts
+./.virtualboard/scripts/ftr-new.sh "User Authentication" auth frontend
+./.virtualboard/scripts/ftr-move.sh FTR-0001 in-progress agent-cursor-1
+./.virtualboard/scripts/ftr-validate.sh
+./.virtualboard/scripts/ftr-index.sh</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Workflow Best Practices</h2>
+      <p>To get the most from VirtualBoard's feature specification workflow:</p>
+      <ol>
+        <li>Use the proper naming conventions for files and branches</li>
+        <li>Ensure all generated content follows the VirtualBoard design system</li>
+        <li>Update feature specs and system specs as agents generate new content</li>
+        <li>Use the CLI tool when available for better integration and automation</li>
+        <li>Validate features regularly to catch issues early</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Feature Spec Validation</h2>
+      <p>VirtualBoard enforces strict validation rules to ensure consistency:</p>
+      <div class="grid two">
+        <article>
+          <h3>Schema Validation</h3>
+          <p>All feature specs must validate against <code>schemas/frontmatter.schema.json</code> to ensure proper structure and required fields.</p>
+        </article>
+        <article>
+          <h3>Folder Consistency</h3>
+          <p>The spec's folder location must match its <code>status</code> field in the frontmatter to maintain system integrity.</p>
+        </article>
+      </div>
+      <p>Validation ensures:</p>
+      <ul>
+        <li>All required sections are present</li>
+        <li>Content follows established formatting guidelines</li>
+        <li>Technical terminology is consistent across specs</li>
+        <li>All links and references are valid</li>
+      </ul>
     </section>
   </main>
 

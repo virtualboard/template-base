@@ -4,40 +4,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VirtualBoard Template · Features</title>
-  <meta name="description" content="Explore the features of VirtualBoard Template including AI agent readiness, markdown-first approach, and zero dependencies.">
-  <meta name="keywords" content="feature management, AI agents, markdown, workflow, project management, virtualboard, template">
+  <meta name="description" content="VirtualBoard feature specs: Comprehensive documentation for AI agent collaboration and software development.">
+  <meta name="keywords" content="features, AI agents, virtualboard, specs, documentation">
   <meta name="author" content="VirtualBoard">
 
   <style>
     :root {
       color-scheme: light dark;
-      --bg: #f7f9fc;
-      --bg-alt: #ffffff;
-      --text: #121c2a;
-      --muted: #52606d;
-      --accent: #00d4ff;
-      --accent-dark: #00a8cc;
-      --accent-secondary: #32d74b;
-      --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #32d74b 100%);
-      --border: #d0d7e2;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --background: oklch(0.13 0.01 240);
+      --foreground: oklch(0.95 0.005 240);
+      --primary: oklch(0.65 0.12 220);
+      --secondary: oklch(0.7 0.15 190);
+      --mred: oklch(0.6 0.01 240);
+      --muted-foreground: oklch(0.6 0.01 240);
+      --border: oklch(0.20 0.01 240);
+      --card: oklch(0.16 0.01 240);
+      --accent: oklch(0.75 0.18 160);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--background);
+      color: var(--foreground);
       line-height: 1.6;
     }
 
-    /* Navbar Styles */
     nav {
-      background: var(--bg-alt);
-      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      border-bottom: 1px solid var(--border/50);
       padding: 0 1.5rem;
       position: sticky;
       top: 0;
@@ -60,33 +57,9 @@
       align-items: center;
       gap: 0.75rem;
       text-decoration: none;
-      color: var(--text);
+      color: var(--foreground);
       font-weight: 700;
       font-size: 1.2rem;
-    }
-
-    .nav-main {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex: 1;
-      justify-content: flex-end;
-    }
-
-    .github-link {
-      display: flex;
-      align-items: center;
-      color: var(--muted);
-      transition: color 0.2s ease;
-    }
-
-    .github-link:hover {
-      color: var(--accent-dark);
-    }
-
-    .github-link svg {
-      width: 24px;
-      height: 24px;
     }
 
     .nav-brand .logo-small {
@@ -102,6 +75,14 @@
       object-fit: cover;
     }
 
+    .nav-main {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
     .nav-links {
       display: flex;
       gap: 2rem;
@@ -112,7 +93,7 @@
 
     .nav-links a {
       text-decoration: none;
-      color: var(--muted);
+      color: var(--muted-foreground);
       font-weight: 500;
       transition: color 0.2s ease;
       position: relative;
@@ -120,7 +101,7 @@
 
     .nav-links a:hover,
     .nav-links a.active {
-      color: var(--accent-dark);
+      color: var(--primary);
     }
 
     .nav-links a.active::after {
@@ -130,51 +111,70 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: var(--accent-gradient);
+      background: var(--primary);
     }
 
-    @media (max-width: 768px) {
-      nav .container {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .nav-links {
-        gap: 1rem;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
+    .github-link {
+      display: flex;
+      align-items: center;
+      color: var(--muted-foreground);
+      transition: color 0.2s ease;
     }
 
-    .container {
+    .github-link:hover { color: var(--primary); }
+
+    header {
+      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
+      padding: 4rem 1.5rem 3rem;
+      border-bottom: 1px solid var(--border/50);
+    }
+
+    .hero {
       max-width: 960px;
       margin: 0 auto;
-      padding: 0 1.5rem;
     }
 
-    .page-header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--bg-alt);
-      padding: 3rem 1.5rem 2rem;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 2rem;
-    }
-
-    .page-title {
-      font-size: 2.5rem;
+    .hero h1 {
+      font-size: 2.8rem;
       margin: 0;
       letter-spacing: -0.02em;
     }
 
-    .page-subtitle {
+    .hero p {
       font-size: 1.1rem;
-      color: var(--muted);
-      margin: 0.5rem 0 0;
+      color: var(--muted-foreground);
+      margin-top: 0.75rem;
     }
 
-    main section {
-      margin: 3.5rem 0;
-      background: var(--bg-alt);
-      border: 1px solid var(--border);
+    .badge-row {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--primary);
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    section {
+      margin: 3rem 0;
+      background: var(--card);
+      border: 1px solid var(--border/50);
       border-radius: 1rem;
       padding: 2.5rem;
       box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
@@ -182,29 +182,35 @@
 
     h2 {
       margin-top: 0;
-      font-size: 1.8rem;
+      font-size: 1.9rem;
       letter-spacing: -0.02em;
     }
 
-    p {
-      margin: 0.75rem 0;
+    h3 {
+      font-size: 1.4rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    ul, ol {
+      padding-left: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
     }
 
     code, pre {
       font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
       background: rgba(0, 212, 255, 0.08);
-      border-radius: 0.4rem;
-    }
-
-    code {
-      padding: 0.15rem 0.4rem;
+      border-radius: 0.5rem;
     }
 
     pre {
-      padding: 1.2rem;
+      padding: 1rem;
       overflow-x: auto;
-      margin: 1.25rem 0;
-      white-space: pre-wrap;
+      font-size: 0.9rem;
     }
 
     .grid {
@@ -212,54 +218,49 @@
       gap: 1.5rem;
     }
 
-    .grid.three {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    }
+    .grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
 
     article {
-      background: var(--bg);
+      background: var(--background);
+      border: 1px solid var(--border/50);
       border-radius: 0.9rem;
       padding: 1.5rem;
-      border: 1px solid var(--border);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .cta-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 1rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
     }
 
     footer {
       text-align: center;
       padding: 3rem 1.5rem 4rem;
-      color: var(--muted);
+      color: var(--muted-foreground);
     }
 
     footer a {
-      color: var(--accent-dark);
+      color: var(--primary);
       text-decoration: none;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0f172a;
-        --bg-alt: #111c36;
-        --text: #f1f5f9;
-        --muted: #cbd5f5b3;
+        --background: #0f172a;
+        --card: #111c36;
+        --foreground: #f1f5f9;
+        --muted-foreground: #cbd5f5b3;
         --border: #1e2a44;
       }
 
-      main section {
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-      }
-
-      article {
-        background: rgba(15, 23, 42, 0.6);
-        box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.12);
-      }
-
-      code, pre {
-        background: rgba(0, 212, 255, 0.12);
-      }
-
-      nav {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
+      section { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
+      article { background: rgba(15, 23, 42, 0.6); }
     }
   </style>
 </head>
@@ -290,247 +291,125 @@
     </div>
   </nav>
 
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">Features</h1>
-      <p class="page-subtitle">Powerful capabilities for modern feature management</p>
+  <header>
+    <div class="hero">
+      <h1>Feature Specs</h1>
+      <p>Comprehensive documentation for AI agent collaboration and software development.</p>
+      <div class="badge-row">
+        <span class="badge">50+ Examples</span>
+        <span class="badge">Agent Ready</span>
+        <span class="badge">Workflow Integrated</span>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <main class="container">
+  <main>
     <section>
-      <h2>Claude Code Plugin</h2>
-      <p>VirtualBoard is now available as a Claude Code plugin with 10 specialized agent roles and 29+ commands. Install with:</p>
-      <pre><code>claude plugin marketplace add virtualboard/template-base<br />claude plugin install virtualboard</code></pre>
-
-      <h3>Agent Commands (29+)</h3>
+      <h2>Feature Specification System</h2>
+      <p>VirtualBoard's feature specification system provides a standardized approach for AI agents and humans to collaborate on software development:</p>
       <div class="grid three">
         <article>
-          <h4>Project Manager</h4>
-          <ul>
-            <li><code>GPP</code> - Project Progress Report</li>
-            <li><code>GBG</code> - Backlog Grooming</li>
-          </ul>
+          <h3>Markdown-First</h3>
+          <p>All important information lives in Markdown files that are easy to diff, parse, and index for both humans and AI agents.</p>
         </article>
         <article>
-          <h4>Architect</h4>
-          <ul>
-            <li><code>GAD</code> - Architecture Diagram</li>
-            <li><code>GAR</code> - Architecture Review</li>
-            <li><code>GTD</code> - Technical Debt</li>
-          </ul>
+          <h3>Parallel Development</h3>
+          <p>Multiple agents can work on different features simultaneously without stepping on each other's toes.</p>
         </article>
         <article>
-          <h4>Backend Developer</h4>
-          <ul>
-            <li><code>GAD</code> - API Documentation</li>
-            <li><code>GAE</code> - API Endpoint</li>
-            <li><code>GDM</code> - Data Migration</li>
-          </ul>
-        </article>
-        <article>
-          <h4>Frontend Developer</h4>
-          <ul>
-            <li><code>GAA</code> - Accessibility Audit</li>
-            <li><code>GC</code> - Component</li>
-            <li><code>GCS</code> - Component Storybook</li>
-          </ul>
-        </article>
-        <article>
-          <h4>Fullstack Developer</h4>
-          <ul>
-            <li><code>GFF</code> - Full Feature</li>
-            <li><code>GIC</code> - Integration Contract</li>
-            <li><code>GETE</code> - E2E Test</li>
-          </ul>
-        </article>
-        <article>
-          <h4>QA Engineer</h4>
-          <ul>
-            <li><code>GBR</code> - Bug Report</li>
-            <li><code>GTCR</code> - Test Coverage</li>
-            <li><code>GTP</code> - Test Plan</li>
-          </ul>
-        </article>
-        <article>
-          <h4>DevOps Engineer</h4>
-          <ul>
-            <li><code>GDC</code> - Deployment Checklist</li>
-            <li><code>GDRR</code> - Deployment Readiness</li>
-            <li><code>GIR</code> - Incident Report</li>
-          </ul>
-        </article>
-        <article>
-          <h4>Security Engineer</h4>
-          <ul>
-            <li><code>GSA</code> - Security Audit</li>
-            <li><code>GSR</code> - Security Review</li>
-            <li><code>GTM</code> - Threat Model</li>
-          </ul>
-        </article>
-        <article>
-          <h4>Data Engineer</h4>
-          <ul>
-            <li><code>GDP</code> - Data Pipeline</li>
-            <li><code>GMD</code> - Metrics Dashboard</li>
-            <li><code>GDQ</code> - Data Quality</li>
-            <li><code>ERD</code> - Entity Relationship Diagram</li>
-          </ul>
-        </article>
-        <article>
-          <h4>UX Designer</h4>
-          <ul>
-            <li><code>GDS</code> - Design System</li>
-            <li><code>GUJ</code> - User Journey</li>
-            <li><code>GWF</code> - Wireframe</li>
-          </ul>
+          <h3>Automation Ready</h3>
+          <p>Simple rules that are trivially validated by CI and followed by agents to enable seamless automation.</p>
         </article>
       </div>
     </section>
 
     <section>
-      <h2>Template Features</h2>
+      <h2>Feature Spec Templates</h2>
+      <p>VirtualBoard provides templates for creating feature specifications:</p>
       <div class="grid three">
         <article>
-          <h3>🤖 AI Agent Ready</h3>
-          <p>Built-in support for multiple AI agents working concurrently on different features without conflicts. Includes role-specific prompts and rules of engagement.</p>
+          <h3>Feature Spec Template</h3>
+          <p>The canonical feature spec template for creating comprehensive feature documentation:</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/feature.md" target="_blank" rel="noreferrer">View Template →</a>
         </article>
         <article>
-          <h3>📝 Markdown First</h3>
-          <p>Everything important lives in Markdown files - easy to diff, parse, and index. Features are tracked as individual Markdown files that move through lifecycle folders.</p>
+          <h3>PR Template</h3>
+          <p>The pull request template that ensures all PRs follow the same structure and validation:</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/pr-template.md" target="_blank" rel="noreferrer">View PR Template →</a>
         </article>
         <article>
-          <h3>⚡ Zero Dependencies</h3>
-          <p>Pure bash scripts eliminate Node.js/npm dependencies. Fast execution, universal compatibility, and easy maintenance across all Unix-like systems.</p>
-        </article>
-        <article>
-          <h3>🔄 Lifecycle Management</h3>
-          <p>Clear state transitions: backlog → in-progress → review → done. Folder location is the source of truth, with automated validation and dependency checking.</p>
-        </article>
-        <article>
-          <h3>🛡️ Multi-Agent Safety</h3>
-          <p>Built-in concurrency controls with ownership locks, dependency validation, and collision prevention to ensure agents don't step on each other.</p>
-        </article>
-        <article>
-          <h3>📚 System Blueprints</h3>
-          <p>An opinionated <code>templates/specs/</code> catalog provides reusable templates covering tech stack, local dev, hosting, CI/CD, database, caching, security, and observability. Copy templates to your project's <code>specs/</code> directory. <a href="specs.html" style="color: var(--accent-dark); font-weight: 600; text-decoration: none;">See details</a></p>
-        </article>
-        <article>
-          <h3>🔧 CI/CD Integration</h3>
-          <p>Ready for continuous integration with validation rules, automated indexing, and GitHub Actions workflows. <code>vb validate</code> (or <code>./scripts/ftr-validate.sh</code>) now checks both features and system specs.</p>
+          <h3>Rules Template</h3>
+          <p>The machine-readable agent rules and validation parameters:</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/rules.yml" target="_blank" rel="noreferrer">View Rules →</a>
         </article>
       </div>
     </section>
 
     <section>
-      <h2>Project Structure</h2>
-      <p>When you initialize a project with this template, you get a complete directory structure with all the necessary components:</p>
+      <h2>Feature Spec Implementation</h2>
+      <p>VirtualBoard provides both CLI tool integration and shell script fallbacks for managing features:</p>
+      <div class="grid two">
+        <article>
+          <h3>CLI Tool Integration</h3>
+          <p>Use the <code>vb</code> CLI tool when available:</p>
+          <pre><code># Check for Virtual Board CLI
+if command -v vb &gt; /dev/null; then
+    echo "Virtual Board CLI found"
+    vb version
+    vb help
+    # Use vb commands for task management
+else
+    echo "Virtual Board CLI not found, using shell scripts"
+    # Fall back to shell scripts or plain bash
+fi</code></pre>
+        </article>
+        <article>
+          <h3>Fallback to Shell Scripts</h3>
+          <p>When the CLI tool is not available, use shell scripts:</p>
+          <pre><code># Make scripts executable
+chmod +x .virtualboard/scripts/*.sh
 
-      <pre><code>.virtualboard/
-├── features/                        # Feature specifications
-│   ├── backlog/                    # Unassigned features
-│   ├── in-progress/                # Features being worked on
-│   ├── blocked/                    # Features waiting on dependencies
-│   ├── review/                     # Features ready for review
-│   ├── done/                       # Completed features
-│   └── INDEX.md                    # Auto-generated feature index
-├── templates/                      # Templates and configuration
-│   ├── feature.md                  # Feature spec template
-│   ├── pr-template.md              # Pull request template
-│   ├── rules.yml                   # Agent rules configuration
-│   └── specs/                      # System blueprint templates
-│       ├── README.md               # Catalog of reusable specs
-│       ├── tech-stack.md           # Tech stack blueprint
-│       ├── local-development.md    # Local dev environment
-│       ├── hosting-and-infrastructure.md
-│       ├── ci-cd-pipeline.md
-│       ├── database-schema.md
-│       ├── caching-and-performance.md
-│       ├── security-and-compliance.md
-│       └── observability-and-incident-response.md
-├── specs/                          # Project-specific system specs
-│   └── (copy templates here)
-├── agents/                         # Agent role definitions
-│   ├── AGENTS.md                   # Agent system overview
-│   ├── RULES.md                    # Rules of engagement for agents
-│   ├── pm.md                       # Project manager role
-│   ├── architect.md                # System architect role
-│   ├── ux_product_designer.md      # UX/Product designer role
-│   ├── backend_dev.md              # Backend developer role
-│   ├── frontend_dev.md             # Frontend developer role
-│   ├── fullstack_dev.md            # Fullstack developer role
-│   ├── devops_engineer.md          # DevOps engineer role
-│   ├── security_compliance_engineer.md  # Security compliance role
-│   ├── data_analytics_engineer.md  # Data analytics engineer role
-│   └── qa.md                       # QA engineer role
-├── prompts/                        # Agent commands and specialized actions
-│   ├── AGENTS.md                   # Command system overview
-│   ├── agents/                     # Role-specific command files
-│   │   ├── pm/                     # Project Manager commands
-│   │   │   ├── README.md           # PM command catalog
-│   │   │   └── GPP.md              # Generate Project Progress Report
-│   │   ├── architect/              # Architect commands
-│   │   │   ├── README.md           # Architect command catalog
-│   │   │   ├── GAD.md              # Generate Architecture Diagram
-│   │   │   ├── GAR.md              # Generate Architecture Review
-│   │   │   └── GTD.md              # Generate Technical Debt Report
-│   │   ├── backend_dev/            # Backend Developer commands
-│   │   │   ├── README.md           # Backend command catalog
-│   │   │   ├── GAD.md              # Generate API Documentation
-│   │   │   ├── GAE.md              # Generate API Endpoint
-│   │   │   └── GDM.md              # Generate Database Migration
-│   │   ├── frontend_dev/           # Frontend Developer commands
-│   │   │   ├── README.md           # Frontend command catalog
-│   │   │   ├── GAA.md              # Generate Accessibility Audit
-│   │   │   ├── GC.md               # Generate Component
-│   │   │   └── GCS.md              # Generate Component Storybook
-│   │   ├── fullstack_dev/          # Fullstack Developer commands
-│   │   │   ├── README.md           # Fullstack command catalog
-│   │   │   ├── GFF.md              # Generate Full Feature
-│   │   │   ├── GIC.md              # Generate Integration Contract
-│   │   │   └── GETE.md             # Generate End-to-End Test
-│   │   ├── data_engineer/          # Data Engineer commands
-│   │   │   ├── README.md           # Data Engineer command catalog
-│   │   │   ├── ERD.md              # Entity Relationship Diagram
-│   │   │   ├── GDP.md              # Generate Data Pipeline
-│   │   │   ├── GMD.md              # Generate Metrics Dashboard
-│   │   │   └── GDQ.md              # Generate Data Quality Check
-│   │   ├── devops/                 # DevOps Engineer commands
-│   │   │   ├── README.md           # DevOps command catalog
-│   │   │   ├── GDC.md              # Generate Deployment Checklist
-│   │   │   ├── GDRR.md             # Generate Deployment Readiness
-│   │   │   └── GIR.md              # Generate Incident Response
-│   │   ├── security/               # Security Engineer commands
-│   │   │   ├── README.md           # Security command catalog
-│   │   │   ├── GSA.md              # Generate Security Audit
-│   │   │   ├── GSR.md              # Generate Security Review
-│   │   │   └── GTM.md              # Generate Threat Model
-│   │   ├── qa/                     # QA Engineer commands
-│   │   │   ├── README.md           # QA command catalog
-│   │   │   ├── GBR.md              # Generate Bug Report
-│   │   │   ├── GTCR.md             # Generate Test Coverage Report
-│   │   │   └── GTP.md              # Generate Test Plan
-│   │   └── ux_designer/            # UX Designer commands
-│   │       ├── README.md           # UX Designer command catalog
-│   │       ├── GDS.md              # Generate Design System
-│   │       ├── GUJ.md              # Generate User Journey
-│   │       └── GWF.md              # Generate Wireframe
-│   └── common/                     # Common templates and utilities
-│       └── session-handoff.md      # Session handoff template
-├── scripts/                        # Automation scripts
-│   ├── ftr-new.sh                  # Create new feature
-│   ├── ftr-move.sh                 # Move feature between states
-│   ├── ftr-validate.sh             # Validate features + system specs
-│   ├── ftr-index.sh                # Generate feature index
-│   └── install-vb-cli.sh           # Install Virtual Board CLI tool
-├── schemas/                        # Schema definitions
-│   ├── frontmatter.schema.json     # Feature frontmatter schema
-│   └── system-spec.schema.json     # System spec frontmatter schema
-├── reports/                        # Generated reports (created by vb CLI)
-├── AGENTS.md                       # Agent system documentation
-├── CHANGELOG.md                    # Version history
-├── README.md                       # Project documentation
-└── version.txt                     # Current version</code></pre>
+# Use shell scripts
+./.virtualboard/scripts/ftr-new.sh "User Authentication" auth frontend
+./.virtualboard/scripts/ftr-move.sh FTR-0001 in-progress agent-cursor-1
+./.virtualboard/scripts/ftr-validate.sh
+./.virtualboard/scripts/ftr-index.sh</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Feature Spec Validation</h2>
+      <p>VirtualBoard enforces strict validation rules to ensure consistency:</p>
+      <div class="grid two">
+        <article>
+          <h3>Schema Validation</h3>
+          <p>All feature specs must validate against <code>schemas/frontmatter.schema.json</code> to ensure proper structure and required fields.</p>
+        </article>
+        <article>
+          <h3>Folder Consistency</h3>
+          <p>The spec's folder location must match its <code>status</code> field in the frontmatter to maintain system integrity.</p>
+        </article>
+      </div>
+      <p>Validation ensures:</p>
+      <ul>
+        <li>All required sections are present</li>
+        <li>Content follows established formatting guidelines</li>
+        <li>Technical terminology is consistent across specs</li>
+        <li>All links and references are valid</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Feature Spec Best Practices</h2>
+      <p>To get the most from VirtualBoard's feature specification system:</p>
+      <ol>
+        <li>Use the proper naming conventions for files and branches</li>
+        <li>Ensure all generated content follows the VirtualBoard design system</li>
+        <li>Update feature specs and system specs as agents generate new content</li>
+        <li>Use the CLI tool when available for better integration and automation</li>
+        <li>Validate features regularly to catch issues early</li>
+      </ol>
     </section>
   </main>
 
