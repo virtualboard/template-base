@@ -3,41 +3,38 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VirtualBoard Template · AI Agents</title>
-  <meta name="description" content="Meet the virtual team of AI agents included in VirtualBoard Template.">
-  <meta name="keywords" content="feature management, AI agents, markdown, workflow, project management, virtualboard, template">
+  <title>VirtualBoard Template · Agents</title>
+  <meta name="description" content="VirtualBoard agent system: Structured support for AI agent workflows with role-specific command catalogs.">
+  <meta name="keywords" content="agents, AI agents, virtualboard, roles, workflows">
   <meta name="author" content="VirtualBoard">
 
   <style>
     :root {
       color-scheme: light dark;
-      --bg: #f7f9fc;
-      --bg-alt: #ffffff;
-      --text: #121c2a;
-      --muted: #52606d;
-      --accent: #00d4ff;
-      --accent-dark: #00a8cc;
-      --accent-secondary: #32d74b;
-      --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #32d74b 100%);
-      --border: #d0d7e2;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --background: oklch(0.13 0.01 240);
+      --foreground: oklch(0.95 0.005 240);
+      --primary: oklch(0.65 0.12 220);
+      --secondary: oklch(0.7 0.15 190);
+      --mred: oklch(0.6 0.01 240);
+      --muted-foreground: oklch(0.6 0.01 240);
+      --border: oklch(0.20 0.01 240);
+      --card: oklch(0.16 0.01 240);
+      --accent: oklch(0.75 0.18 160);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--background);
+      color: var(--foreground);
       line-height: 1.6;
     }
 
-    /* Navbar Styles */
     nav {
-      background: var(--bg-alt);
-      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      border-bottom: 1px solid var(--border/50);
       padding: 0 1.5rem;
       position: sticky;
       top: 0;
@@ -46,7 +43,7 @@
     }
 
     nav .container {
-      max-width: 1200px;
+      max-width: 960px;
       margin: 0 auto;
       display: flex;
       align-items: center;
@@ -60,33 +57,9 @@
       align-items: center;
       gap: 0.75rem;
       text-decoration: none;
-      color: var(--text);
+      color: var(--foreground);
       font-weight: 700;
       font-size: 1.2rem;
-    }
-
-    .nav-main {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex: 1;
-      justify-content: flex-end;
-    }
-
-    .github-link {
-      display: flex;
-      align-items: center;
-      color: var(--muted);
-      transition: color 0.2s ease;
-    }
-
-    .github-link:hover {
-      color: var(--accent-dark);
-    }
-
-    .github-link svg {
-      width: 24px;
-      height: 24px;
     }
 
     .nav-brand .logo-small {
@@ -102,6 +75,14 @@
       object-fit: cover;
     }
 
+    .nav-main {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
     .nav-links {
       display: flex;
       gap: 2rem;
@@ -112,7 +93,7 @@
 
     .nav-links a {
       text-decoration: none;
-      color: var(--muted);
+      color: var(--muted-foreground);
       font-weight: 500;
       transition: color 0.2s ease;
       position: relative;
@@ -120,7 +101,7 @@
 
     .nav-links a:hover,
     .nav-links a.active {
-      color: var(--accent-dark);
+      color: var(--primary);
     }
 
     .nav-links a.active::after {
@@ -130,302 +111,156 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: var(--accent-gradient);
+      background: var(--primary);
     }
 
-    @media (max-width: 768px) {
-      nav .container {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .nav-links {
-        gap: 1rem;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
+    .github-link {
+      display: flex;
+      align-items: center;
+      color: var(--muted-foreground);
+      transition: color 0.2s ease;
     }
 
-    .container {
-      max-width: 1200px;
+    .github-link:hover { color: var(--primary); }
+
+    header {
+      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
+      padding: 4rem 1.5rem 3rem;
+      border-bottom: 1px solid var(--border/50);
+    }
+
+    .hero {
+      max-width: 960px;
       margin: 0 auto;
-      padding: 0 1.5rem;
     }
 
-    .page-header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--bg-alt);
-      padding: 3rem 1.5rem 2rem;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 2rem;
-    }
-
-    .page-title {
-      font-size: 2.5rem;
+    .hero h1 {
+      font-size: 2.8rem;
       margin: 0;
       letter-spacing: -0.02em;
     }
 
-    .page-subtitle {
+    .hero p {
       font-size: 1.1rem;
-      color: var(--muted);
-      margin: 0.5rem 0 0;
+      color: var(--muted-foreground);
+      margin-top: 0.75rem;
     }
 
-    /* Agent Layout Styles */
-    .agents-layout {
+    .badge-row {
+      margin-top: 1.5rem;
       display: flex;
-      gap: 2rem;
-      margin: 2rem 0;
-      min-height: 600px;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
-    .agents-sidebar {
-      flex-shrink: 0;
-      width: 280px;
-      background: var(--bg-alt);
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 1rem;
-      box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
-      height: fit-content;
-      position: sticky;
-      top: 90px;
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--primary);
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
     }
 
-    .agents-sidebar h2 {
-      font-size: 1.2rem;
-      margin: 0 0 1rem 0;
-      padding: 0 0.5rem;
-      color: var(--text);
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
     }
 
-    .agent-tab {
-      display: block;
-      width: 100%;
-      padding: 0.875rem 1rem;
-      margin-bottom: 0.5rem;
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 0.75rem;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: var(--text);
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    .agent-tab:hover {
-      background: var(--bg);
-      border-color: var(--border);
-    }
-
-    .agent-tab.active {
-      background: var(--bg);
-      border-color: var(--accent);
-      box-shadow: 0 2px 8px rgba(0, 212, 255, 0.15);
-    }
-
-    .agents-content {
-      flex: 1;
-      background: var(--bg-alt);
-      border: 1px solid var(--border);
+    section {
+      margin: 3rem 0;
+      background: var(--card);
+      border: 1px solid var(--border/50);
       border-radius: 1rem;
       padding: 2.5rem;
       box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
-      min-height: 500px;
     }
 
-    .agent-panel {
-      display: none;
-      animation: fadeIn 0.3s ease;
+    h2 {
+      margin-top: 0;
+      font-size: 1.9rem;
+      letter-spacing: -0.02em;
     }
 
-    .agent-panel.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .agent-header {
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .agent-header h2 {
-      font-size: 2rem;
-      margin: 0 0 0.5rem 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .agent-header p {
-      color: var(--muted);
-      margin: 0.5rem 0;
-      font-size: 1.05rem;
-    }
-
-    .agent-header .view-prompt {
-      display: inline-block;
-      margin-top: 0.75rem;
-      color: var(--accent-dark);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s ease;
-    }
-
-    .agent-header .view-prompt:hover {
-      color: var(--accent);
-    }
-
-    .commands-section {
-      margin-top: 2rem;
-    }
-
-    .commands-section h3 {
+    h3 {
       font-size: 1.4rem;
-      margin: 0 0 1rem 0;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
     }
 
-    .command-list {
-      display: grid;
-      gap: 1rem;
+    ul, ol {
+      padding-left: 1.5rem;
+      margin: 1rem 0;
     }
 
-    .command-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      padding: 1.25rem;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-
-    .command-code {
-      display: inline-block;
-      background: var(--accent);
-      color: #000;
-      padding: 0.25rem 0.75rem;
-      border-radius: 0.5rem;
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-      font-size: 0.875rem;
-      font-weight: 600;
+    li {
       margin-bottom: 0.5rem;
     }
 
-    .command-description {
-      color: var(--muted);
-      margin: 0 0 0.5rem 0;
-      font-size: 0.95rem;
+    code, pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      background: rgba(0, 212, 255, 0.08);
+      border-radius: 0.5rem;
     }
 
-    .command-link {
-      display: inline-block;
-      margin-top: 0.5rem;
-      color: var(--accent-dark);
+    pre {
+      padding: 1rem;
+      overflow-x: auto;
+      font-size: 0.9rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+    article {
+      background: var(--background);
+      border: 1px solid var(--border/50);
+      border-radius: 0.9rem;
+      padding: 1.5rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .cta-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 1rem;
+      color: var(--primary);
       text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: color 0.2s ease;
-    }
-
-    .command-link:hover {
-      color: var(--accent);
-    }
-
-    .no-commands {
-      color: var(--muted);
-      font-style: italic;
-      text-align: center;
-      padding: 2rem;
+      font-weight: 600;
     }
 
     footer {
       text-align: center;
       padding: 3rem 1.5rem 4rem;
-      color: var(--muted);
+      color: var(--muted-foreground);
     }
 
     footer a {
-      color: var(--accent-dark);
+      color: var(--primary);
       text-decoration: none;
-    }
-
-    /* Mobile Responsive */
-    @media (max-width: 968px) {
-      .agents-layout {
-        flex-direction: column;
-      }
-
-      .agents-sidebar {
-        width: 100%;
-        position: relative;
-        top: 0;
-      }
-
-      .agent-tab {
-        display: inline-block;
-        width: auto;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-
-      .agents-sidebar h2 {
-        display: none;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .agents-sidebar {
-        padding: 0.75rem;
-      }
-
-      .agent-tab {
-        font-size: 0.85rem;
-        padding: 0.625rem 0.75rem;
-      }
-
-      .agents-content {
-        padding: 1.5rem;
-      }
-
-      .agent-header h2 {
-        font-size: 1.5rem;
-      }
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0f172a;
-        --bg-alt: #111c36;
-        --text: #f1f5f9;
-        --muted: #cbd5f5b3;
+        --background: #0f172a;
+        --card: #111c36;
+        --foreground: #f1f5f9;
+        --muted-foreground: #cbd5f5b3;
         --border: #1e2a44;
       }
 
-      .agents-sidebar,
-      .agents-content {
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-      }
-
-      .command-item {
-        background: rgba(15, 23, 42, 0.6);
-        box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.12);
-      }
-
-      nav {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
+      section { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
+      article { background: rgba(15, 23, 42, 0.6); }
     }
   </style>
 </head>
@@ -456,359 +291,143 @@
     </div>
   </nav>
 
-  <div class="page-header">
-    <div class="container">
-      <h1 class="page-title">AI Agents</h1>
-      <p class="page-subtitle">Your complete virtual team - select an agent to view their role and available commands</p>
-      <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-alt); border: 1px solid var(--border); border-radius: 0.75rem;">
-        <p style="margin: 0 0 0.5rem 0; font-weight: 600;">Available as Claude Code Plugin</p>
-        <code style="color: var(--accent-dark);">claude plugin marketplace add virtualboard/template-base<br />claude plugin install virtualboard</code>
+  <header>
+    <div class="hero">
+      <h1>Agent System</h1>
+      <p>Structured support for AI agent workflows with role-specific command catalogs.</p>
+      <div class="badge-row">
+        <span class="badge">50+ Examples</span>
+        <span class="badge">Agent Ready</span>
+        <span class="badge">Workflow Integrated</span>
       </div>
     </div>
-  </div>
+  </header>
 
-  <main class="container">
-    <div class="agents-layout">
-      <!-- Sidebar with Agent Tabs -->
-      <aside class="agents-sidebar">
-        <h2>Agents</h2>
-        <button class="agent-tab active" data-agent="pm">👨‍💼 Project Manager</button>
-        <button class="agent-tab" data-agent="architect">🏗️ Architect</button>
-        <button class="agent-tab" data-agent="ux">🎨 UX/Product Designer</button>
-        <button class="agent-tab" data-agent="backend">⚙️ Backend Developer</button>
-        <button class="agent-tab" data-agent="frontend">💻 Frontend Developer</button>
-        <button class="agent-tab" data-agent="fullstack">🔄 Fullstack Developer</button>
-        <button class="agent-tab" data-agent="security">🔒 Security Compliance Engineer</button>
-        <button class="agent-tab" data-agent="qa">🧪 QA Engineer</button>
-        <button class="agent-tab" data-agent="data">📊 Data Analytics Engineer</button>
-        <button class="agent-tab" data-agent="devops">🚀 DevOps Engineer</button>
-      </aside>
-
-      <!-- Content Area -->
-      <div class="agents-content">
-        <!-- Project Manager -->
-        <div class="agent-panel active" data-panel="pm">
-          <div class="agent-header">
-            <h2>👨‍💼 Project Manager</h2>
-            <p>Oversees project planning, prioritization, and coordination between teams</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/pm.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">GPP</div>
-                <p class="command-description">Generate Project Progress Report</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/pm/GPP.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GBG</div>
-                <p class="command-description">Generate Backlog Grooming - Comprehensive backlog refinement session</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/pm/GBG.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Architect -->
-        <div class="agent-panel" data-panel="architect">
-          <div class="agent-header">
-            <h2>🏗️ Architect</h2>
-            <p>Designs system architecture, technical decisions, and integration patterns</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/architect.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">GAD</div>
-                <p class="command-description">Generate Architecture Diagram</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/architect/GAD.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GAR</div>
-                <p class="command-description">Generate Architecture Review</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/architect/GAR.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GTD</div>
-                <p class="command-description">Generate Technical Debt Report</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/architect/GTD.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- UX/Product Designer -->
-        <div class="agent-panel" data-panel="ux">
-          <div class="agent-header">
-            <h2>🎨 UX/Product Designer</h2>
-            <p>Focuses on user experience, interface design, and product requirements</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/ux_product_designer.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">GUJ</div>
-                <p class="command-description">Generate User Journey</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/ux_designer/GUJ.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GWF</div>
-                <p class="command-description">Generate Wireframe</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/ux_designer/GWF.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GDS</div>
-                <p class="command-description">Generate Design System</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/ux_designer/GDS.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Backend Developer -->
-        <div class="agent-panel" data-panel="backend">
-          <div class="agent-header">
-            <h2>⚙️ Backend Developer</h2>
-            <p>Handles server-side logic, APIs, databases, and infrastructure</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/backend_dev.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">GAE</div>
-                <p class="command-description">Generate API Endpoint</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/backend_dev/GAE.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GDM</div>
-                <p class="command-description">Generate Data Migration</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/backend_dev/GDM.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GAD</div>
-                <p class="command-description">Generate API Documentation</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/backend_dev/GAD.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Frontend Developer -->
-        <div class="agent-panel" data-panel="frontend">
-          <div class="agent-header">
-            <h2>💻 Frontend Developer</h2>
-            <p>Manages client-side code, UI components, and user interactions</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/frontend_dev.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">GC</div>
-                <p class="command-description">Generate Component</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/frontend_dev/GC.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GCS</div>
-                <p class="command-description">Generate Component Storybook</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/frontend_dev/GCS.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GAA</div>
-                <p class="command-description">Generate Accessibility Audit</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/frontend_dev/GAA.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Fullstack Developer -->
-        <div class="agent-panel" data-panel="fullstack">
-          <div class="agent-header">
-            <h2>🔄 Fullstack Developer</h2>
-            <p>Works across the entire stack, from database to user interface</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/fullstack_dev.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">GFF</div>
-                <p class="command-description">Generate Full Feature</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/fullstack_dev/GFF.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GIC</div>
-                <p class="command-description">Generate Integration Contract</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/fullstack_dev/GIC.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GETE</div>
-                <p class="command-description">Generate End-to-End Test</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/fullstack_dev/GETE.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Security Compliance Engineer -->
-        <div class="agent-panel" data-panel="security">
-          <div class="agent-header">
-            <h2>🔒 Security Compliance Engineer</h2>
-            <p>Ensures security best practices, compliance, and threat mitigation</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/security_compliance_engineer.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">GSA</div>
-                <p class="command-description">Generate Security Audit</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/security/GSA.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GTM</div>
-                <p class="command-description">Generate Threat Model</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/security/GTM.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GSR</div>
-                <p class="command-description">Generate Security Review</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/security/GSR.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- QA Engineer -->
-        <div class="agent-panel" data-panel="qa">
-          <div class="agent-header">
-            <h2>🧪 QA Engineer</h2>
-            <p>Responsible for testing, quality assurance, and validation</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/qa.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">GTP</div>
-                <p class="command-description">Generate Test Plan</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/qa/GTP.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GBR</div>
-                <p class="command-description">Generate Bug Report</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/qa/GBR.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GTCR</div>
-                <p class="command-description">Generate Test Coverage Report</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/qa/GTCR.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GBAT</div>
-                <p class="command-description">Generate Browser Automation Tests (Playwright)</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/qa/GBAT.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Data Analytics Engineer -->
-        <div class="agent-panel" data-panel="data">
-          <div class="agent-header">
-            <h2>📊 Data Analytics Engineer</h2>
-            <p>Handles analytics, metrics, data pipelines, and data-driven insights</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/data_analytics_engineer.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">ERD</div>
-                <p class="command-description">Entity Relationship Diagram</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/data_engineer/ERD.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GDP</div>
-                <p class="command-description">Generate Data Pipeline</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/data_engineer/GDP.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GMD</div>
-                <p class="command-description">Generate Metrics Dashboard</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/data_engineer/GMD.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GDQ</div>
-                <p class="command-description">Generate Data Quality Check</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/data_engineer/GDQ.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- DevOps Engineer -->
-        <div class="agent-panel" data-panel="devops">
-          <div class="agent-header">
-            <h2>🚀 DevOps Engineer</h2>
-            <p>Manages CI/CD pipelines, infrastructure automation, and deployment processes</p>
-            <a href="https://github.com/virtualboard/template-base/blob/main/agents/devops_engineer.md" target="_blank" rel="noreferrer" class="view-prompt">View full prompt →</a>
-          </div>
-          <div class="commands-section">
-            <h3>Available Commands</h3>
-            <div class="command-list">
-              <div class="command-item">
-                <div class="command-code">GDC</div>
-                <p class="command-description">Generate Deployment Checklist</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/devops/GDC.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GIR</div>
-                <p class="command-description">Generate Incident Response</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/devops/GIR.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-              <div class="command-item">
-                <div class="command-code">GDRR</div>
-                <p class="command-description">Generate Deployment Readiness</p>
-                <a href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/devops/GDRR.md" target="_blank" rel="noreferrer" class="command-link">View command prompt →</a>
-              </div>
-            </div>
-          </div>
-        </div>
+  <main>
+    <section>
+      <h2>VirtualBoard Agent System</h2>
+      <p>VirtualBoard provides structured support for AI agent workflows with role-specific command catalogs:</p>
+      <div class="grid three">
+        <article>
+          <h3>Command Detection</h3>
+          <p>Agents check for available commands in the /prompts/agents/{role}/ directory:</p>
+          <ul>
+            <li>First found takes precedence: .virtualboard/agents/ or .claude/agents/</li>
+            <li>Read AGENTS.md from the found directory to understand the agent system</li>
+            <li>Analyze the current task to determine appropriate agent role</li>
+            <li>Announce adopted role and follow specific workflow</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Workflow Integration</h3>
+          <p>Agent commands integrate with VirtualBoard's feature specification workflow:</p>
+          <ul>
+            <li>Read /prompts/agents/{role}/README.md for available commands</li>
+            <li>Display command catalog to user when starting session</li>
+            <li>Identify if user's request matches defined command/trigger phrase</li>
+            <li>Read full command file for detailed workflow instructions</li>
+            <li>Follow exact workflow specified in the command file</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Command Catalogs</h3>
+          <p>Each agent role has its own command catalog in the /prompts/agents directory:</p>
+          <ul>
+            <li>Project Manager (PM)</li>
+            <li>Architect</li>
+            <li>Frontend Developer</li>
+            <li>Backend Developer</li>
+            <li>Fullstack Developer</li>
+            <li>DevOps Engineer</li>
+          </ul>
+        </article>
       </div>
-    </div>
+    </section>
+
+    <section>
+      <h2>Agent Role Command Catalogs</h2>
+      <p>Each agent role has its own command catalog in the /prompts/agents directory:</p>
+      <div class="grid three">
+        <article>
+          <h3>Project Manager</h3>
+          <p>Generate project progress reports and manage feature tracking.</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/pm/README.md" target="_blank" rel="noreferrer">View PM Commands →</a>
+        </article>
+        <article>
+          <h3>Architect</h3>
+          <p>Generate architecture diagrams, reviews, and technical debt reports.</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/architect/README.md" target="_blank" rel="noreferrer">View Architect Commands →</a>
+        </article>
+        <article>
+          <h3>Frontend Developer</h3>
+          <p>Generate components, storybooks, and accessibility audits.</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/frontend_dev/README.md" target="_blank" rel="noreferrer">View Frontend Commands →</a>
+        </article>
+        <article>
+          <h3>Backend Developer</h3>
+          <p>Generate API documentation, endpoints, and data migrations.</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/backend_dev/README.md" target="_blank" rel="noreferrer">View Backend Commands →</a>
+        </article>
+        <article>
+          <h3>Fullstack Developer</h3>
+          <p>Generate full features, integration contracts, and end-to-end tests.</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/fullstack_dev/README.md" target="_blank" rel="noreferrer">View Fullstack Commands →</a>
+        </article>
+        <article>
+          <h3>DevOps Engineer</h3>
+          <p>Generate deployment checklists, incident responses, and readiness reports.</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/devops_engineer/README.md" target="_blank" rel="noreferrer">View DevOps Commands →</a>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Agent System Implementation</h2>
+      <p>VirtualBoard provides structured support for agent workflows:</p>
+      <div class="grid two">
+        <article>
+          <h3>Command Detection</h3>
+          <p>Agents check for available commands in the /prompts/agents/{role}/ directory:</p>
+          <pre><code># Check for agent directories in this order (first found takes precedence):
+# .virtualboard/agents/ (project-specific agents)
+# .claude/agents/ (project-level agents)
+
+# If either exists:
+# Read AGENTS.md from the found directory to understand the agent system
+# Analyze the current task to determine the appropriate agent role
+# Announce your adopted role (e.g., "I am working as a Frontend Developer agent")
+# Follow that agent's specific workflow for the entire task
+# Maintain role consistency throughout the task lifecycle</code></pre>
+        </article>
+        <article>
+          <h3>Workflow Integration</h3>
+          <p>Agent commands integrate with VirtualBoard's feature specification workflow:</p>
+          <pre><code># When adopting an agent role:
+# 1. Read /prompts/agents/{role}/README.md to understand available commands
+# 2. Display available commands to the user when starting a session  
+# 3. Identify if the user's request matches a defined command/trigger phrase
+# 4. Read the full command file for detailed workflow instructions
+# 5. Follow the exact workflow specified in the command file
+# 6. Use the provided templates for consistent output format</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Agent System Best Practices</h2>
+      <p>To get the most from VirtualBoard's agent system:</p>
+      <ol>
+        <li>Each agent should read their role-specific documentation before acting</li>
+        <li>Follow command catalog instructions for each agent role</li>
+        <li>Use the proper naming conventions for agent commands and outputs</li>
+        <li>Ensure all generated content follows the VirtualBoard design system</li>
+        <li>Update feature specs and system specs as agents generate new content</li>
+      </ol>
+    </section>
   </main>
 
   <footer>
     <p>VirtualBoard Template · Released under the MIT License</p>
   </footer>
-
-  <script>
-    // Tab switching functionality
-    const tabs = document.querySelectorAll('.agent-tab');
-    const panels = document.querySelectorAll('.agent-panel');
-
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const agentId = tab.dataset.agent;
-
-        // Update active tab
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-
-        // Update active panel
-        panels.forEach(p => p.classList.remove('active'));
-        const activePanel = document.querySelector(`[data-panel="${agentId}"]`);
-        if (activePanel) {
-          activePanel.classList.add('active');
-        }
-      });
-    });
-  </script>
 </body>
 </html>

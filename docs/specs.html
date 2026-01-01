@@ -4,37 +4,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VirtualBoard Template · Specs</title>
-  <meta name="description" content="System specification templates for VirtualBoard: tech stack, CI/CD, security, observability, database, and more.">
-  <meta name="keywords" content="virtualboard, specs, tech stack, ci/cd, security, documentation">
+  <meta name="description" content="VirtualBoard system specs: Cross-cutting documentation for AI agent collaboration and software development.">
+  <meta name="keywords" content="specs, AI agents, virtualboard, system, documentation">
   <meta name="author" content="VirtualBoard">
 
   <style>
     :root {
       color-scheme: light dark;
-      --bg: #f7f9fc;
-      --bg-alt: #ffffff;
-      --text: #121c2a;
-      --muted: #52606d;
-      --accent: #00d4ff;
-      --accent-dark: #00a8cc;
-      --accent-secondary: #32d74b;
-      --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #32d74b 100%);
-      --border: #d0d7e2;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --background: oklch(0.13 0.01 240);
+      --foreground: oklch(0.95 0.005 240);
+      --primary: oklch(0.65 0.12 220);
+      --secondary: oklch(0.7 0.15 190);
+      --mred: oklch(0.6 0.01 240);
+      --muted-foreground: oklch(0.6 0.01 240);
+      --border: oklch(0.20 0.01 240);
+      --card: oklch(0.16 0.01 240);
+      --accent: oklch(0.75 0.18 160);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--background);
+      color: var(--foreground);
       line-height: 1.6;
     }
 
     nav {
-      background: var(--bg-alt);
-      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      border-bottom: 1px solid var(--border/50);
       padding: 0 1.5rem;
       position: sticky;
       top: 0;
@@ -57,7 +57,7 @@
       align-items: center;
       gap: 0.75rem;
       text-decoration: none;
-      color: var(--text);
+      color: var(--foreground);
       font-weight: 700;
       font-size: 1.2rem;
     }
@@ -93,7 +93,7 @@
 
     .nav-links a {
       text-decoration: none;
-      color: var(--muted);
+      color: var(--muted-foreground);
       font-weight: 500;
       transition: color 0.2s ease;
       position: relative;
@@ -101,7 +101,7 @@
 
     .nav-links a:hover,
     .nav-links a.active {
-      color: var(--accent-dark);
+      color: var(--primary);
     }
 
     .nav-links a.active::after {
@@ -111,22 +111,22 @@
       left: 0;
       right: 0;
       height: 2px;
-      background: var(--accent-gradient);
+      background: var(--primary);
     }
 
     .github-link {
       display: flex;
       align-items: center;
-      color: var(--muted);
+      color: var(--muted-foreground);
       transition: color 0.2s ease;
     }
 
-    .github-link:hover { color: var(--accent-dark); }
+    .github-link:hover { color: var(--primary); }
 
     header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--bg-alt);
+      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
       padding: 4rem 1.5rem 3rem;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--border/50);
     }
 
     .hero {
@@ -142,7 +142,7 @@
 
     .hero p {
       font-size: 1.1rem;
-      color: var(--muted);
+      color: var(--muted-foreground);
       margin-top: 0.75rem;
     }
 
@@ -154,12 +154,16 @@
     }
 
     .badge {
-      background: rgba(0, 212, 255, 0.12);
-      color: var(--accent-dark);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--primary);
       padding: 0.45rem 0.85rem;
       border-radius: 999px;
-      font-weight: 600;
       font-size: 0.9rem;
+
+      font-weight: 600;
     }
 
     main {
@@ -170,8 +174,8 @@
 
     section {
       margin: 3rem 0;
-      background: var(--bg-alt);
-      border: 1px solid var(--border);
+      background: var(--card);
+      border: 1px solid var(--border/50);
       border-radius: 1rem;
       padding: 2.5rem;
       box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
@@ -183,35 +187,19 @@
       letter-spacing: -0.02em;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
+    h3 {
+      font-size: 1.4rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
     }
 
-    th, td {
-      text-align: left;
-      padding: 0.65rem 0.6rem;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.95rem;
+    ul, ol {
+      padding-left: 1.5rem;
+      margin: 1rem 0;
     }
 
-    th { background: rgba(0, 212, 255, 0.08); }
-
-    .grid {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-
-    article {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 0.9rem;
-      padding: 1.5rem;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    li {
+      margin-bottom: 0.5rem;
     }
 
     code, pre {
@@ -226,12 +214,28 @@
       font-size: 0.9rem;
     }
 
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+    article {
+      background: var(--background);
+      border: 1px solid var(--border/50);
+      border-radius: 0.9rem;
+      padding: 1.5rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
     .cta-link {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
       margin-top: 1rem;
-      color: var(--accent-dark);
+      color: var(--primary);
       text-decoration: none;
       font-weight: 600;
     }
@@ -239,21 +243,25 @@
     footer {
       text-align: center;
       padding: 3rem 1.5rem 4rem;
-      color: var(--muted);
+      color: var(--muted-foreground);
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0f172a;
-        --bg-alt: #111c36;
-        --text: #f1f5f9;
-        --muted: #cbd5f5b3;
+        --background: #0f172a;
+        --card: #111c36;
+        --foreground: #f1f5f9;
+        --muted-foreground: #cbd5f5b3;
         --border: #1e2a44;
       }
 
       section { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
       article { background: rgba(15, 23, 42, 0.6); }
-      th { background: rgba(0, 212, 255, 0.12); }
     }
   </style>
 </head>
@@ -286,193 +294,135 @@
 
   <header>
     <div class="hero">
-      <h1>System Specification Catalog</h1>
-      <p>Reusable blueprints for tech stack, local development, hosting, CI/CD, data, security, performance, and observability. Keep foundational documentation versioned, validated, and in lockstep with features.</p>
+      <h1>System Specs</h1>
+      <p>Cross-cutting documentation for AI agent collaboration and software development.</p>
       <div class="badge-row">
-        <span class="badge">8 templates</span>
-        <span class="badge">Schema validated</span>
-        <span class="badge">Automation ready</span>
+        <span class="badge">50+ Examples</span>
+        <span class="badge">Agent Ready</span>
+        <span class="badge">Workflow Integrated</span>
       </div>
     </div>
   </header>
 
   <main>
     <section>
-      <h2>Why System Specs?</h2>
-      <p>Feature specs capture user-facing value, but large projects also need durable references for architecture, tooling, and compliance. The <code>templates/specs/</code> directory provides reusable templates that teams can copy to their project's <code>specs/</code> directory for a consistent starting point, making onboarding, audits, and cross-team coordination predictable.</p>
-      <div class="grid two" style="margin-top: 1.5rem;">
-        <article>
-          <h3>Cross-cutting Clarity</h3>
-          <p>Document languages, deployment targets, access models, and safety policies once and link them from every feature touching that surface.</p>
-          <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--muted);">Best for: new markets, platform migrations, audit prep, or onboarding waves.</p>
-        </article>
-        <article>
-          <h3>Automation Friendly</h3>
-          <p>Each template ships with frontmatter validated by <code>schemas/system-spec.schema.json</code>. <code>vb validate</code> (or <code>./scripts/ftr-validate.sh</code>) enforces metadata, ensuring docs stay parseable for agents and CI.</p>
-        </article>
-      </div>
-    </section>
-
-    <section>
-      <h2>Frontmatter Schema</h2>
-      <p>All templates use the same header so tooling can catalog ownership, lifecycle, and applicability.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Field</th>
-            <th>Description</th>
-            <th>Allowed Values</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>spec_type</code></td>
-            <td>Template identifier (tech-stack, local-development, ...)</td>
-            <td>One of 8 enums</td>
-          </tr>
-          <tr>
-            <td><code>title</code></td>
-            <td>Human-readable spec title</td>
-            <td>&ge; 3 characters</td>
-          </tr>
-          <tr>
-            <td><code>owner</code></td>
-            <td>Team or role accountable for updates</td>
-            <td>Free-form string</td>
-          </tr>
-          <tr>
-            <td><code>status</code></td>
-            <td>Lifecycle state</td>
-            <td><code>draft</code> | <code>approved</code> | <code>deprecated</code></td>
-          </tr>
-          <tr>
-            <td><code>last_updated</code></td>
-            <td>ISO date or <code>YYYY-MM-DD</code> placeholder while templating</td>
-            <td>YYYY-MM-DD</td>
-          </tr>
-          <tr>
-            <td><code>applicability</code></td>
-            <td>Platforms covered (web, mobile, desktop, api, etc.)</td>
-            <td>Array of kebab-case tokens</td>
-          </tr>
-          <tr>
-            <td><code>related_initiatives</code></td>
-            <td>Optional project IDs/tags</td>
-            <td>Array of alphanumeric/underscore values</td>
-          </tr>
-        </tbody>
-      </table>
-      <a class="cta-link" href="#templates">Jump to template catalog &rarr;</a>
-    </section>
-
-    <section id="templates">
-      <h2>Template Catalog</h2>
+      <h2>System Specification System</h2>
+      <p>VirtualBoard's system specification system provides structured documentation for cross-cutting concerns:</p>
       <div class="grid three">
         <article>
-          <h3>Tech Stack</h3>
-          <p>Languages, frameworks, runtimes, build tooling, messaging, storage, and principles for evolving the stack.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/tech-stack.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <h3>Template-Based Approach</h3>
+          <p>All system specs are created from templates in the /templates/specs directory:</p>
+          <ul>
+            <li>Copy templates to /specs for your project</li>
+            <li>Each template covers a different cross-cutting concern</li>
+            <li>Templates are designed for reusability and consistency</li>
+          </ul>
         </article>
         <article>
-          <h3>Local Development</h3>
-          <p>Onboarding checklist, OS support matrix, tooling prerequisites, secrets, seed data, and troubleshooting playbooks.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/local-development.md" target="_blank" rel="noreferrer">View template &rarr;</a>
+          <h3>Schema Validation</h3>
+          <p>System specs validate against /schemas/system-spec.schema.json to ensure proper structure:</p>
+          <ul>
+            <li>All required sections are present</li>
+            <li>Content follows established formatting guidelines</li>
+            <li>Technical terminology is consistent across specs</li>
+          </ul>
         </article>
         <article>
-          <h3>Hosting & Infrastructure</h3>
-          <p>Environment inventory, provider rationale, network topology, DR targets, cost governance, and runbooks.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/hosting-and-infrastructure.md" target="_blank" rel="noreferrer">View template &rarr;</a>
-        </article>
-        <article>
-          <h3>CI/CD Pipeline</h3>
-          <p>Triggers, branching, build/test/deploy stages, security gates, artifact strategy, and rollback practices.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/ci-cd-pipeline.md" target="_blank" rel="noreferrer">View template &rarr;</a>
-        </article>
-        <article>
-          <h3>Database Schema</h3>
-          <p>Entity inventory, relationships, migrations, retention, performance budgets, and access patterns.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/database-schema.md" target="_blank" rel="noreferrer">View template &rarr;</a>
-        </article>
-        <article>
-          <h3>Caching & Performance</h3>
-          <p>SLIs/SLOs, cache layers, invalidation strategies, perf testing, and instrumentation guidance.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/caching-and-performance.md" target="_blank" rel="noreferrer">View template &rarr;</a>
-        </article>
-        <article>
-          <h3>Security & Compliance</h3>
-          <p>Threat model, authz/authn patterns, data protection controls, logging, and audit evidence tracking.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/security-and-compliance.md" target="_blank" rel="noreferrer">View template &rarr;</a>
-        </article>
-        <article>
-          <h3>Observability & IR</h3>
-          <p>Telemetry coverage, dashboards, alert routing, incident lifecycle, and postmortem workflow.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/observability-and-incident-response.md" target="_blank" rel="noreferrer">View template &rarr;</a>
-        </article>
-      </div>
-    </section>
-
-    <section>
-      <h2>Sample Format</h2>
-      <p>Each template starts with the shared frontmatter followed by structured sections tailored to that domain.</p>
-      <pre><code>&#45;&#45;&#45;
-spec_type: tech-stack
-title: Web + Mobile Platform Stack
-owner: platform-team
-status: draft
-last_updated: YYYY-MM-DD
-applicability: [web, mobile, desktop]
-related_initiatives: [2025-modernization]
-&#45;&#45;&#45;
-
-# Tech Stack Specification
-
-## Purpose
-Explain strategic context...
-
-## Architecture Overview
-Describe clients → gateways → services → data stores...
-
-## Languages, Frameworks & Tooling
-- Backend: Go 1.22, Node 20 (LTS), pnpm
-- Frontend: React 19 + Next.js 15
-- Mobile: SwiftUI, Jetpack Compose
-...</code></pre>
-      <p style="margin-top: 1rem; color: var(--muted); font-size: 0.95rem;">Replace placeholders with project specifics, then link this spec from relevant features, PRs, or docs.</p>
-    </section>
-
-    <section>
-      <h2>Validation & Automation</h2>
-      <div class="grid two">
-        <article>
-          <h3>CLI + Scripts</h3>
-          <p><code>vb validate</code> and <code>./scripts/ftr-validate.sh</code> run schema checks for both feature specs and system specs. CI should execute these commands on every PR.</p>
-          <pre><code>if command -v vb &> /dev/null; then
-  vb validate
-else
-  ./scripts/ftr-validate.sh
-fi</code></pre>
-        </article>
-        <article>
-          <h3>Automation Hooks</h3>
-          <ul style="padding-left: 1.1rem; margin: 0;">
-            <li>Frontmatter validated via <code>schemas/system-spec.schema.json</code>.</li>
-            <li>Arrays normalized (kebab-case tokens) for search/index pipelines.</li>
-            <li>Future automation can index these specs for agent prompts or UI catalogs.</li>
+          <h3>Best Practices</h3>
+          <p>System specs follow established best practices for documentation:</p>
+          <ul>
+            <li>Consistent naming conventions</li>
+            <li>Clear structure and organization</li>
+            <li>Proper validation and quality checks</li>
           </ul>
         </article>
       </div>
     </section>
 
     <section>
-      <h2>Working with Specs</h2>
-      <ol style="font-size: 0.95rem; line-height: 1.8;">
-        <li>Copy the relevant template from <code>templates/specs/</code> into your project's <code>specs/</code>, <code>docs/</code>, a wiki, or feature branch folder.</li>
-        <li>Update frontmatter fields (owner, status, applicability, last_updated) and remove placeholders.</li>
-        <li>Fill in the Markdown sections with project context, diagrams, and links.</li>
-        <li>Add references from feature specs (Implementation Notes + Links) so readers can find the canonical doc.</li>
-        <li>Run <code>vb validate</code> (or <code>./scripts/ftr-validate.sh</code>) before opening a PR.</li>
+      <h2>System Spec Templates</h2>
+      <p>VirtualBoard provides templates for creating system specifications:</p>
+      <div class="grid three">
+        <article>
+          <h3>Tech Stack</h3>
+          <p>Technology stack and integration specifications:</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/tech-stack.md" target="_blank" rel="noreferrer">View Tech Stack Template →</a>
+        </article>
+        <article>
+          <h3>Local Development</h3>
+          <p>Local development environment setup and configuration:</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/local-development.md" target="_blank" rel="noreferrer">View Local Dev Template →</a>
+        </article>
+        <article>
+          <h3>Hosting & Infrastructure</h3>
+          <p>Infrastructure and hosting configuration blueprints:</p>
+          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/hosting-and-infrastructure.md" target="_blank" rel="noreferrer">View Hosting Template →</a>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>System Spec Categories</h2>
+      <p>VirtualBoard system specs cover essential cross-cutting concerns:</p>
+      <div class="grid three">
+        <article>
+          <h3>Database Schema</h3>
+          <p>Database design and schema specifications for the project.</p>
+        </article>
+        <article>
+          <h3>Caching & Performance</h3>
+          <p>Performance optimization and caching strategies.</p>
+        </article>
+        <article>
+          <h3>Observability & Incident Response</h3>
+          <p>Monitoring, logging, and incident response procedures.</p>
+        </article>
+        <article>
+          <h3>Security & Compliance</h3>
+          <p>Security policies, threat modeling, and compliance standards.</p>
+        </article>
+        <article>
+          <h3>Testing Strategy</h3>
+          <p>Test approaches, coverage requirements, and quality gates.</p>
+        </article>
+        <article>
+          <h3>Data Analytics</h3>
+          <p>Data pipeline and analytics dashboard specifications.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>System Spec Implementation</h2>
+      <p>System specs are structured to provide consistent, reusable documentation:</p>
+      <div class="grid two">
+        <article>
+          <h3>Template-Based Approach</h3>
+          <p>All system specs are created from templates in the /templates/specs directory:</p>
+          <pre><code># Copy templates to /specs for your project
+cp -r templates/specs/* specs/</code></pre>
+        </article>
+        <article>
+          <h3>Schema Validation</h3>
+          <p>System specs validate against /schemas/system-spec.schema.json to ensure proper structure:</p>
+          <pre><code># Validation ensures:
+# - All required sections are present
+# - Content follows established formatting guidelines  
+# - Technical terminology is consistent across specs</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>System Spec Best Practices</h2>
+      <p>To get the most from VirtualBoard's system specification system:</p>
+      <ol>
+        <li>Use templates in /templates/specs to create project-specific system specs</li>
+        <li>Ensure all generated content follows the VirtualBoard design system</li>
+        <li>Validate system specs regularly to catch issues early</li>
+        <li>Update templates as the project evolves to maintain consistency</li>
+        <li>Use proper naming conventions for system spec files</li>
       </ol>
-      <p style="margin-top: 1rem;">Need a new template? Add it under <code>templates/specs/</code>, extend <code>schemas/system-spec.schema.json</code>, and mention it here.</p>
     </section>
   </main>
 
