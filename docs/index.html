@@ -510,7 +510,7 @@
         <a class="secondary" href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer">View on GitHub</a>
       </div>
       <div class="badge-row">
-        <span class="badge">Template · v0.3.0</span>
+        <span class="badge">Template · v0.4.0</span>
         <span class="badge">Claude Code Plugin</span>
         <span class="badge">Zero Dependencies</span>
         <span class="badge">AI Ready</span>
@@ -568,6 +568,32 @@
 
         <div class="info-box">
           <strong>Plugin Benefits:</strong> Automatic updates, built-in validation, and seamless integration with Claude Code's agent system.
+        </div>
+
+        <h3>/work-on Skill</h3>
+        <p>The plugin includes a <span class="highlight">/work-on skill</span> for working on features in isolated git worktrees:</p>
+        <div class="code-block">
+          <code>/work-on FTR-0042                    # Interactive mode<br>/work-on FTR-0042 --autonomous       # Autonomous mode<br>/work-on FTR-0042 --base-branch dev  # Branch from dev<br>/work-on FTR-0042 --create-pr        # Create PR after push</code>
+        </div>
+        <div class="grid two">
+          <article>
+            <h3>Features</h3>
+            <ul>
+              <li>Creates git worktree with feature branch</li>
+              <li>Detects and resumes existing work</li>
+              <li>Configurable base branch</li>
+              <li>Automatic commit footer</li>
+            </ul>
+          </article>
+          <article>
+            <h3>Configuration</h3>
+            <ul>
+              <li>VIRTUALBOARD_WORKTREE_PATH</li>
+              <li>VIRTUALBOARD_BASE_BRANCH</li>
+              <li>VIRTUALBOARD_POST_PUSH</li>
+              <li>VIRTUALBOARD_SESSION_MODE</li>
+            </ul>
+          </article>
         </div>
       </div>
 

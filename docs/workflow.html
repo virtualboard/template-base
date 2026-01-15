@@ -379,6 +379,32 @@ chmod +x .virtualboard/scripts/*.sh
     </section>
 
     <section>
+      <h2>/work-on Skill (Claude Code)</h2>
+      <p>The Claude Code plugin includes a <code>/work-on</code> skill for working on features in isolated git worktrees:</p>
+      <div class="grid two">
+        <article>
+          <h3>Usage</h3>
+          <pre><code>/work-on FTR-0042                 # Interactive
+/work-on FTR-0042 --autonomous    # Autonomous
+/work-on FTR-0042 --base-branch dev # From dev
+/work-on FTR-0042 --create-pr     # Create PR</code></pre>
+          <p>The skill creates a git worktree with branch <code>feature/FTR-XXXX/slug</code>, detects existing work, and manages the full implementation cycle.</p>
+        </article>
+        <article>
+          <h3>Configuration</h3>
+          <p>Environment variables:</p>
+          <ul>
+            <li><code>VIRTUALBOARD_WORKTREE_PATH</code> - Worktree location</li>
+            <li><code>VIRTUALBOARD_BASE_BRANCH</code> - Base branch</li>
+            <li><code>VIRTUALBOARD_POST_PUSH</code> - Post-push action</li>
+            <li><code>VIRTUALBOARD_SESSION_MODE</code> - Session mode</li>
+          </ul>
+          <p>See <code>skills/work-on/config.md</code> for details.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
       <h2>Workflow Best Practices</h2>
       <p>To get the most from VirtualBoard's feature specification workflow:</p>
       <ol>
