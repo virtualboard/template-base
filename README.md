@@ -13,6 +13,36 @@ claude plugin install virtualboard
 
 Or use the plugin marketplace. See [.claude-plugin/README.md](.claude-plugin/README.md) for full plugin documentation.
 
+### `/work-on` Skill
+
+The plugin includes a `/work-on` skill for working on features in isolated git worktrees:
+
+```bash
+# Basic usage - work on a feature interactively
+/work-on FTR-0042
+
+# Autonomous mode (no clarifying questions)
+/work-on FTR-0042 --autonomous
+
+# Custom worktree location
+/work-on FTR-0042 --worktree-path ~/worktrees
+
+# Branch from develop instead of main
+/work-on FTR-0042 --base-branch develop
+
+# Create PR after pushing
+/work-on FTR-0042 --create-pr
+```
+
+The skill:
+- Creates a git worktree with branch `feature/FTR-XXXX/feature-slug`
+- Detects and resumes existing work on the branch
+- Spawns a new Claude Code session in the worktree
+- Commits with footer: `FTR-XXXX implemented using the @virtualboard /work-on skill`
+- Pushes the branch (and optionally creates a PR)
+
+See `skills/work-on/config.md` for configuration options.
+
 ## Cursor IDE Integration
 
 VirtualBoard includes a `.cursor/rules/virtualboard.mdc` file that enables automatic integration with [Cursor](https://cursor.sh/) IDE. This rule tells Cursor to use the VirtualBoard workflow and agent system.
@@ -255,7 +285,12 @@ Each template includes frontmatter compatible with `schemas/system-spec.schema.j
 │   ├── ftr-move.sh          # Move feature between states
 │   ├── ftr-validate.sh      # Validate features
 │   ├── ftr-index.sh         # Generate feature index
-│   └── install-vb-cli.sh    # Install Virtual Board CLI tool
+│   ├── install-vb-cli.sh    # Install Virtual Board CLI tool
+│   └── worktree-setup.sh    # Git worktree setup for /work-on skill
+├── skills/                  # Claude Code plugin skills
+│   └── work-on/             # /work-on skill for feature development
+│       ├── SKILL.md         # Skill definition
+│       └── config.md        # Configuration reference
 └── schemas/                 # Schema definitions
     ├── frontmatter.schema.json     # Feature frontmatter validation schema
     └── system-spec.schema.json     # System specification frontmatter schema

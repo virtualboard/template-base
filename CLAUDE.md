@@ -95,7 +95,13 @@ scripts/             # Automation scripts
 ├── ftr-move.sh      # Move feature between states
 ├── ftr-validate.sh  # Validate all features
 ├── ftr-index.sh     # Generate features/INDEX.md
-└── install-vb-cli.sh# Install Virtual Board CLI tool
+├── install-vb-cli.sh# Install Virtual Board CLI tool
+└── worktree-setup.sh# Git worktree setup for /work-on skill
+
+skills/              # Claude Code plugin skills
+└── work-on/         # /work-on skill for feature development
+    ├── SKILL.md     # Skill definition
+    └── config.md    # Configuration reference
 
 templates/           # Templates for features and PRs
 ├── feature.md       # Feature spec template
@@ -324,6 +330,33 @@ claude plugin install virtualboard
 ```
 
 See `.claude-plugin/README.md` for plugin documentation.
+
+#### `/work-on` Skill
+
+The plugin includes a `/work-on` skill for working on features in isolated git worktrees:
+
+```bash
+/work-on FTR-0042                    # Interactive mode (default)
+/work-on FTR-0042 --autonomous       # Fully autonomous mode
+/work-on FTR-0042 --base-branch dev  # Branch from dev instead of main
+/work-on FTR-0042 --create-pr        # Create PR after pushing
+/work-on FTR-0042 --worktree-path ~  # Custom worktree location
+```
+
+**Features:**
+- Creates git worktree with branch `feature/FTR-XXXX/feature-slug`
+- Detects and resumes existing work on branches
+- Configurable session modes: interactive, semi-autonomous, autonomous
+- Automatic commit footer: `FTR-XXXX implemented using the @virtualboard /work-on skill`
+- Optional PR creation and worktree cleanup
+
+**Configuration:**
+- `VIRTUALBOARD_WORKTREE_PATH` - Base path for worktrees (default: `/tmp/virtualboard-worktrees`)
+- `VIRTUALBOARD_BASE_BRANCH` - Base branch to create feature branches from (default: auto-detect or `main`)
+- `VIRTUALBOARD_POST_PUSH` - Action after push: `push`, `push+pr`, `push+pr+cleanup`
+- `VIRTUALBOARD_SESSION_MODE` - Default mode: `interactive`, `semi-autonomous`, `autonomous`
+
+See `skills/work-on/config.md` for full configuration reference.
 
 ### CI/CD
 

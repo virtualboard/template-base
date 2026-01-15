@@ -142,7 +142,12 @@
   ftr-move.sh        # move feature across lifecycle w/ checks
   ftr-index.sh       # generate /features/INDEX.md
   ftr-validate.sh    # validate schema, status-folder match, deps, links
-  install-vb-cli.sh   # install Virtual Board CLI tool
+  install-vb-cli.sh  # install Virtual Board CLI tool
+  worktree-setup.sh  # git worktree setup for /work-on skill
+/skills              # Claude Code plugin skills
+  /work-on           # /work-on skill for feature development
+    SKILL.md         # skill definition
+    config.md        # configuration reference
 /schemas
   frontmatter.schema.json # frontmatter validation schema
   system-spec.schema.json # system blueprint schema

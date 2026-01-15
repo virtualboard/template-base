@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-01-14
+
+### Added
+- **`/work-on` skill** for Claude Code plugin (`skills/work-on/SKILL.md`)
+  - Work on VirtualBoard features in isolated git worktrees
+  - Automatic branch creation with naming convention `feature/FTR-XXXX/feature-slug`
+  - Resume support for existing branches with progress detection
+  - Configurable session modes: interactive, semi-autonomous, autonomous
+  - Automatic commit footer: `FTR-XXXX implemented using the @virtualboard /work-on skill`
+  - Post-push actions: push only, create PR, or full cleanup
+  - Configuration via environment variables or command-line options
+- **`scripts/worktree-setup.sh`** helper script for git worktree management
+  - Creates and manages git worktrees for feature development
+  - Detects existing branches (local and remote)
+  - Reports worktree status including commits ahead and uncommitted changes
+- **Skills directory** (`skills/`) for Claude Code plugin auto-discovery
+  - `skills/work-on/SKILL.md` - Main skill definition
+  - `skills/work-on/config.md` - Configuration reference documentation
+
+### Changed
+- Updated documentation (README.md, CLAUDE.md, AGENTS.md) with `/work-on` skill usage
+- Updated HTML documentation with new skill information
+- Bumped version from 0.3.0 to 0.4.0
+
 ## [0.3.0] - 2025-12-16
 
 ### Added
