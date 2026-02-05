@@ -88,53 +88,55 @@
   /agents            # agent-specific command files organized by role
     /pm              # Project Manager commands
       README.md      # PM command catalog
-      GPP.md         # Generate Project Progress Report
+      PM-Generate_Project_Progress_Report.md
+      PM-Generate_Backlog_Grooming.md
     /architect       # Architect commands
       README.md      # Architect command catalog
-      GAD.md         # Generate Architecture Diagram
-      GAR.md         # Generate Architecture Review
-      GTD.md         # Generate Technical Debt Report
+      Architect-Generate_Architecture_Decision.md
+      Architect-Generate_Architecture_Report.md
+      Architect-Generate_Technical_Debt_Report.md
     /backend_dev     # Backend Developer commands
       README.md      # Backend command catalog
-      GAD.md         # Generate API Documentation
-      GAE.md         # Generate API Endpoint
-      GDM.md         # Generate Data Migration
+      BackendDeveloper-Generate_API_Documentation.md
+      BackendDeveloper-Generate_API_Endpoint.md
+      BackendDeveloper-Generate_Database_Migration.md
     /frontend_dev    # Frontend Developer commands
       README.md      # Frontend command catalog
-      GAA.md         # Generate Accessibility Audit
-      GC.md          # Generate Component
-      GCS.md         # Generate Component Storybook
+      FrontendDeveloper-Generate_Accessibility_Audit.md
+      FrontendDeveloper-Generate_Component.md
+      FrontendDeveloper-Generate_Component_Story.md
     /fullstack_dev   # Fullstack Developer commands
       README.md      # Fullstack command catalog
-      GFF.md         # Generate Full Feature
-      GIC.md         # Generate Integration Contract
-      GETE.md        # Generate End-to-End Test
+      FullstackDeveloper-Generate_Full_Feature.md
+      FullstackDeveloper-Generate_Integration_Contract.md
+      FullstackDeveloper-Generate_End_to_End_Test.md
     /data_engineer   # Data Engineer commands
       README.md      # Data Engineer command catalog
-      GDP.md         # Generate Data Pipeline
-      GMD.md         # Generate Metrics Dashboard
-      GDQ.md         # Generate Data Quality Check
-      ERD.md         # Entity Relationship Diagram
+      DataEngineer-Generate_Data_Pipeline.md
+      DataEngineer-Generate_Metrics_Dashboard.md
+      DataEngineer-Generate_Data_Quality_Check.md
+      DataEngineer-Generate_Entity_Relationship_Diagram.md
     /devops          # DevOps Engineer commands
       README.md      # DevOps command catalog
-      GDC.md         # Generate Deployment Checklist
-      GDRR.md        # Generate Deployment Readiness Report
-      GIR.md         # Generate Incident Response
+      DevOps-Generate_Deployment_Checklist.md
+      DevOps-Generate_Deployment_Readiness_Report.md
+      DevOps-Generate_Incident_Report.md
     /security        # Security Engineer commands
       README.md      # Security command catalog
-      GSA.md         # Generate Security Audit
-      GSR.md         # Generate Security Review
-      GTM.md         # Generate Threat Model
+      Security-Generate_Security_Audit.md
+      Security-Generate_Security_Review.md
+      Security-Generate_Threat_Model.md
     /qa              # QA Engineer commands
       README.md      # QA command catalog
-      GBR.md         # Generate Bug Report
-      GTCR.md        # Generate Test Coverage Report
-      GTP.md         # Generate Test Plan
+      QA-Generate_Bug_Report.md
+      QA-Generate_Test_Coverage_Report.md
+      QA-Generate_Test_Plan.md
+      QA-Generate_Browser_Automation_Tests.md
     /ux_designer     # UX Designer commands
       README.md      # UX Designer command catalog
-      GDS.md         # Generate Design System
-      GUJ.md         # Generate User Journey
-      GWF.md         # Generate Wireframe
+      UXDesigner-Generate_Design_System_Component.md
+      UXDesigner-Generate_User_Journey.md
+      UXDesigner-Generate_Wireframe.md
   /common            # common prompt templates and utilities
     session-handoff.md
 /scripts
@@ -395,14 +397,14 @@ The `/prompts/` directory contains specialized commands and workflows for each a
   /agents
     /{role}/                   # Each agent has their own directory
       README.md                # Command catalog for that role
-      {COMMAND}.md             # Individual command workflows
+      {AgentName}-{Command_Name}.md  # Individual command workflows
   /common
     session-handoff.md         # Common templates
 ```
 
 ### Command File Structure
 
-Each command file (e.g., `prompts/agents/pm/GPP.md`) contains:
+Each command file (e.g., `prompts/agents/pm/PM-Generate_Project_Progress_Report.md`) contains:
 
 1. **Trigger Phrases** - Keywords that activate the command
 2. **Description** - What the command does
@@ -430,7 +432,7 @@ Each command file (e.g., `prompts/agents/pm/GPP.md`) contains:
 2. **Loads command catalog** - Reads `prompts/agents/{role}/README.md`
 3. **Displays available commands** - Shows user what's available
 4. **User triggers command** - Via trigger phrase (e.g., "GPP")
-5. **Agent executes workflow** - Follows `prompts/agents/{role}/{COMMAND}.md`
+5. **Agent executes workflow** - Follows `prompts/agents/{role}/{AgentName}-{Command_Name}.md`
 6. **Generates output** - Creates report/artifact at specified path
 
 See `/prompts/AGENTS.md` for complete documentation.
@@ -561,7 +563,7 @@ See `/prompts/AGENTS.md` for complete documentation.
 
 Each agent role has:
 - **README.md** - Catalog of available commands for that role
-- **Command files** (e.g., `GPP.md`, `GAD.md`) - Detailed workflow for each command
+- **Command files** (e.g., `PM-Generate_Project_Progress_Report.md`, `Architect-Generate_Architecture_Decision.md`) - Detailed workflow for each command
 - **Special trigger phrases** that activate specific workflows
 - **Structured report templates** for consistent outputs
 - **Output file conventions** for generated reports and documentation
@@ -589,7 +591,7 @@ Each agent role has:
 1. Read `/prompts/agents/{role}/README.md` to understand available commands
 2. Display command summary to the user when adopting role
 3. Identify if the user's request matches a defined command/trigger phrase
-4. Read the full command file (e.g., `/prompts/agents/pm/GPP.md`) for detailed workflow
+4. Read the full command file (e.g., `/prompts/agents/pm/PM-Generate_Project_Progress_Report.md`) for detailed workflow
 5. Follow the exact workflow specified in the command file
 6. Use the provided templates for consistent output format
 7. Save reports to the specified file path conventions

@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-02-04
+
+### Changed
+- **Renamed all 31 agent command files** to collision-free, descriptive names using `{AgentName}-{Command_Name}.md` pattern (e.g., `GPP.md` → `PM-Generate_Project_Progress_Report.md`). Short trigger codes (GPP, GAD, etc.) remain valid aliases.
+- Updated `.claude-plugin/plugin.json` with all 31 new command file paths
+- Updated all 10 agent `README.md` files (`pm`, `architect`, `backend_dev`, `frontend_dev`, `fullstack_dev`, `qa`, `devops`, `security`, `data_engineer`, `ux_designer`) with new file references
+- Updated cross-reference in `BackendDeveloper-Generate_API_Documentation.md` to reference new Architect command name
+- Removed GAD disambiguation note from `backend_dev/README.md` (collision resolved by unique filenames)
+- Updated documentation across `AGENTS.md`, `README.md`, `CLAUDE.md`, `prompts/AGENTS.md`, `agents/RULES.md`, and `.claude-plugin/README.md` with new naming pattern and file paths
+- Bumped version from 0.4.0 to 0.5.0
+
 ## [0.4.0] - 2026-01-14
 
 ### Added
@@ -44,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2025-12-12
 
 ### Added
-- **GBAT (Generate Browser Automation Tests)** command for QA Engineer agent (`prompts/agents/qa/GBAT.md`)
+- **GBAT (Generate Browser Automation Tests)** command for QA Engineer agent (`prompts/agents/qa/QA-Generate_Browser_Automation_Tests.md`)
   - Comprehensive 4-phase browser automation testing workflow using Playwright
   - Phase 1: Test case generation in markdown format (`.virtualboard/docs/browser-test-cases/`)
   - Phase 2: Playwright automation script generation with Page Object Model pattern
@@ -102,7 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2025-11-04
 
 ### Added
-- **GBG (Generate Backlog Grooming)** command for Project Manager agent (`prompts/agents/pm/GBG.md`)
+- **GBG (Generate Backlog Grooming)** command for Project Manager agent (`prompts/agents/pm/PM-Generate_Backlog_Grooming.md`)
   - Comprehensive backlog refinement session with interactive decision-making
   - Implementation status assessment (fully/partially/not implemented)
   - Automated relevance analysis based on codebase evolution

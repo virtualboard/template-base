@@ -268,16 +268,16 @@ Each template includes frontmatter compatible with `schemas/system-spec.schema.j
 ├── prompts/                 # Agent commands and specialized actions
 │   ├── AGENTS.md            # Command system overview and catalog
 │   ├── agents/              # Role-specific command files
-│   │   ├── pm/              # Project Manager commands (GPP, etc.)
-│   │   ├── architect/       # Architect commands (GAD, GAR, GTD)
-│   │   ├── backend_dev/     # Backend commands (GAD, GAE, GDM)
-│   │   ├── frontend_dev/    # Frontend commands (GAA, GC, GCS)
-│   │   ├── fullstack_dev/   # Fullstack commands (GFF, GIC, GETE)
-│   │   ├── data_engineer/   # Data Engineer commands (GDP, GMD, GDQ, ERD)
-│   │   ├── devops/          # DevOps commands (GDC, GDRR, GIR)
-│   │   ├── security/        # Security commands (GSA, GSR, GTM)
-│   │   ├── qa/              # QA commands (GBR, GTCR, GTP)
-│   │   └── ux_designer/     # UX Designer commands (GDS, GUJ, GWF)
+│   │   ├── pm/              # PM commands (PM-Generate_*.md)
+│   │   ├── architect/       # Architect commands (Architect-Generate_*.md)
+│   │   ├── backend_dev/     # Backend commands (BackendDeveloper-Generate_*.md)
+│   │   ├── frontend_dev/    # Frontend commands (FrontendDeveloper-Generate_*.md)
+│   │   ├── fullstack_dev/   # Fullstack commands (FullstackDeveloper-Generate_*.md)
+│   │   ├── data_engineer/   # Data Engineer commands (DataEngineer-Generate_*.md)
+│   │   ├── devops/          # DevOps commands (DevOps-Generate_*.md)
+│   │   ├── security/        # Security commands (Security-Generate_*.md)
+│   │   ├── qa/              # QA commands (QA-Generate_*.md)
+│   │   └── ux_designer/     # UX Designer commands (UXDesigner-Generate_*.md)
 │   └── common/              # Common templates and utilities
 │       └── session-handoff.md # Session handoff template
 ├── scripts/                 # Automation scripts
@@ -356,16 +356,16 @@ Each agent role has access to specialized commands for common tasks. Commands ar
 
 | Agent Role | Commands Directory | Key Commands |
 |------------|-------------------|--------------|
-| **Project Manager** | `prompts/agents/pm/` | GPP (Project Progress Report) |
-| **Architect** | `prompts/agents/architect/` | GAD (Architecture Diagram), GAR (Architecture Review), GTD (Technical Debt) |
-| **Backend Developer** | `prompts/agents/backend_dev/` | GAD (API Documentation), GAE (API Endpoint), GDM (Data Migration) |
-| **Frontend Developer** | `prompts/agents/frontend_dev/` | GAA (Accessibility Audit), GC (Component), GCS (Component Storybook) |
-| **Fullstack Developer** | `prompts/agents/fullstack_dev/` | GFF (Full Feature), GIC (Integration Contract), GETE (E2E Test) |
-| **Data Engineer** | `prompts/agents/data_engineer/` | GDP (Data Pipeline), GMD (Metrics Dashboard), GDQ (Data Quality), ERD (Entity Relationship Diagram) |
-| **DevOps Engineer** | `prompts/agents/devops/` | GDC (Deployment Checklist), GDRR (Deployment Readiness), GIR (Incident Response) |
-| **Security Engineer** | `prompts/agents/security/` | GSA (Security Audit), GSR (Security Review), GTM (Threat Model) |
-| **QA Engineer** | `prompts/agents/qa/` | GBR (Bug Report), GTCR (Test Coverage), GTP (Test Plan) |
-| **UX Designer** | `prompts/agents/ux_designer/` | GDS (Design System), GUJ (User Journey), GWF (Wireframe) |
+| **Project Manager** | `prompts/agents/pm/` | PM-Generate_Project_Progress_Report (GPP), PM-Generate_Backlog_Grooming (GBG) |
+| **Architect** | `prompts/agents/architect/` | Architect-Generate_Architecture_Decision (GAD), Architect-Generate_Architecture_Report (GAR), Architect-Generate_Technical_Debt_Report (GTD) |
+| **Backend Developer** | `prompts/agents/backend_dev/` | BackendDeveloper-Generate_API_Documentation (GAD), BackendDeveloper-Generate_API_Endpoint (GAE), BackendDeveloper-Generate_Database_Migration (GDM) |
+| **Frontend Developer** | `prompts/agents/frontend_dev/` | FrontendDeveloper-Generate_Accessibility_Audit (GAA), FrontendDeveloper-Generate_Component (GC), FrontendDeveloper-Generate_Component_Story (GCS) |
+| **Fullstack Developer** | `prompts/agents/fullstack_dev/` | FullstackDeveloper-Generate_Full_Feature (GFF), FullstackDeveloper-Generate_Integration_Contract (GIC), FullstackDeveloper-Generate_End_to_End_Test (GETE) |
+| **Data Engineer** | `prompts/agents/data_engineer/` | DataEngineer-Generate_Data_Pipeline (GDP), DataEngineer-Generate_Metrics_Dashboard (GMD), DataEngineer-Generate_Data_Quality_Check (GDQ), DataEngineer-Generate_Entity_Relationship_Diagram (ERD) |
+| **DevOps Engineer** | `prompts/agents/devops/` | DevOps-Generate_Deployment_Checklist (GDC), DevOps-Generate_Deployment_Readiness_Report (GDRR), DevOps-Generate_Incident_Report (GIR) |
+| **Security Engineer** | `prompts/agents/security/` | Security-Generate_Security_Audit (GSA), Security-Generate_Security_Review (GSR), Security-Generate_Threat_Model (GTM) |
+| **QA Engineer** | `prompts/agents/qa/` | QA-Generate_Bug_Report (GBR), QA-Generate_Test_Coverage_Report (GTCR), QA-Generate_Test_Plan (GTP), QA-Generate_Browser_Automation_Tests (GBAT) |
+| **UX Designer** | `prompts/agents/ux_designer/` | UXDesigner-Generate_Design_System_Component (GDS), UXDesigner-Generate_User_Journey (GUJ), UXDesigner-Generate_Wireframe (GWF) |
 
 ### Using Agent Commands
 
@@ -373,7 +373,7 @@ When adopting an agent role:
 
 1. **Read your role's README:** Check `prompts/agents/{role}/README.md` for available commands
 2. **Display available commands:** Agents should show users what commands they can execute
-3. **Execute commands:** Follow the detailed workflow in each command file (e.g., `prompts/agents/pm/GPP.md`)
+3. **Execute commands:** Follow the detailed workflow in each command file (e.g., `prompts/agents/pm/PM-Generate_Project_Progress_Report.md`)
 4. **Follow templates:** Use the exact report structure and file paths specified in each command
 
 See `prompts/AGENTS.md` for complete documentation on the command system.

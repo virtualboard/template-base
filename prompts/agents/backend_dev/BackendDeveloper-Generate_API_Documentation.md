@@ -1,6 +1,6 @@
 # Generate API Documentation (GAD)
 
-**Note:** This is Backend Developer's GAD (Generate API Documentation). For Architecture Decision Records, see Architect's GAD command.
+**Note:** This is Backend Developer's GAD (Generate API Documentation). For Architecture Decision Records, see Architect's Architect-Generate_Architecture_Decision command.
 
 **Trigger Phrases:**
 - "Generate API Documentation"

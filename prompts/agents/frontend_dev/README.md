@@ -9,9 +9,9 @@ This file defines specialized commands and actions for the Frontend Developer ag
 **Format:**
 ```
 📋 Available Frontend Developer Commands:
-• GC (Generate Component) - Scaffold a new React/Vue/Angular component with tests - See [frontend_dev/GC.md](GC.md)
-• GCS (Generate Component Story) - Create Storybook story for a component - See [frontend_dev/GCS.md](GCS.md)
-• GAA (Generate Accessibility Audit) - Check component for a11y compliance - See [frontend_dev/GAA.md](GAA.md)
+• GC (Generate Component) - Scaffold a new React/Vue/Angular component with tests - See [frontend_dev/FrontendDeveloper-Generate_Component.md](FrontendDeveloper-Generate_Component.md)
+• GCS (Generate Component Story) - Create Storybook story for a component - See [frontend_dev/FrontendDeveloper-Generate_Component_Story.md](FrontendDeveloper-Generate_Component_Story.md)
+• GAA (Generate Accessibility Audit) - Check component for a11y compliance - See [frontend_dev/FrontendDeveloper-Generate_Accessibility_Audit.md](FrontendDeveloper-Generate_Accessibility_Audit.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -22,7 +22,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate Component (GC)
 
-**Location:** [frontend_dev/GC.md](GC.md)
+**Location:** [frontend_dev/FrontendDeveloper-Generate_Component.md](FrontendDeveloper-Generate_Component.md)
 
 **Description:** Scaffold a new React/Vue/Angular component with tests
 
@@ -33,13 +33,13 @@ This ensures users know what commands are available to them.
 - "Scaffold component"
 - "New component"
 
-When you receive this command, read the full instructions in [frontend_dev/GC.md](GC.md).
+When you receive this command, read the full instructions in [frontend_dev/FrontendDeveloper-Generate_Component.md](FrontendDeveloper-Generate_Component.md).
 
 ---
 
 ### ✅ Generate Component Story (GCS)
 
-**Location:** [frontend_dev/GCS.md](GCS.md)
+**Location:** [frontend_dev/FrontendDeveloper-Generate_Component_Story.md](FrontendDeveloper-Generate_Component_Story.md)
 
 **Description:** Create Storybook story for a component
 
@@ -49,13 +49,13 @@ When you receive this command, read the full instructions in [frontend_dev/GC.md
 - "Create Storybook story"
 - "Add story"
 
-When you receive this command, read the full instructions in [frontend_dev/GCS.md](GCS.md).
+When you receive this command, read the full instructions in [frontend_dev/FrontendDeveloper-Generate_Component_Story.md](FrontendDeveloper-Generate_Component_Story.md).
 
 ---
 
 ### ✅ Generate Accessibility Audit (GAA)
 
-**Location:** [frontend_dev/GAA.md](GAA.md)
+**Location:** [frontend_dev/FrontendDeveloper-Generate_Accessibility_Audit.md](FrontendDeveloper-Generate_Accessibility_Audit.md)
 
 **Description:** Check component for a11y compliance
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [frontend_dev/GCS.m
 - "Accessibility check"
 - "A11y audit"
 
-When you receive this command, read the full instructions in [frontend_dev/GAA.md](GAA.md).
+When you receive this command, read the full instructions in [frontend_dev/FrontendDeveloper-Generate_Accessibility_Audit.md](FrontendDeveloper-Generate_Accessibility_Audit.md).
 
 ---
 

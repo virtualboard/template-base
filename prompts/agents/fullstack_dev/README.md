@@ -9,9 +9,9 @@ This file defines specialized commands and actions for the Fullstack Developer a
 **Format:**
 ```
 📋 Available Fullstack Developer Commands:
-• GFF (Generate Full Feature) - Scaffold complete feature (UI + API + DB) - See [fullstack_dev/GFF.md](GFF.md)
-• GIC (Generate Integration Contract) - Define API contracts between frontend/backend - See [fullstack_dev/GIC.md](GIC.md)
-• GETE (Generate End-to-End Test) - Create E2E test for user flow - See [fullstack_dev/GETE.md](GETE.md)
+• GFF (Generate Full Feature) - Scaffold complete feature (UI + API + DB) - See [fullstack_dev/FullstackDeveloper-Generate_Full_Feature.md](FullstackDeveloper-Generate_Full_Feature.md)
+• GIC (Generate Integration Contract) - Define API contracts between frontend/backend - See [fullstack_dev/FullstackDeveloper-Generate_Integration_Contract.md](FullstackDeveloper-Generate_Integration_Contract.md)
+• GETE (Generate End-to-End Test) - Create E2E test for user flow - See [fullstack_dev/FullstackDeveloper-Generate_End_to_End_Test.md](FullstackDeveloper-Generate_End_to_End_Test.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -22,7 +22,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate Full Feature (GFF)
 
-**Location:** [fullstack_dev/GFF.md](GFF.md)
+**Location:** [fullstack_dev/FullstackDeveloper-Generate_Full_Feature.md](FullstackDeveloper-Generate_Full_Feature.md)
 
 **Description:** Scaffold complete feature (UI + API + DB)
 
@@ -33,13 +33,13 @@ This ensures users know what commands are available to them.
 - "Scaffold feature"
 - "New feature end-to-end"
 
-When you receive this command, read the full instructions in [fullstack_dev/GFF.md](GFF.md).
+When you receive this command, read the full instructions in [fullstack_dev/FullstackDeveloper-Generate_Full_Feature.md](FullstackDeveloper-Generate_Full_Feature.md).
 
 ---
 
 ### ✅ Generate Integration Contract (GIC)
 
-**Location:** [fullstack_dev/GIC.md](GIC.md)
+**Location:** [fullstack_dev/FullstackDeveloper-Generate_Integration_Contract.md](FullstackDeveloper-Generate_Integration_Contract.md)
 
 **Description:** Define API contracts between frontend and backend
 
@@ -50,13 +50,13 @@ When you receive this command, read the full instructions in [fullstack_dev/GFF.
 - "Define integration contract"
 - "Set up contract testing"
 
-When you receive this command, read the full instructions in [fullstack_dev/GIC.md](GIC.md).
+When you receive this command, read the full instructions in [fullstack_dev/FullstackDeveloper-Generate_Integration_Contract.md](FullstackDeveloper-Generate_Integration_Contract.md).
 
 ---
 
 ### ✅ Generate End-to-End Test (GETE)
 
-**Location:** [fullstack_dev/GETE.md](GETE.md)
+**Location:** [fullstack_dev/FullstackDeveloper-Generate_End_to_End_Test.md](FullstackDeveloper-Generate_End_to_End_Test.md)
 
 **Description:** Create E2E test for user flow
 
@@ -66,7 +66,7 @@ When you receive this command, read the full instructions in [fullstack_dev/GIC.
 - "Create E2E test"
 - "E2E test"
 
-When you receive this command, read the full instructions in [fullstack_dev/GETE.md](GETE.md).
+When you receive this command, read the full instructions in [fullstack_dev/FullstackDeveloper-Generate_End_to_End_Test.md](FullstackDeveloper-Generate_End_to_End_Test.md).
 
 ---
 

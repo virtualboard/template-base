@@ -9,10 +9,10 @@ This file defines specialized commands and actions for the QA Engineer agent rol
 **Format:**
 ```
 📋 Available QA Commands:
-• GTP (Generate Test Plan) - Create comprehensive test plan for a feature - See [qa/GTP.md](GTP.md)
-• GBR (Generate Bug Report) - Document bugs with reproduction steps - See [qa/GBR.md](GBR.md)
-• GTCR (Generate Test Coverage Report) - Analyze test coverage gaps - See [qa/GTCR.md](GTCR.md)
-• GBAT (Generate Browser Automation Tests) - Create Playwright browser tests with full automation - See [qa/GBAT.md](GBAT.md)
+• GTP (Generate Test Plan) - Create comprehensive test plan for a feature - See [qa/QA-Generate_Test_Plan.md](QA-Generate_Test_Plan.md)
+• GBR (Generate Bug Report) - Document bugs with reproduction steps - See [qa/QA-Generate_Bug_Report.md](QA-Generate_Bug_Report.md)
+• GTCR (Generate Test Coverage Report) - Analyze test coverage gaps - See [qa/QA-Generate_Test_Coverage_Report.md](QA-Generate_Test_Coverage_Report.md)
+• GBAT (Generate Browser Automation Tests) - Create Playwright browser tests with full automation - See [qa/QA-Generate_Browser_Automation_Tests.md](QA-Generate_Browser_Automation_Tests.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -23,7 +23,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate Test Plan (GTP)
 
-**Location:** [qa/GTP.md](GTP.md)
+**Location:** [qa/QA-Generate_Test_Plan.md](QA-Generate_Test_Plan.md)
 
 **Description:** Create comprehensive test plan for a feature
 
@@ -33,13 +33,13 @@ This ensures users know what commands are available to them.
 - "Create test plan"
 - "Test plan for feature"
 
-When you receive this command, read the full instructions in [qa/GTP.md](GTP.md).
+When you receive this command, read the full instructions in [qa/QA-Generate_Test_Plan.md](QA-Generate_Test_Plan.md).
 
 ---
 
 ### ✅ Generate Bug Report (GBR)
 
-**Location:** [qa/GBR.md](GBR.md)
+**Location:** [qa/QA-Generate_Bug_Report.md](QA-Generate_Bug_Report.md)
 
 **Description:** Document bugs with reproduction steps
 
@@ -50,13 +50,13 @@ When you receive this command, read the full instructions in [qa/GTP.md](GTP.md)
 - "Create bug report"
 - "Log defect"
 
-When you receive this command, read the full instructions in [qa/GBR.md](GBR.md).
+When you receive this command, read the full instructions in [qa/QA-Generate_Bug_Report.md](QA-Generate_Bug_Report.md).
 
 ---
 
 ### ✅ Generate Test Coverage Report (GTCR)
 
-**Location:** [qa/GTCR.md](GTCR.md)
+**Location:** [qa/QA-Generate_Test_Coverage_Report.md](QA-Generate_Test_Coverage_Report.md)
 
 **Description:** Analyze test coverage gaps
 
@@ -66,13 +66,13 @@ When you receive this command, read the full instructions in [qa/GBR.md](GBR.md)
 - "Create test coverage report"
 - "Test coverage analysis"
 
-When you receive this command, read the full instructions in [qa/GTCR.md](GTCR.md).
+When you receive this command, read the full instructions in [qa/QA-Generate_Test_Coverage_Report.md](QA-Generate_Test_Coverage_Report.md).
 
 ---
 
 ### ✅ Generate Browser Automation Tests (GBAT)
 
-**Location:** [qa/GBAT.md](GBAT.md)
+**Location:** [qa/QA-Generate_Browser_Automation_Tests.md](QA-Generate_Browser_Automation_Tests.md)
 
 **Description:** Create Playwright browser tests with full automation workflow (test case generation, automation scripts, execution, and reporting)
 
@@ -84,7 +84,7 @@ When you receive this command, read the full instructions in [qa/GTCR.md](GTCR.m
 - "Create browser test cases"
 - "Playwright test automation"
 
-When you receive this command, read the full instructions in [qa/GBAT.md](GBAT.md).
+When you receive this command, read the full instructions in [qa/QA-Generate_Browser_Automation_Tests.md](QA-Generate_Browser_Automation_Tests.md).
 
 **Note:** This is a multi-phase command that handles:
 1. Test case documentation generation

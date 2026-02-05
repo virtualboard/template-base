@@ -180,6 +180,9 @@ When working with an agent, you can trigger specialized commands:
 
 # As Frontend Developer
 "GC - Generate a UserProfile component"
+
+# Commands can also be triggered by their full file names
+# e.g., "PM-Generate_Project_Progress_Report" or short code "GPP"
 ```
 
 Each command follows a structured workflow and produces standardized output.

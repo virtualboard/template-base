@@ -9,9 +9,9 @@ This file defines specialized commands and actions for the UX/Product Designer a
 **Format:**
 ```
 📋 Available UX/Product Designer Commands:
-• GUJ (Generate User Journey) - Map complete user journey with touchpoints - See [ux_designer/GUJ.md](GUJ.md)
-• GWF (Generate Wireframe) - Create wireframe documentation for screens - See [ux_designer/GWF.md](GWF.md)
-• GDS (Generate Design System Component) - Document design system component - See [ux_designer/GDS.md](GDS.md)
+• GUJ (Generate User Journey) - Map complete user journey with touchpoints - See [ux_designer/UXDesigner-Generate_User_Journey.md](UXDesigner-Generate_User_Journey.md)
+• GWF (Generate Wireframe) - Create wireframe documentation for screens - See [ux_designer/UXDesigner-Generate_Wireframe.md](UXDesigner-Generate_Wireframe.md)
+• GDS (Generate Design System Component) - Document design system component - See [ux_designer/UXDesigner-Generate_Design_System_Component.md](UXDesigner-Generate_Design_System_Component.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -22,7 +22,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate User Journey (GUJ)
 
-**Location:** [ux_designer/GUJ.md](GUJ.md)
+**Location:** [ux_designer/UXDesigner-Generate_User_Journey.md](UXDesigner-Generate_User_Journey.md)
 
 **Description:** Map complete user journey with touchpoints
 
@@ -33,13 +33,13 @@ This ensures users know what commands are available to them.
 - "Map user flow"
 - "User journey map"
 
-When you receive this command, read the full instructions in [ux_designer/GUJ.md](GUJ.md).
+When you receive this command, read the full instructions in [ux_designer/UXDesigner-Generate_User_Journey.md](UXDesigner-Generate_User_Journey.md).
 
 ---
 
 ### ✅ Generate Wireframe (GWF)
 
-**Location:** [ux_designer/GWF.md](GWF.md)
+**Location:** [ux_designer/UXDesigner-Generate_Wireframe.md](UXDesigner-Generate_Wireframe.md)
 
 **Description:** Create wireframe documentation for screens
 
@@ -49,13 +49,13 @@ When you receive this command, read the full instructions in [ux_designer/GUJ.md
 - "Create wireframe"
 - "Document wireframe"
 
-When you receive this command, read the full instructions in [ux_designer/GWF.md](GWF.md).
+When you receive this command, read the full instructions in [ux_designer/UXDesigner-Generate_Wireframe.md](UXDesigner-Generate_Wireframe.md).
 
 ---
 
 ### ✅ Generate Design System Component (GDS)
 
-**Location:** [ux_designer/GDS.md](GDS.md)
+**Location:** [ux_designer/UXDesigner-Generate_Design_System_Component.md](UXDesigner-Generate_Design_System_Component.md)
 
 **Description:** Document design system component
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [ux_designer/GWF.md
 - "Document design component"
 - "Design system update"
 
-When you receive this command, read the full instructions in [ux_designer/GDS.md](GDS.md).
+When you receive this command, read the full instructions in [ux_designer/UXDesigner-Generate_Design_System_Component.md](UXDesigner-Generate_Design_System_Component.md).
 
 ---
 

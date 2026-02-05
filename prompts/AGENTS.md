@@ -53,12 +53,10 @@ The agent commands system provides standardized workflows for common project man
 
 ## Command File Structure
 
-Each agent command file (`prompts/agents/{role}.md`) follows this structure:
+Each agent has a `README.md` index and individual command files following the naming pattern `{AgentName}-{Command_Name}.md` (e.g., `PM-Generate_Project_Progress_Report.md`). Each command file follows this structure:
 
 ```markdown
-# {Agent Role} Commands
-
-## Command Name (TRIGGER_CODE)
+# Command Name (TRIGGER_CODE)
 
 **Trigger Phrases:**
 - "Full command phrase"
@@ -86,8 +84,8 @@ When the {Role} agent receives this command, it should:
 
 To add a new command for any agent:
 
-1. **Open the agent's command file**: `prompts/agents/{role}.md`
-2. **Add a new section** with:
+1. **Create a new command file**: `prompts/agents/{role}/{AgentName}-{Command_Name}.md`
+2. **Include** in the file:
    - Clear command name and trigger code
    - List of trigger phrases (including short codes)
    - Step-by-step action workflow

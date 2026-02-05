@@ -9,9 +9,9 @@ This file defines specialized commands and actions for the System Architect agen
 **Format:**
 ```
 📋 Available Architect Commands:
-• GAD (Generate Architecture Decision) - Document architectural decisions with ADR format - See [architect/GAD.md](GAD.md)
-• GAR (Generate Architecture Report) - Create architecture analysis reports - See [architect/GAR.md](GAR.md)
-• GTD (Generate Technical Debt Report) - Analyze and prioritize technical debt - See [architect/GTD.md](GTD.md)
+• GAD (Generate Architecture Decision) - Document architectural decisions with ADR format - See [architect/Architect-Generate_Architecture_Decision.md](Architect-Generate_Architecture_Decision.md)
+• GAR (Generate Architecture Report) - Create architecture analysis reports - See [architect/Architect-Generate_Architecture_Report.md](Architect-Generate_Architecture_Report.md)
+• GTD (Generate Technical Debt Report) - Analyze and prioritize technical debt - See [architect/Architect-Generate_Technical_Debt_Report.md](Architect-Generate_Technical_Debt_Report.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -22,7 +22,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate Architecture Decision (GAD)
 
-**Location:** [architect/GAD.md](GAD.md)
+**Location:** [architect/Architect-Generate_Architecture_Decision.md](Architect-Generate_Architecture_Decision.md)
 
 **Description:** Document architectural decisions with ADR format
 
@@ -33,13 +33,13 @@ This ensures users know what commands are available to them.
 - "Create ADR"
 - "Architecture Decision Record"
 
-When you receive this command, read the full instructions in [architect/GAD.md](GAD.md).
+When you receive this command, read the full instructions in [architect/Architect-Generate_Architecture_Decision.md](Architect-Generate_Architecture_Decision.md).
 
 ---
 
 ### ✅ Generate Architecture Report (GAR)
 
-**Location:** [architect/GAR.md](GAR.md)
+**Location:** [architect/Architect-Generate_Architecture_Report.md](Architect-Generate_Architecture_Report.md)
 
 **Description:** Create architecture analysis reports
 
@@ -49,13 +49,13 @@ When you receive this command, read the full instructions in [architect/GAD.md](
 - "Create architecture report"
 - "Architecture analysis"
 
-When you receive this command, read the full instructions in [architect/GAR.md](GAR.md).
+When you receive this command, read the full instructions in [architect/Architect-Generate_Architecture_Report.md](Architect-Generate_Architecture_Report.md).
 
 ---
 
 ### ✅ Generate Technical Debt Report (GTD)
 
-**Location:** [architect/GTD.md](GTD.md)
+**Location:** [architect/Architect-Generate_Technical_Debt_Report.md](Architect-Generate_Technical_Debt_Report.md)
 
 **Description:** Analyze and prioritize technical debt
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [architect/GAR.md](
 - "Analyze technical debt"
 - "Technical debt analysis"
 
-When you receive this command, read the full instructions in [architect/GTD.md](GTD.md).
+When you receive this command, read the full instructions in [architect/Architect-Generate_Technical_Debt_Report.md](Architect-Generate_Technical_Debt_Report.md).
 
 ---
 

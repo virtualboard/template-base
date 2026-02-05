@@ -9,9 +9,9 @@ This file defines specialized commands and actions for the DevOps Engineer agent
 **Format:**
 ```
 📋 Available DevOps Commands:
-• GDC (Generate Deployment Checklist) - Create pre-deployment verification checklist - See [devops/GDC.md](GDC.md)
-• GIR (Generate Incident Report) - Document incidents with timeline and RCA - See [devops/GIR.md](GIR.md)
-• GDRR (Generate Deployment Readiness Report) - Comprehensive deployment assessment - See [devops/GDRR.md](GDRR.md)
+• GDC (Generate Deployment Checklist) - Create pre-deployment verification checklist - See [devops/DevOps-Generate_Deployment_Checklist.md](DevOps-Generate_Deployment_Checklist.md)
+• GIR (Generate Incident Report) - Document incidents with timeline and RCA - See [devops/DevOps-Generate_Incident_Report.md](DevOps-Generate_Incident_Report.md)
+• GDRR (Generate Deployment Readiness Report) - Comprehensive deployment assessment - See [devops/DevOps-Generate_Deployment_Readiness_Report.md](DevOps-Generate_Deployment_Readiness_Report.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -22,7 +22,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate Deployment Checklist (GDC)
 
-**Location:** [devops/GDC.md](GDC.md)
+**Location:** [devops/DevOps-Generate_Deployment_Checklist.md](DevOps-Generate_Deployment_Checklist.md)
 
 **Description:** Create pre-deployment verification checklist
 
@@ -32,13 +32,13 @@ This ensures users know what commands are available to them.
 - "Create deployment checklist"
 - "Deployment verification"
 
-When you receive this command, read the full instructions in [devops/GDC.md](GDC.md).
+When you receive this command, read the full instructions in [devops/DevOps-Generate_Deployment_Checklist.md](DevOps-Generate_Deployment_Checklist.md).
 
 ---
 
 ### ✅ Generate Incident Report (GIR)
 
-**Location:** [devops/GIR.md](GIR.md)
+**Location:** [devops/DevOps-Generate_Incident_Report.md](DevOps-Generate_Incident_Report.md)
 
 **Description:** Document incidents with timeline and RCA
 
@@ -49,13 +49,13 @@ When you receive this command, read the full instructions in [devops/GDC.md](GDC
 - "Document incident"
 - "Post-mortem"
 
-When you receive this command, read the full instructions in [devops/GIR.md](GIR.md).
+When you receive this command, read the full instructions in [devops/DevOps-Generate_Incident_Report.md](DevOps-Generate_Incident_Report.md).
 
 ---
 
 ### ✅ Generate Deployment Readiness Report (GDRR)
 
-**Location:** [devops/GDRR.md](GDRR.md)
+**Location:** [devops/DevOps-Generate_Deployment_Readiness_Report.md](DevOps-Generate_Deployment_Readiness_Report.md)
 
 **Description:** Comprehensive deployment assessment
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [devops/GIR.md](GIR
 - "Create deployment readiness report"
 - "Deployment assessment"
 
-When you receive this command, read the full instructions in [devops/GDRR.md](GDRR.md).
+When you receive this command, read the full instructions in [devops/DevOps-Generate_Deployment_Readiness_Report.md](DevOps-Generate_Deployment_Readiness_Report.md).
 
 ---
 

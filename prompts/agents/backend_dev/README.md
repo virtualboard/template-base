@@ -9,9 +9,9 @@ This file defines specialized commands and actions for the Backend Developer age
 **Format:**
 ```
 📋 Available Backend Developer Commands:
-• GAE (Generate API Endpoint) - Scaffold REST/GraphQL endpoint with validation - See [backend_dev/GAE.md](GAE.md)
-• GDM (Generate Database Migration) - Create database migration file - See [backend_dev/GDM.md](GDM.md)
-• GAD (Generate API Documentation) - Auto-generate OpenAPI/Swagger docs - See [backend_dev/GAD.md](GAD.md)
+• GAE (Generate API Endpoint) - Scaffold REST/GraphQL endpoint with validation - See [backend_dev/BackendDeveloper-Generate_API_Endpoint.md](BackendDeveloper-Generate_API_Endpoint.md)
+• GDM (Generate Database Migration) - Create database migration file - See [backend_dev/BackendDeveloper-Generate_Database_Migration.md](BackendDeveloper-Generate_Database_Migration.md)
+• GAD (Generate API Documentation) - Auto-generate OpenAPI/Swagger docs - See [backend_dev/BackendDeveloper-Generate_API_Documentation.md](BackendDeveloper-Generate_API_Documentation.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -22,7 +22,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate API Endpoint (GAE)
 
-**Location:** [backend_dev/GAE.md](GAE.md)
+**Location:** [backend_dev/BackendDeveloper-Generate_API_Endpoint.md](BackendDeveloper-Generate_API_Endpoint.md)
 
 **Description:** Scaffold REST/GraphQL endpoint with validation
 
@@ -33,13 +33,13 @@ This ensures users know what commands are available to them.
 - "Create endpoint"
 - "New API route"
 
-When you receive this command, read the full instructions in [backend_dev/GAE.md](GAE.md).
+When you receive this command, read the full instructions in [backend_dev/BackendDeveloper-Generate_API_Endpoint.md](BackendDeveloper-Generate_API_Endpoint.md).
 
 ---
 
 ### ✅ Generate Database Migration (GDM)
 
-**Location:** [backend_dev/GDM.md](GDM.md)
+**Location:** [backend_dev/BackendDeveloper-Generate_Database_Migration.md](BackendDeveloper-Generate_Database_Migration.md)
 
 **Description:** Create database migration file
 
@@ -49,17 +49,15 @@ When you receive this command, read the full instructions in [backend_dev/GAE.md
 - "Create migration"
 - "Database migration"
 
-When you receive this command, read the full instructions in [backend_dev/GDM.md](GDM.md).
+When you receive this command, read the full instructions in [backend_dev/BackendDeveloper-Generate_Database_Migration.md](BackendDeveloper-Generate_Database_Migration.md).
 
 ---
 
 ### ✅ Generate API Documentation (GAD)
 
-**Location:** [backend_dev/GAD.md](GAD.md)
+**Location:** [backend_dev/BackendDeveloper-Generate_API_Documentation.md](BackendDeveloper-Generate_API_Documentation.md)
 
 **Description:** Auto-generate OpenAPI/Swagger docs
-
-**Note:** This is Backend Developer's GAD (Generate API Documentation). For Architecture Decision Records, see Architect's GAD command.
 
 **Trigger Phrases:**
 - "Generate API Documentation"
@@ -67,7 +65,7 @@ When you receive this command, read the full instructions in [backend_dev/GDM.md
 - "Document API"
 - "Create API docs"
 
-When you receive this command, read the full instructions in [backend_dev/GAD.md](GAD.md).
+When you receive this command, read the full instructions in [backend_dev/BackendDeveloper-Generate_API_Documentation.md](BackendDeveloper-Generate_API_Documentation.md).
 
 ---
 

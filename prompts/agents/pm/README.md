@@ -9,8 +9,8 @@ This file defines specialized commands and actions for the Project Manager agent
 **Format:**
 ```
 📋 Available PM Commands:
-• GPP (Generate Project Progress Report) - Create comprehensive project status reports - See [pm/GPP.md](GPP.md)
-• GBG (Generate Backlog Grooming) - Perform comprehensive backlog refinement session - See [pm/GBG.md](GBG.md)
+• GPP (Generate Project Progress Report) - Create comprehensive project status reports - See [pm/PM-Generate_Project_Progress_Report.md](PM-Generate_Project_Progress_Report.md)
+• GBG (Generate Backlog Grooming) - Perform comprehensive backlog refinement session - See [pm/PM-Generate_Backlog_Grooming.md](PM-Generate_Backlog_Grooming.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -21,7 +21,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate Project Progress Report (GPP)
 
-**Location:** [pm/GPP.md](GPP.md)
+**Location:** [pm/PM-Generate_Project_Progress_Report.md](PM-Generate_Project_Progress_Report.md)
 
 **Description:** Create comprehensive project status reports
 
@@ -31,13 +31,13 @@ This ensures users know what commands are available to them.
 - "Create progress report"
 - "Project status report"
 
-When you receive this command, read the full instructions in [pm/GPP.md](GPP.md).
+When you receive this command, read the full instructions in [pm/PM-Generate_Project_Progress_Report.md](PM-Generate_Project_Progress_Report.md).
 
 ---
 
 ### ✅ Generate Backlog Grooming (GBG)
 
-**Location:** [pm/GBG.md](GBG.md)
+**Location:** [pm/PM-Generate_Backlog_Grooming.md](PM-Generate_Backlog_Grooming.md)
 
 **Description:** Perform comprehensive backlog refinement session
 
@@ -49,7 +49,7 @@ When you receive this command, read the full instructions in [pm/GPP.md](GPP.md)
 - "Refine backlog"
 - "Backlog refinement"
 
-When you receive this command, read the full instructions in [pm/GBG.md](GBG.md).
+When you receive this command, read the full instructions in [pm/PM-Generate_Backlog_Grooming.md](PM-Generate_Backlog_Grooming.md).
 
 **What it does:**
 - Assesses implementation status of all backlog features

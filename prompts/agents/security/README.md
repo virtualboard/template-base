@@ -9,9 +9,9 @@ This file defines specialized commands and actions for the Security Engineer age
 **Format:**
 ```
 📋 Available Security Engineer Commands:
-• GSA (Generate Security Audit) - Perform comprehensive security audit - See [security/GSA.md](GSA.md)
-• GTM (Generate Threat Model) - Create threat model for feature/system - See [security/GTM.md](GTM.md)
-• GSR (Generate Security Review) - Review code/config for vulnerabilities - See [security/GSR.md](GSR.md)
+• GSA (Generate Security Audit) - Perform comprehensive security audit - See [security/Security-Generate_Security_Audit.md](Security-Generate_Security_Audit.md)
+• GTM (Generate Threat Model) - Create threat model for feature/system - See [security/Security-Generate_Threat_Model.md](Security-Generate_Threat_Model.md)
+• GSR (Generate Security Review) - Review code/config for vulnerabilities - See [security/Security-Generate_Security_Review.md](Security-Generate_Security_Review.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -22,7 +22,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate Security Audit (GSA)
 
-**Location:** [security/GSA.md](GSA.md)
+**Location:** [security/Security-Generate_Security_Audit.md](Security-Generate_Security_Audit.md)
 
 **Description:** Perform comprehensive security audit
 
@@ -33,13 +33,13 @@ This ensures users know what commands are available to them.
 - "Audit security"
 - "Security assessment"
 
-When you receive this command, read the full instructions in [security/GSA.md](GSA.md).
+When you receive this command, read the full instructions in [security/Security-Generate_Security_Audit.md](Security-Generate_Security_Audit.md).
 
 ---
 
 ### ✅ Generate Threat Model (GTM)
 
-**Location:** [security/GTM.md](GTM.md)
+**Location:** [security/Security-Generate_Threat_Model.md](Security-Generate_Threat_Model.md)
 
 **Description:** Create threat model for feature/system
 
@@ -49,13 +49,13 @@ When you receive this command, read the full instructions in [security/GSA.md](G
 - "Threat modeling"
 - "Create threat model"
 
-When you receive this command, read the full instructions in [security/GTM.md](GTM.md).
+When you receive this command, read the full instructions in [security/Security-Generate_Threat_Model.md](Security-Generate_Threat_Model.md).
 
 ---
 
 ### ✅ Generate Security Review (GSR)
 
-**Location:** [security/GSR.md](GSR.md)
+**Location:** [security/Security-Generate_Security_Review.md](Security-Generate_Security_Review.md)
 
 **Description:** Review code/config for vulnerabilities
 
@@ -65,7 +65,7 @@ When you receive this command, read the full instructions in [security/GTM.md](G
 - "Review security"
 - "Security code review"
 
-When you receive this command, read the full instructions in [security/GSR.md](GSR.md).
+When you receive this command, read the full instructions in [security/Security-Generate_Security_Review.md](Security-Generate_Security_Review.md).
 
 ---
 

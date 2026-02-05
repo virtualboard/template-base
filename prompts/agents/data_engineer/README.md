@@ -9,10 +9,10 @@ This file defines specialized commands and actions for the Data Engineer agent r
 **Format:**
 ```
 📋 Available Data Engineer Commands:
-• GDP (Generate Data Pipeline) - Create ETL/ELT pipeline with transformations - See [data_engineer/GDP.md](GDP.md)
-• GMD (Generate Metrics Dashboard) - Build analytics dashboard with key metrics - See [data_engineer/GMD.md](GMD.md)
-• GDQ (Generate Data Quality Check) - Create data validation and quality rules - See [data_engineer/GDQ.md](GDQ.md)
-• ERD (Entity Relationship Diagram) - Create data model diagram for database schemas and service models - See [data_engineer/ERD.md](ERD.md)
+• GDP (Generate Data Pipeline) - Create ETL/ELT pipeline with transformations - See [data_engineer/DataEngineer-Generate_Data_Pipeline.md](DataEngineer-Generate_Data_Pipeline.md)
+• GMD (Generate Metrics Dashboard) - Build analytics dashboard with key metrics - See [data_engineer/DataEngineer-Generate_Metrics_Dashboard.md](DataEngineer-Generate_Metrics_Dashboard.md)
+• GDQ (Generate Data Quality Check) - Create data validation and quality rules - See [data_engineer/DataEngineer-Generate_Data_Quality_Check.md](DataEngineer-Generate_Data_Quality_Check.md)
+• ERD (Entity Relationship Diagram) - Create data model diagram for database schemas and service models - See [data_engineer/DataEngineer-Generate_Entity_Relationship_Diagram.md](DataEngineer-Generate_Entity_Relationship_Diagram.md)
 ```
 
 This ensures users know what commands are available to them.
@@ -23,7 +23,7 @@ This ensures users know what commands are available to them.
 
 ### ✅ Generate Data Pipeline (GDP)
 
-**Location:** [data_engineer/GDP.md](GDP.md)
+**Location:** [data_engineer/DataEngineer-Generate_Data_Pipeline.md](DataEngineer-Generate_Data_Pipeline.md)
 
 **Description:** Create ETL/ELT pipeline with transformations
 
@@ -34,13 +34,13 @@ This ensures users know what commands are available to them.
 - "Build ETL pipeline"
 - "Create data flow"
 
-When you receive this command, read the full instructions in [data_engineer/GDP.md](GDP.md).
+When you receive this command, read the full instructions in [data_engineer/DataEngineer-Generate_Data_Pipeline.md](DataEngineer-Generate_Data_Pipeline.md).
 
 ---
 
 ### ✅ Generate Metrics Dashboard (GMD)
 
-**Location:** [data_engineer/GMD.md](GMD.md)
+**Location:** [data_engineer/DataEngineer-Generate_Metrics_Dashboard.md](DataEngineer-Generate_Metrics_Dashboard.md)
 
 **Description:** Build analytics dashboard with key metrics
 
@@ -50,13 +50,13 @@ When you receive this command, read the full instructions in [data_engineer/GDP.
 - "Create dashboard"
 - "Build analytics dashboard"
 
-When you receive this command, read the full instructions in [data_engineer/GMD.md](GMD.md).
+When you receive this command, read the full instructions in [data_engineer/DataEngineer-Generate_Metrics_Dashboard.md](DataEngineer-Generate_Metrics_Dashboard.md).
 
 ---
 
 ### ✅ Generate Data Quality Check (GDQ)
 
-**Location:** [data_engineer/GDQ.md](GDQ.md)
+**Location:** [data_engineer/DataEngineer-Generate_Data_Quality_Check.md](DataEngineer-Generate_Data_Quality_Check.md)
 
 **Description:** Create data validation and quality rules
 
@@ -66,13 +66,13 @@ When you receive this command, read the full instructions in [data_engineer/GMD.
 - "Create data validation"
 - "Quality rules"
 
-When you receive this command, read the full instructions in [data_engineer/GDQ.md](GDQ.md).
+When you receive this command, read the full instructions in [data_engineer/DataEngineer-Generate_Data_Quality_Check.md](DataEngineer-Generate_Data_Quality_Check.md).
 
 ---
 
 ### ✅ Entity Relationship Diagram (ERD)
 
-**Location:** [data_engineer/ERD.md](ERD.md)
+**Location:** [data_engineer/DataEngineer-Generate_Entity_Relationship_Diagram.md](DataEngineer-Generate_Entity_Relationship_Diagram.md)
 
 **Description:** Create data model diagram for database schemas and service models
 
@@ -84,7 +84,7 @@ When you receive this command, read the full instructions in [data_engineer/GDQ.
 - "Create database diagram"
 - "Show data model"
 
-When you receive this command, read the full instructions in [data_engineer/ERD.md](ERD.md).
+When you receive this command, read the full instructions in [data_engineer/DataEngineer-Generate_Entity_Relationship_Diagram.md](DataEngineer-Generate_Entity_Relationship_Diagram.md).
 
 ---
 
