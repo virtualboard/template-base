@@ -87,11 +87,14 @@ Determine the worktree configuration:
 # Default worktree base path
 WORKTREE_BASE="${VIRTUALBOARD_WORKTREE_PATH:-/tmp/virtualboard-worktrees}"
 
+# Repository name (derived from git root directory name)
+REPO_NAME=$(basename "$(git rev-parse --show-toplevel)")
+
 # Branch name format
 BRANCH_NAME="feature/FTR-XXXX/<feature-slug>"
 
-# Worktree directory
-WORKTREE_DIR="$WORKTREE_BASE/FTR-XXXX"
+# Worktree directory (includes repo name to avoid collisions across projects)
+WORKTREE_DIR="$WORKTREE_BASE/$REPO_NAME/FTR-XXXX"
 ```
 
 Run the worktree setup script:

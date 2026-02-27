@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-02-26
+
+### Changed
+- **Worktree path structure now includes repository name** to prevent feature ID collisions across projects. Path changed from `$WORKTREE_BASE/FTR-XXXX` to `$WORKTREE_BASE/<repo-name>/FTR-XXXX` (e.g., `/tmp/virtualboard-worktrees/my-project/FTR-0042`).
+- Updated `scripts/worktree-setup.sh` to detect repository name from git root directory
+- Updated `/work-on` skill documentation (`skills/work-on/SKILL.md`, `skills/work-on/config.md`) with new path structure
+
 ## [0.5.0] - 2026-02-04
 
 ### Changed

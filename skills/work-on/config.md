@@ -18,13 +18,18 @@ Base directory where git worktrees are created.
 export VIRTUALBOARD_WORKTREE_PATH="$HOME/worktrees"
 ```
 
-Worktrees are created as subdirectories named by feature ID:
+Worktrees are created as subdirectories organized by repository name, then feature ID:
 ```
 $VIRTUALBOARD_WORKTREE_PATH/
-├── FTR-0001/
-├── FTR-0042/
-└── FTR-0099/
+├── my-webapp/
+│   ├── FTR-0001/
+│   └── FTR-0042/
+└── api-service/
+    ├── FTR-0001/
+    └── FTR-0099/
 ```
+
+This structure prevents feature ID collisions when using VirtualBoard across multiple projects.
 
 ### VIRTUALBOARD_POST_PUSH
 

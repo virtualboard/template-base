@@ -43,6 +43,9 @@ FEATURE_SLUG="$2"
 WORKTREE_BASE="${3:-${VIRTUALBOARD_WORKTREE_PATH:-/tmp/virtualboard-worktrees}}"
 BASE_BRANCH="${4:-${VIRTUALBOARD_BASE_BRANCH:-}}"
 
+# Get repository name from git remote or directory name
+REPO_NAME=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || basename "$(pwd)")
+
 # Validate feature ID format
 if ! echo "$FEATURE_ID" | grep -qE '^FTR-[0-9]{4}$'; then
     echo -e "${RED}Error: Invalid feature ID format '$FEATURE_ID'${NC}"
@@ -52,9 +55,9 @@ fi
 
 # Construct paths
 BRANCH_NAME="feature/$FEATURE_ID/$FEATURE_SLUG"
-WORKTREE_DIR="$WORKTREE_BASE/$FEATURE_ID"
+WORKTREE_DIR="$WORKTREE_BASE/$REPO_NAME/$FEATURE_ID"
 
-echo -e "${BLUE}Setting up worktree for $FEATURE_ID${NC}"
+echo -e "${BLUE}Setting up worktree for $FEATURE_ID (repo: $REPO_NAME)${NC}"
 echo "  Branch: $BRANCH_NAME"
 echo "  Directory: $WORKTREE_DIR"
 echo ""
