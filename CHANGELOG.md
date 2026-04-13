@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-04-11
+
+### Added
+- **`scripts/install-vb-cli.sh --ensure-latest`** — non-interactive bootstrap mode for agents and CI. Installs the CLI when missing, compares the installed version to the latest GitHub release, runs `vb upgrade` when outdated (with `sudo vb upgrade` as a fallback), and exits cleanly when already on the latest release. Also adds `--yes`/`-y` for non-interactive fresh installs.
+
+### Changed
+- **The `vb` CLI is now required** for all feature workflow operations. Agents and CI must run `./scripts/install-vb-cli.sh --ensure-latest` before invoking any `vb` command — no shell-script fallbacks remain.
+- Documentation (`CLAUDE.md`, `AGENTS.md`, `README.md`, `.claude-plugin/README.md`, `skills/work-on/SKILL.md`, `docs/.opencode/skill/virtualboard/SKILL.md`, `templates/specs/README.md`, `prompts/agents/pm/PM-Generate_Backlog_Grooming.md`, `docs/workflow.html`, `docs/features.html`, `docs/index.html`) updated to reflect the CLI-required model and the `--ensure-latest` bootstrap pattern.
+- Bumped version from 0.5.1 to 0.6.0 across `version.txt`, `.claude-plugin/plugin.json`, and `.claude-plugin/marketplace.json`.
+
+### Removed
+- `scripts/ftr-new.sh`, `scripts/ftr-move.sh`, `scripts/ftr-validate.sh`, `scripts/ftr-index.sh` — replaced by `vb new`, `vb move`, `vb validate`, `vb index`. `scripts/install-vb-cli.sh` and `scripts/worktree-setup.sh` remain as the installer bootstrap and `/work-on` skill helper respectively.
+
 ## [0.5.1] - 2026-02-26
 
 ### Changed

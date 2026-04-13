@@ -251,12 +251,13 @@ git worktree prune
 Move the feature to `in-progress` if it was in `backlog`:
 
 ```bash
-./scripts/ftr-move.sh FTR-XXXX in-progress
+# Ensure the latest vb CLI is installed (required)
+./scripts/install-vb-cli.sh --ensure-latest
+
+vb move FTR-XXXX in-progress --owner claude
 ```
 
-Update the feature file's frontmatter:
-- `status: in-progress`
-- `owner: <appropriate agent or "claude">`
+`vb move` updates the frontmatter (`status`, `updated`, `owner`) and relocates the file. Do not edit those fields by hand.
 - `updated: <today's date>`
 
 ## Configuration

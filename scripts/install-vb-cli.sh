@@ -13,26 +13,62 @@ GITHUB_REPO="virtualboard/vb-cli"
 INSTALL_TO_PATH=true
 LOCAL_INSTALL=false
 INSTALL_PATH="/usr/local/bin"
+ENSURE_LATEST=false
+NONINTERACTIVE=false
+ALLOW_SUDO=false
 
 # Parse arguments
-if [[ $# -gt 0 ]]; then
-    if [[ "$1" == "--local" ]] || [[ "$1" == "-l" ]]; then
-        LOCAL_INSTALL=true
-        INSTALL_TO_PATH=false
-        INSTALL_PATH="."
-    elif [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
-        echo "Usage: $0 [options]"
-        echo ""
-        echo "Options:"
-        echo "  --local, -l    Install to current directory (./vb)"
-        echo "  --help, -h     Show this help message"
-        echo ""
-        echo "Examples:"
-        echo "  $0              # Install to /usr/local/bin (requires sudo)"
-        echo "  $0 --local      # Install to ./vb in current directory"
-        exit 0
-    else
-        INSTALL_PATH="$1"
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --local|-l)
+            LOCAL_INSTALL=true
+            INSTALL_TO_PATH=false
+            INSTALL_PATH="."
+            shift
+            ;;
+        --ensure-latest)
+            ENSURE_LATEST=true
+            NONINTERACTIVE=true
+            shift
+            ;;
+        --allow-sudo)
+            ALLOW_SUDO=true
+            shift
+            ;;
+        --yes|-y)
+            NONINTERACTIVE=true
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: $0 [options] [install-path]"
+            echo ""
+            echo "Options:"
+            echo "  --local, -l        Install to current directory (./vb)"
+            echo "  --ensure-latest    Install if missing, upgrade if outdated (non-interactive)"
+            echo "  --allow-sudo       Allow sudo escalation on upgrade failure (requires --ensure-latest)"
+            echo "  --yes, -y          Non-interactive mode; auto-confirm all prompts"
+            echo "  --help, -h         Show this help message"
+            echo ""
+            echo "Examples:"
+            echo "  $0                       # Install to /usr/local/bin (requires sudo)"
+            echo "  $0 --local               # Install to ./vb in current directory"
+            echo "  $0 --ensure-latest       # Used by agents/CI to guarantee pinned vb"
+            exit 0
+            ;;
+        *)
+            INSTALL_PATH="$1"
+            shift
+            ;;
+    esac
+done
+
+# Read pinned version from .vb-version if it exists
+PINNED_VERSION=""
+VB_VERSION_FILE=".vb-version"
+if [[ -f "$VB_VERSION_FILE" ]]; then
+    PINNED_VERSION=$(tr -d '[:space:]' < "$VB_VERSION_FILE")
+    if [[ -n "$PINNED_VERSION" ]]; then
+        echo "Pinned version: $PINNED_VERSION (from $VB_VERSION_FILE)"
     fi
 fi
 
@@ -63,9 +99,15 @@ else
     exit 1
 fi
 
-# Construct download URL
+# Construct download URL (use pinned version if available, otherwise latest)
 BINARY_NAME="vb-${OS_NAME}-${ARCH}"
-DOWNLOAD_URL="https://github.com/${GITHUB_REPO}/releases/latest/download/${BINARY_NAME}"
+if [[ -n "$PINNED_VERSION" ]]; then
+    DOWNLOAD_URL="https://github.com/${GITHUB_REPO}/releases/download/${PINNED_VERSION}/${BINARY_NAME}"
+    CHECKSUMS_URL="https://github.com/${GITHUB_REPO}/releases/download/${PINNED_VERSION}/checksums.txt"
+else
+    DOWNLOAD_URL="https://github.com/${GITHUB_REPO}/releases/latest/download/${BINARY_NAME}"
+    CHECKSUMS_URL="https://github.com/${GITHUB_REPO}/releases/latest/download/checksums.txt"
+fi
 
 # Determine install location
 if [[ "$LOCAL_INSTALL" == true ]]; then
@@ -86,19 +128,24 @@ else
     NEEDS_SUDO=false
 fi
 
-# Function to prompt for yes/no
+# Function to prompt for yes/no (auto-yes when NONINTERACTIVE=true)
 prompt_yes_no() {
     local prompt="$1"
     local default="${2:-n}"
     local response
-    
+
+    if [[ "$NONINTERACTIVE" == true ]]; then
+        echo "$prompt [auto: yes]"
+        return 0
+    fi
+
     while true; do
         if [[ "$default" == "y" ]]; then
             read -p "$prompt [Y/n]: " response
         else
             read -p "$prompt [y/N]: " response
         fi
-        
+
         response="${response:-$default}"
         case "$response" in
             [Yy]|[Yy][Ee][Ss])
@@ -134,34 +181,88 @@ if command -v vb &> /dev/null; then
     fi
 fi
 
-# Fetch latest version from GitHub
-LATEST_VERSION=""
-LATEST_VERSION_NORMALIZED=""
-echo "Checking for latest version..." >&2
-if command -v jq &> /dev/null; then
-    # Use jq if available (more reliable)
-    API_RESPONSE=$(curl -s -L "https://api.github.com/repos/${GITHUB_REPO}/releases/latest")
-    if [[ -n "$API_RESPONSE" ]]; then
-        LATEST_VERSION=$(echo "$API_RESPONSE" | jq -r '.tag_name // empty' 2>/dev/null)
-        if [[ -n "$LATEST_VERSION" ]] && [[ "$LATEST_VERSION" != "null" ]]; then
-            LATEST_VERSION_NORMALIZED=$(normalize_version "$LATEST_VERSION")
+# Determine target version: pinned version takes priority over GitHub API latest
+TARGET_VERSION=""
+TARGET_VERSION_NORMALIZED=""
+if [[ -n "$PINNED_VERSION" ]]; then
+    TARGET_VERSION="$PINNED_VERSION"
+    TARGET_VERSION_NORMALIZED=$(normalize_version "$PINNED_VERSION")
+else
+    echo "Checking for latest version..." >&2
+    if command -v jq &> /dev/null; then
+        # Use jq if available (more reliable)
+        API_RESPONSE=$(curl -s -L "https://api.github.com/repos/${GITHUB_REPO}/releases/latest")
+        if [[ -n "$API_RESPONSE" ]]; then
+            TARGET_VERSION=$(echo "$API_RESPONSE" | jq -r '.tag_name // empty' 2>/dev/null)
+            if [[ -n "$TARGET_VERSION" ]] && [[ "$TARGET_VERSION" != "null" ]]; then
+                TARGET_VERSION_NORMALIZED=$(normalize_version "$TARGET_VERSION")
+            else
+                TARGET_VERSION=""
+            fi
         fi
-    fi
-elif command -v grep &> /dev/null && command -v sed &> /dev/null; then
-    # Fallback: parse JSON with grep/sed
-    API_RESPONSE=$(curl -s -L "https://api.github.com/repos/${GITHUB_REPO}/releases/latest")
-    if [[ -n "$API_RESPONSE" ]]; then
-        LATEST_VERSION=$(echo "$API_RESPONSE" | grep -o '"tag_name":\s*"[^"]*"' | sed 's/"tag_name":\s*"\([^"]*\)"/\1/' | head -1)
-        if [[ -n "$LATEST_VERSION" ]]; then
-            LATEST_VERSION_NORMALIZED=$(normalize_version "$LATEST_VERSION")
+    elif command -v grep &> /dev/null && command -v sed &> /dev/null; then
+        # Fallback: parse JSON with grep/sed
+        API_RESPONSE=$(curl -s -L "https://api.github.com/repos/${GITHUB_REPO}/releases/latest")
+        if [[ -n "$API_RESPONSE" ]]; then
+            TARGET_VERSION=$(echo "$API_RESPONSE" | grep -o '"tag_name":\s*"[^"]*"' | sed 's/"tag_name":\s*"\([^"]*\)"/\1/' | head -1)
+            if [[ -n "$TARGET_VERSION" ]]; then
+                TARGET_VERSION_NORMALIZED=$(normalize_version "$TARGET_VERSION")
+            fi
         fi
     fi
 fi
+# Backward-compat aliases used by the rest of the script
+LATEST_VERSION="$TARGET_VERSION"
+LATEST_VERSION_NORMALIZED="$TARGET_VERSION_NORMALIZED"
 
 # Display information and get confirmation
 echo "Virtual Board CLI Installer"
 echo "=========================="
 echo ""
+
+# --ensure-latest: non-interactive upgrade path for agents/CI
+if [[ "$ENSURE_LATEST" == true ]] && [[ "$VB_INSTALLED" == true ]]; then
+    echo "Virtual Board CLI is already installed."
+    if [[ -n "$VB_VERSION" ]] && [[ "$VB_VERSION" != "(unable to determine version)" ]]; then
+        echo "Current version: $VB_VERSION"
+    fi
+
+    # If we couldn't determine the target version, trust what's installed and exit.
+    if [[ -z "$LATEST_VERSION_NORMALIZED" ]]; then
+        echo "Warning: unable to determine target version — keeping installed version." >&2
+        exit 0
+    fi
+
+    echo "Target version: $LATEST_VERSION"
+
+    # Already at target — nothing to do.
+    if [[ -n "$VB_VERSION_NORMALIZED" ]] && [[ "$VB_VERSION_NORMALIZED" == "$LATEST_VERSION_NORMALIZED" ]]; then
+        echo "✓ Already up to date."
+        exit 0
+    fi
+
+    # Outdated (or version unknown) — upgrade via `vb upgrade`.
+    echo "Upgrading to $LATEST_VERSION via 'vb upgrade'..."
+    if vb upgrade; then
+        echo "✓ vb upgraded to latest."
+        exit 0
+    fi
+
+    if [[ "$ALLOW_SUDO" == true ]]; then
+        echo "'vb upgrade' failed; retrying with 'sudo vb upgrade' (--allow-sudo)..." >&2
+        if sudo vb upgrade; then
+            echo "✓ vb upgraded to latest (via sudo)."
+            exit 0
+        fi
+        echo "Error: 'sudo vb upgrade' also failed. Falling back to fresh install." >&2
+    else
+        echo "'vb upgrade' failed. To retry with elevated privileges, re-run with --allow-sudo." >&2
+        echo "Or install to a user-writable path with: $0 --local" >&2
+        exit 1
+    fi
+    echo ""
+    # Fall through to the fresh-install path below.
+fi
 
 # If already installed, check version and suggest upgrade
 if [[ "$VB_INSTALLED" == true ]]; then
@@ -169,7 +270,7 @@ if [[ "$VB_INSTALLED" == true ]]; then
     if [[ -n "$VB_VERSION" ]] && [[ "$VB_VERSION" != "(unable to determine version)" ]]; then
         echo "Current version: $VB_VERSION"
     fi
-    
+
     # Check if already on latest version
     if [[ -n "$VB_VERSION_NORMALIZED" ]] && [[ -n "$LATEST_VERSION_NORMALIZED" ]] && [[ "$VB_VERSION_NORMALIZED" == "$LATEST_VERSION_NORMALIZED" ]]; then
         echo "Latest version: $LATEST_VERSION"
@@ -178,12 +279,12 @@ if [[ "$VB_INSTALLED" == true ]]; then
         echo "No installation needed."
         exit 0
     fi
-    
+
     # Show latest version if available
     if [[ -n "$LATEST_VERSION" ]]; then
         echo "Latest version: $LATEST_VERSION"
     fi
-    
+
     echo ""
     echo "To upgrade to the latest version, you can run:"
     # Check if vb is likely in a system directory that requires sudo
@@ -241,6 +342,39 @@ else
     rm -f "$TEMP_FILE"
     exit 1
 fi
+
+# Verify SHA-256 checksum
+echo "Verifying checksum..."
+CHECKSUMS_FILE=$(mktemp)
+if curl -s -L -f -o "$CHECKSUMS_FILE" "$CHECKSUMS_URL"; then
+    EXPECTED_HASH=$(grep "$BINARY_NAME" "$CHECKSUMS_FILE" | awk '{print $1}')
+    if [[ -z "$EXPECTED_HASH" ]]; then
+        echo "Warning: no checksum entry found for $BINARY_NAME in checksums.txt — skipping verification." >&2
+    else
+        if command -v sha256sum &> /dev/null; then
+            ACTUAL_HASH=$(sha256sum "$TEMP_FILE" | awk '{print $1}')
+        elif command -v shasum &> /dev/null; then
+            ACTUAL_HASH=$(shasum -a 256 "$TEMP_FILE" | awk '{print $1}')
+        else
+            echo "Warning: neither sha256sum nor shasum found — skipping verification." >&2
+            ACTUAL_HASH=""
+        fi
+        if [[ -n "$ACTUAL_HASH" ]]; then
+            if [[ "$ACTUAL_HASH" != "$EXPECTED_HASH" ]]; then
+                echo "Error: SHA-256 checksum mismatch!" >&2
+                echo "  Expected: $EXPECTED_HASH" >&2
+                echo "  Actual:   $ACTUAL_HASH" >&2
+                echo "The downloaded binary may have been tampered with. Aborting." >&2
+                rm -f "$TEMP_FILE" "$CHECKSUMS_FILE"
+                exit 1
+            fi
+            echo "Checksum verified (SHA-256)."
+        fi
+    fi
+else
+    echo "Warning: could not download checksums.txt — skipping verification." >&2
+fi
+rm -f "$CHECKSUMS_FILE"
 
 # Make executable
 chmod +x "$TEMP_FILE"

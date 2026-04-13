@@ -140,12 +140,8 @@
   /common            # common prompt templates and utilities
     session-handoff.md
 /scripts
-  ftr-new.sh         # create a new feature spec from template
-  ftr-move.sh        # move feature across lifecycle w/ checks
-  ftr-index.sh       # generate /features/INDEX.md
-  ftr-validate.sh    # validate schema, status-folder match, deps, links
-  install-vb-cli.sh  # install Virtual Board CLI tool
-  worktree-setup.sh  # git worktree setup for /work-on skill
+  install-vb-cli.sh  # bootstrap installer for the `vb` CLI (run when `vb` is missing)
+  worktree-setup.sh  # git worktree setup for /work-on skill (no `vb` equivalent)
 /skills              # Claude Code plugin skills
   /work-on           # /work-on skill for feature development
     SKILL.md         # skill definition
@@ -322,33 +318,33 @@ Who is impacted, what pain exists, why now.
 
 ---
 
-## 9) CLI Tool Detection & Usage
+## 9) CLI Tool — Required
 
-### A. Check for Virtual Board CLI
+The `vb` CLI is **required** for all feature workflow operations. There are no shell-script fallbacks — if `vb` is missing, agents must install it before proceeding.
 
-Before using any automation, agents should first check if the `vb` CLI tool is available:
+### A. Bootstrap check
+
+Run this at the start of any task that touches feature specs:
 
 ```bash
-# Check if vb CLI is installed
-if command -v vb &> /dev/null; then
-    echo "Virtual Board CLI found"
-    vb version
-    vb help
-    # Use vb commands for task management
-else
-    echo "Virtual Board CLI not found, using shell scripts"
-    # Fall back to shell scripts or plain bash
-fi
+./.virtualboard/scripts/install-vb-cli.sh --ensure-latest
+vb version
 ```
 
-### B. CLI Usage (if available)
+`--ensure-latest` is non-interactive and handles every state:
 
-If `vb` CLI is available, use it for all task management:
+- **Not installed** → downloads and installs the latest release from `virtualboard/vb-cli` (OS/arch auto-detected).
+- **Installed but outdated** → runs `vb upgrade`, then retries with `sudo vb upgrade` if the first attempt fails.
+- **Already latest** → exits successfully with no changes.
+
+It is the only supported bootstrap path.
+
+### B. CLI usage
 
 ```bash
 # Check version and upgrade
 vb version
-vb upgrade  # Upgrade to latest version (use sudo if in system directory)
+vb upgrade  # Upgrade to the latest release
 
 # Create new feature
 vb new "Feature Title" label1 label2
@@ -363,20 +359,7 @@ vb validate
 vb index
 ```
 
-### C. Fallback to Shell Scripts
-
-If `vb` CLI is not available, use the shell scripts:
-
-```bash
-# Make scripts executable
-chmod +x .virtualboard/scripts/*.sh
-
-# Use shell scripts
-./.virtualboard/scripts/ftr-new.sh "Feature Title" label1 label2
-./.virtualboard/scripts/ftr-move.sh FTR-0001 in-progress agent-cursor-1
-./.virtualboard/scripts/ftr-validate.sh
-./.virtualboard/scripts/ftr-index.sh
-```
+Run `vb help` (or `vb <command> --help`) for the full command surface.
 
 ---
 
@@ -443,17 +426,12 @@ See `/prompts/AGENTS.md` for complete documentation.
 
 ### A. Create a New Feature
 
-1. **Check for CLI tool first:**
+1. **Create the feature (after ensuring `vb` is installed — see §9):**
    ```bash
-   if command -v vb &> /dev/null; then
-       vb new "User Authentication" --labels "auth,frontend"
-   else
-       chmod +x .virtualboard/scripts/*.sh
-       ./.virtualboard/scripts/ftr-new.sh "User Authentication" auth frontend
-   fi
+   vb new "User Authentication" --labels "auth,frontend"
    ```
 
-2. Script/CLI assigns next ID, creates `/features/backlog/FTR-####-user-authentication.md` from template.
+2. `vb` assigns the next ID and creates `/features/backlog/FTR-####-user-authentication.md` from the template.
 3. Fill frontmatter (status=`backlog`, owner=`unassigned`).
 4. Complete minimal sections: Summary, Problem, Goals, Acceptance Criteria.
 
@@ -461,11 +439,7 @@ See `/prompts/AGENTS.md` for complete documentation.
 
 1. **Check dependencies and move feature:**
    ```bash
-   if command -v vb &> /dev/null; then
-       vb move FTR-0001 in-progress --owner agent-cursor-1
-   else
-       ./.virtualboard/scripts/ftr-move.sh FTR-0001 in-progress agent-cursor-1
-   fi
+   vb move FTR-0001 in-progress --owner agent-cursor-1
    ```
 
 2. Ensure dependencies are `done` (validation enforces this).
@@ -476,11 +450,7 @@ See `/prompts/AGENTS.md` for complete documentation.
 
 1. **Move to review status:**
    ```bash
-   if command -v vb &> /dev/null; then
-       vb move FTR-0001 review
-   else
-       ./.virtualboard/scripts/ftr-move.sh FTR-0001 review
-   fi
+   vb move FTR-0001 review
    ```
 
 2. Open PR using `/templates/pr-template.md`; link spec and reference `FTR-####` in title.
@@ -491,11 +461,7 @@ See `/prompts/AGENTS.md` for complete documentation.
 1. Reviewer approves PR; merge code.
 2. **Move to done status:**
    ```bash
-   if command -v vb &> /dev/null; then
-       vb move FTR-0001 done
-   else
-       ./.virtualboard/scripts/ftr-move.sh FTR-0001 done
-   fi
+   vb move FTR-0001 done
    ```
 
 3. Link merged PR and release notes in `Links` section.
@@ -537,7 +503,7 @@ See `/prompts/AGENTS.md` for complete documentation.
 
 **Index Generation:**
 
-- `scripts/ftr-index.sh` creates `/features/INDEX.md` containing a table: ID, Title, Status, Owner, Priority, Complexity, Labels, Updated, Links.
+- `vb index` creates `/features/INDEX.md` containing a table: ID, Title, Status, Owner, Priority, Complexity, Labels, Updated, Links.
 - Run on every push to `main`.
 
 **Linting:**
@@ -602,9 +568,8 @@ Each agent role has:
 
 - **Check `/prompts/agents/{role}/README.md` first** when adopting an agent role
 - **Display available commands** to user when starting a session
-- Check for `vb` CLI tool availability first: `command -v vb &> /dev/null`
-- If `vb` CLI is available, use `vb version` and `vb help` to understand available commands
-- If `vb` CLI is not available, fall back to shell scripts in `scripts/` or plain bash
+- Ensure the latest `vb` CLI is installed before touching any feature spec: `./scripts/install-vb-cli.sh --ensure-latest`
+- Run `vb version` and `vb help` to confirm the CLI and inspect available commands
 - Read `/templates/rules.yml` on start.
 - Validate spec before edits; bail on lock/owner mismatch.
 - Only modify specs where `owner == agent-id`.

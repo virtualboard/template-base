@@ -113,15 +113,14 @@ To enable VirtualBoard agents in OpenCode:
 
 ## Implementation
 
-The system is built entirely with bash scripts, eliminating the need for Node.js or npm dependencies. This approach provides:
+All workflow operations run through the `vb` CLI — a single static binary with no runtime dependencies (no Node.js, npm, or Python). This approach provides:
 
-- **Zero dependencies**: No package.json or node_modules required
-- **Universal compatibility**: Works on any Unix-like system with bash
-- **Fast execution**: Direct shell commands without JavaScript runtime overhead
-- **Easy maintenance**: Simple bash scripts that are easy to understand and modify
-- **CI/CD friendly**: No build steps or dependency installation required
+- **Zero runtime dependencies**: A single binary for macOS/Linux on amd64/arm64
+- **Universal compatibility**: Works on any Unix-like system
+- **Consistent behavior**: One canonical implementation of validation, moves, indexing, and locks
+- **CI/CD friendly**: Install once, then invoke `vb` commands directly
 
-**CLI Tool Integration:** The system first checks for the `vb` (Virtual Board) CLI tool. If available, agents should use `vb` commands for task management. If not found, agents should fall back to the shell scripts in `.virtualboard/scripts/` or use plain bash commands according to the strategy definition.
+**CLI Tool Requirement:** The `vb` CLI is **required**. Agents and CI must run `./scripts/install-vb-cli.sh --ensure-latest` before any `vb` command — that single call installs `vb` if missing, upgrades it via `vb upgrade` (with `sudo vb upgrade` fallback) if outdated, and is a no-op if already on the latest release. There are no shell-script fallbacks for feature operations.
 
 ## System Specification Templates
 
@@ -136,15 +135,13 @@ Beyond feature files, the template ships with a `/templates/specs` catalog of re
 - `security-and-compliance.md` – Threat model, controls, logging/audit needs, and incident workflows.
 - `observability-and-incident-response.md` – Telemetry coverage, alerting, runbooks, and postmortems.
 
-Each template includes frontmatter compatible with `schemas/system-spec.schema.json`, so `vb validate` (or `./scripts/ftr-validate.sh`) enforces required metadata just like feature specs. See `templates/specs/README.md` for usage tips.
+Each template includes frontmatter compatible with `schemas/system-spec.schema.json`, so `vb validate` enforces required metadata just like feature specs. See `templates/specs/README.md` for usage tips.
 
 ## Quick Start
 
-### Option 1: Using Virtual Board CLI (Recommended)
-
-1. **Install the Virtual Board CLI:**
+1. **Install the Virtual Board CLI (required):**
    ```bash
-   # Quick install (recommended):
+   # Install to /usr/local/bin (requires sudo)
    ./scripts/install-vb-cli.sh
 
    # Or install to current directory:
@@ -156,75 +153,34 @@ Each template includes frontmatter compatible with `schemas/system-spec.schema.j
 
    The installer automatically:
    - Checks if `vb` is already installed and compares versions
-   - If you already have the latest version, it will inform you and exit
-   - If an older version is installed, it suggests using `vb upgrade` instead
+   - Suggests `vb upgrade` if an older version is installed
    - Detects your OS (macOS/Linux) and architecture (amd64/arm64)
    - Downloads the appropriate binary from the latest GitHub release
-   - Guides you through the installation with confirmation prompts
 
-2. **Check CLI installation:**
+   > **Note:** Agents should bootstrap the CLI automatically with `./scripts/install-vb-cli.sh --ensure-latest` at the start of any task. That one command installs `vb` if missing, runs `vb upgrade` (or `sudo vb upgrade` as a fallback) if outdated, and is a no-op if already on the latest release.
+
+2. **Verify the installation:**
    ```bash
    vb version
    vb help
    ```
 
-3. **Initialize VirtualBoard workspace:**
+3. **Initialize a VirtualBoard workspace:**
    ```bash
-   # Initialize a new VirtualBoard workspace
-   vb init
-
-   # Update existing workspace to latest template
-   vb init --update
-
-   # Update specific files only
+   vb init                                              # New workspace
+   vb init --update                                     # Update to latest template
    vb init --update --files agents/pm.md,templates/feature.md
    ```
 
-4. **Use CLI commands:**
+4. **Core commands:**
    ```bash
-   # Create a new feature
-   vb new "Feature Title" label1 label2
-
-   # Move a feature through lifecycle
-   vb move FTR-0001 in-progress --owner fullstack_dev
-
-   # Validate all features
-   vb validate
-
-   # Generate feature index
-   vb index
+   vb new "Feature Title" label1 label2                 # Create a new feature
+   vb move FTR-0001 in-progress --owner fullstack_dev   # Move + claim
+   vb validate                                          # Validate features + specs
+   vb index                                             # Regenerate features/INDEX.md
    ```
 
-### Option 2: Using Shell Scripts (Fallback)
-
-1. **Make scripts executable:**
-   ```bash
-   chmod +x scripts/*.sh
-   ```
-
-2. **Create a new feature:**
-   ```bash
-   ./scripts/ftr-new.sh "Feature Title" label1 label2
-   ```
-
-3. **Move a feature through lifecycle:**
-   ```bash
-   ./scripts/ftr-move.sh FTR-0001 in-progress frontend_dev
-   ```
-   **IMPORTANT**: When moving a feature, you MUST update the frontmatter:
-   - Update `status` field to match the destination folder
-   - Update `updated` field to today's date
-   - Update `owner` field if claiming/releasing ownership
-
-4. **Validate all features:**
-   ```bash
-   ./scripts/ftr-validate.sh
-   ```
-
-5. **Generate feature index:**
-   ```bash
-   ./scripts/ftr-index.sh
-   ```
+   **IMPORTANT**: `vb move` updates frontmatter (`status`, `updated`, `owner`) automatically — do not edit these fields by hand when transitioning a feature.
 
 ## Directory Structure
 
@@ -280,12 +236,8 @@ Each template includes frontmatter compatible with `schemas/system-spec.schema.j
 │   │   └── ux_designer/     # UX Designer commands (UXDesigner-Generate_*.md)
 │   └── common/              # Common templates and utilities
 │       └── session-handoff.md # Session handoff template
-├── scripts/                 # Automation scripts
-│   ├── ftr-new.sh           # Create new feature
-│   ├── ftr-move.sh          # Move feature between states
-│   ├── ftr-validate.sh      # Validate features
-│   ├── ftr-index.sh         # Generate feature index
-│   ├── install-vb-cli.sh    # Install Virtual Board CLI tool
+├── scripts/                 # Bootstrap + helper scripts
+│   ├── install-vb-cli.sh    # Bootstrap installer for the `vb` CLI
 │   └── worktree-setup.sh    # Git worktree setup for /work-on skill
 ├── skills/                  # Claude Code plugin skills
 │   └── work-on/             # /work-on skill for feature development
@@ -310,18 +262,13 @@ The system includes sample features in different states to demonstrate the workf
 
 AI agents should:
 
-1. **Check for CLI tool first:**
+1. **Ensure the latest `vb` CLI is installed (required):**
    ```bash
-   if command -v vb &> /dev/null; then
-       echo "Virtual Board CLI found"
-       vb version
-       vb help
-       # Use CLI commands for task management
-   else
-       echo "Virtual Board CLI not found, using shell scripts"
-       # Fall back to shell scripts
-   fi
+   ./scripts/install-vb-cli.sh --ensure-latest
+   vb version
+   vb help
    ```
+   `--ensure-latest` installs when missing, runs `vb upgrade` (with `sudo vb upgrade` fallback) when outdated, and is a no-op when already on the latest release.
 
 2. **Adopt an agent role:** Read `/agents/AGENTS.md` to understand available roles, then read the specific role file (e.g., `/agents/pm.md`)
 3. **Load agent commands:** Check `/prompts/agents/{role}/README.md` for specialized commands available to your role
@@ -396,34 +343,16 @@ The system enforces several validation rules:
 Add these steps to your CI pipeline:
 
 ```yaml
-- name: Check for Virtual Board CLI
+- name: Install Virtual Board CLI
   run: |
-    if command -v vb &> /dev/null; then
-      echo "Virtual Board CLI found"
-      vb version
-    else
-      echo "Virtual Board CLI not found, using shell scripts"
-    fi
-
-- name: Make Scripts Executable (if CLI not available)
-  if: steps.cli-check.outcome == 'failure'
-  run: chmod +x scripts/*.sh
+    ./scripts/install-vb-cli.sh --ensure-latest
+    vb version
 
 - name: Validate Features
-  run: |
-    if command -v vb &> /dev/null; then
-      vb validate
-    else
-      ./scripts/ftr-validate.sh
-    fi
+  run: vb validate
 
 - name: Generate Index
-  run: |
-    if command -v vb &> /dev/null; then
-      vb index
-    else
-      ./scripts/ftr-index.sh
-    fi
+  run: vb index
 ```
 
 ## Troubleshooting
@@ -438,10 +367,10 @@ Add these steps to your CI pipeline:
 **Solutions:**
 
 - Check `/features/INDEX.md` for available features
-- Use CLI or shell scripts to validate: `vb validate` or `./scripts/ftr-validate.sh`
+- Run `vb validate` to check frontmatter, dependencies, and folder/status alignment
 - Review the agent rules in `/agents/RULES.md`
-- Ensure CLI is properly installed: `vb version`
-- To install or upgrade the CLI: `./scripts/install-vb-cli.sh` or `vb upgrade`
+- Ensure the CLI is properly installed: `vb version`
+- To install or upgrade the CLI: `./scripts/install-vb-cli.sh` (fresh install) or `vb upgrade` (existing install)
 
 ## Contributing
 
@@ -449,17 +378,17 @@ When adding new features or modifying the system:
 
 1. Follow the existing patterns
 2. Update documentation as needed
-3. Test with CLI or shell scripts: `vb validate` or `./scripts/ftr-validate.sh`
-4. Update the feature index: `vb index` or `./scripts/ftr-index.sh`
+3. Run `vb validate` before committing
+4. Regenerate the feature index with `vb index`
 
 ## Virtual Board CLI
 
-For enhanced task management, we recommend using the [Virtual Board CLI (`vb`)](https://github.com/virtualboard/vb-cli). The CLI provides:
+All workflow operations use the [Virtual Board CLI (`vb`)](https://github.com/virtualboard/vb-cli). The CLI provides:
 
-- **Streamlined interface**: Simplified commands for common operations
-- **Better error handling**: More descriptive error messages and validation
-- **Enhanced features**: Additional functionality beyond basic shell scripts
-- **Consistent experience**: Standardized interface across different environments
+- **Streamlined interface**: Single entry point for all feature workflow operations
+- **Schema-backed validation**: Enforces frontmatter, dependencies, and folder/status alignment
+- **Lifecycle safety**: Validated moves, ownership claims, and locks
+- **Consistent experience**: One canonical implementation across local dev and CI
 
 See the [Quick Start](#quick-start) section above for installation instructions and basic usage.
 

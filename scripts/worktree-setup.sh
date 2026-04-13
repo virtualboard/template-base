@@ -40,7 +40,8 @@ fi
 
 FEATURE_ID="$1"
 FEATURE_SLUG="$2"
-WORKTREE_BASE="${3:-${VIRTUALBOARD_WORKTREE_PATH:-/tmp/virtualboard-worktrees}}"
+_DEFAULT_WORKTREE_PATH="${XDG_STATE_HOME:-$HOME/.local/state}/virtualboard/worktrees"
+WORKTREE_BASE="${3:-${VIRTUALBOARD_WORKTREE_PATH:-$_DEFAULT_WORKTREE_PATH}}"
 BASE_BRANCH="${4:-${VIRTUALBOARD_BASE_BRANCH:-}}"
 
 # Get repository name from git remote or directory name

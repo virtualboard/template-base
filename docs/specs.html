@@ -3,431 +3,676 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VirtualBoard Template · Specs</title>
-  <meta name="description" content="VirtualBoard system specs: Cross-cutting documentation for AI agent collaboration and software development.">
-  <meta name="keywords" content="specs, AI agents, virtualboard, system, documentation">
-  <meta name="author" content="VirtualBoard">
+  <title>System Specs -- VirtualBoard Template</title>
+  <meta name="description" content="VirtualBoard system specification templates: 8 reusable blueprints for tech stack, infrastructure, CI/CD, database, caching, security, observability, and local development.">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="globals.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background:   'oklch(0.12 0.008 260)',
+            foreground:   'oklch(0.94 0.005 260)',
+            primary:      'oklch(0.68 0.14 230)',
+            'primary-foreground': 'oklch(0.12 0.008 260)',
+            secondary:    'oklch(0.72 0.12 195)',
+            muted:        'oklch(0.22 0.008 260)',
+            'muted-foreground': 'oklch(0.55 0.01 260)',
+            border:       'oklch(0.22 0.008 260)',
+            card:         'oklch(0.155 0.008 260)',
+            accent:       'oklch(0.78 0.16 155)',
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
-    :root {
-      color-scheme: light dark;
-      --background: oklch(0.13 0.01 240);
-      --foreground: oklch(0.95 0.005 240);
-      --primary: oklch(0.65 0.12 220);
-      --secondary: oklch(0.7 0.15 190);
-      --mred: oklch(0.6 0.01 240);
-      --muted-foreground: oklch(0.6 0.01 240);
-      --border: oklch(0.20 0.01 240);
-      --card: oklch(0.16 0.01 240);
-      --accent: oklch(0.75 0.18 160);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--background);
-      color: var(--foreground);
-      line-height: 1.6;
-    }
-
-    nav {
+    /* Spec detail panels — mirrors agents page pattern */
+    .spec-panel {
       background: var(--card);
-      border-bottom: 1px solid var(--border/50);
-      padding: 0 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 8px rgba(18, 28, 42, 0.08);
-    }
-
-    nav .container {
-      max-width: 960px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 0;
-      gap: 1rem;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--foreground);
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-
-    .nav-brand .logo-small {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
       overflow: hidden;
+      transition: border-color 0.3s ease;
     }
-
-    .nav-brand .logo-small img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .nav-main {
+    .spec-panel:hover,
+    .spec-panel.open { border-color: var(--border); }
+    .spec-header {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      flex: 1;
-      justify-content: flex-end;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      user-select: none;
     }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .nav-links a {
-      text-decoration: none;
+    .spec-header:hover { background: var(--card-hover); }
+    .spec-chevron {
+      margin-left: auto;
       color: var(--muted-foreground);
-      font-weight: 500;
-      transition: color 0.2s ease;
-      position: relative;
+      transition: transform 0.25s ease, color 0.25s ease;
+      flex-shrink: 0;
     }
-
-    .nav-links a:hover,
-    .nav-links a.active {
+    .spec-panel.open .spec-chevron {
+      transform: rotate(90deg);
       color: var(--primary);
     }
+    .spec-body { display: none; border-top: 1px solid var(--border-subtle); }
+    .spec-panel.open .spec-body { display: block; }
+    .spec-body-inner { padding: 1.5rem; }
 
-    .nav-links a.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1.25rem;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--primary);
-    }
-
-    .github-link {
+    /* Section list items */
+    .section-item {
       display: flex;
-      align-items: center;
-      color: var(--muted-foreground);
-      transition: color 0.2s ease;
+      align-items: flex-start;
+      gap: 0.625rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.8125rem;
     }
-
-    .github-link:hover { color: var(--primary); }
-
-    header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
-      padding: 4rem 1.5rem 3rem;
-      border-bottom: 1px solid var(--border/50);
-    }
-
-    .hero {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    .hero h1 {
-      font-size: 2.8rem;
-      margin: 0;
-      letter-spacing: -0.02em;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      color: var(--muted-foreground);
-      margin-top: 0.75rem;
-    }
-
-    .badge-row {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(0, 212, 255, 0.1);
-      color: var(--primary);
-      padding: 0.45rem 0.85rem;
-      border-radius: 999px;
-      font-size: 0.9rem;
-
+    .section-item:last-child { border-bottom: none; }
+    .section-item .heading {
       font-weight: 600;
+      color: var(--foreground);
+      flex-shrink: 0;
+      min-width: 0;
     }
-
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 1.5rem 4rem;
-    }
-
-    section {
-      margin: 3rem 0;
-      background: var(--card);
-      border: 1px solid var(--border/50);
-      border-radius: 1rem;
-      padding: 2.5rem;
-      box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 1.9rem;
-      letter-spacing: -0.02em;
-    }
-
-    h3 {
-      font-size: 1.4rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    ul, ol {
-      padding-left: 1.5rem;
-      margin: 1rem 0;
-    }
-
-    li {
-      margin-bottom: 0.5rem;
-    }
-
-    code, pre {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      background: rgba(0, 212, 255, 0.08);
-      border-radius: 0.5rem;
-    }
-
-    pre {
-      padding: 1rem;
-      overflow-x: auto;
-      font-size: 0.9rem;
-    }
-
-    .grid {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-
-    article {
-      background: var(--background);
-      border: 1px solid var(--border/50);
-      border-radius: 0.9rem;
-      padding: 1.5rem;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-
-    .cta-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      margin-top: 1rem;
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    footer {
-      text-align: center;
-      padding: 3rem 1.5rem 4rem;
+    .section-item .desc {
       color: var(--muted-foreground);
+      line-height: 1.5;
     }
 
-    footer a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --background: #0f172a;
-        --card: #111c36;
-        --foreground: #f1f5f9;
-        --muted-foreground: #cbd5f5b3;
-        --border: #1e2a44;
-      }
-
-      section { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
-      article { background: rgba(15, 23, 42, 0.6); }
-    }
+    [id] { scroll-margin-top: 5rem; }
   </style>
 </head>
-<body>
-  <nav>
-    <div class="container">
-      <a href="index.html" class="nav-brand">
-        <div class="logo-small">
-          <img src="avatar.png" alt="VirtualBoard" />
-        </div>
-        <span>VirtualBoard Template</span>
-      </a>
-      <div class="nav-main">
-        <ul class="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="features.html">Features</a></li>
-          <li><a href="specs.html" class="active">Specs</a></li>
-          <li><a href="workflow.html">Workflow</a></li>
-          <li><a href="agents.html">Agents</a></li>
-          <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">CLI</a></li>
-        </ul>
-        <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="github-link" aria-label="GitHub">
-          <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
+<body class="min-h-screen bg-background text-foreground">
+
+  <!-- Navigation -->
+  <nav class="site-nav">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2.5 text-foreground hover:text-primary transition-colors">
+          <div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+            <img src="avatar.png" alt="VirtualBoard" class="w-full h-full object-cover" />
+          </div>
+          <span class="font-semibold text-sm tracking-tight">VirtualBoard Template</span>
         </a>
+        <div class="flex items-center gap-6">
+          <ul class="hidden md:flex items-center gap-5">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="features.html" class="nav-link">Features</a></li>
+            <li><a href="workflow.html" class="nav-link">Workflow</a></li>
+            <li><a href="agents.html" class="nav-link">Agents</a></li>
+            <li><a href="specs.html" class="nav-link nav-link--active">Specs</a></li>
+            <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a></li>
+          </ul>
+          <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="md:hidden flex flex-wrap gap-4 pb-3 justify-center">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="features.html" class="nav-link">Features</a>
+        <a href="workflow.html" class="nav-link">Workflow</a>
+        <a href="agents.html" class="nav-link">Agents</a>
+        <a href="specs.html" class="nav-link nav-link--active">Specs</a>
+        <a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a>
       </div>
     </div>
   </nav>
 
-  <header>
-    <div class="hero">
-      <h1>System Specs</h1>
-      <p>Cross-cutting documentation for AI agent collaboration and software development.</p>
-      <div class="badge-row">
-        <span class="badge">50+ Examples</span>
-        <span class="badge">Agent Ready</span>
-        <span class="badge">Workflow Integrated</span>
-      </div>
-    </div>
-  </header>
-
   <main>
-    <section>
-      <h2>System Specification System</h2>
-      <p>VirtualBoard's system specification system provides structured documentation for cross-cutting concerns:</p>
-      <div class="grid three">
-        <article>
-          <h3>Template-Based Approach</h3>
-          <p>All system specs are created from templates in the /templates/specs directory:</p>
-          <ul>
-            <li>Copy templates to /specs for your project</li>
-            <li>Each template covers a different cross-cutting concern</li>
-            <li>Templates are designed for reusability and consistency</li>
-          </ul>
-        </article>
-        <article>
-          <h3>Schema Validation</h3>
-          <p>System specs validate against /schemas/system-spec.schema.json to ensure proper structure:</p>
-          <ul>
-            <li>All required sections are present</li>
-            <li>Content follows established formatting guidelines</li>
-            <li>Technical terminology is consistent across specs</li>
-          </ul>
-        </article>
-        <article>
-          <h3>Best Practices</h3>
-          <p>System specs follow established best practices for documentation:</p>
-          <ul>
-            <li>Consistent naming conventions</li>
-            <li>Clear structure and organization</li>
-            <li>Proper validation and quality checks</li>
-          </ul>
-        </article>
+    <!-- Hero -->
+    <section class="hero text-center">
+      <div class="max-w-5xl mx-auto px-6 relative">
+        <div class="animate-fade-up">
+          <span class="badge badge--primary mb-5 inline-flex">8 Templates</span>
+          <h1 class="mb-4">System <span class="text-primary">Specs</span></h1>
+          <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Reusable Markdown blueprints for documenting foundational architecture decisions. Schema-validated, status-tracked, and ready for your project.
+          </p>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>System Spec Templates</h2>
-      <p>VirtualBoard provides templates for creating system specifications:</p>
-      <div class="grid three">
-        <article>
-          <h3>Tech Stack</h3>
-          <p>Technology stack and integration specifications:</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/tech-stack.md" target="_blank" rel="noreferrer">View Tech Stack Template →</a>
-        </article>
-        <article>
-          <h3>Local Development</h3>
-          <p>Local development environment setup and configuration:</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/local-development.md" target="_blank" rel="noreferrer">View Local Dev Template →</a>
-        </article>
-        <article>
-          <h3>Hosting & Infrastructure</h3>
-          <p>Infrastructure and hosting configuration blueprints:</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/specs/hosting-and-infrastructure.md" target="_blank" rel="noreferrer">View Hosting Template →</a>
-        </article>
+    <!-- Overview -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--primary mb-4 mx-auto inline-flex">How It Works</p>
+          <h2 class="mb-4">Cross-cutting documentation</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Structured templates for every architectural concern
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 stagger">
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Template-Based</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Copy templates from <code class="inline-code">templates/specs/</code> to your project's <code class="inline-code">specs/</code> directory. Each template covers a different cross-cutting concern.
+            </p>
+          </div>
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Schema Validated</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              System specs validate against <code class="inline-code">schemas/system-spec.schema.json</code> with required fields: <code class="inline-code">spec_type</code>, <code class="inline-code">title</code>, <code class="inline-code">status</code>, <code class="inline-code">last_updated</code>.
+            </p>
+          </div>
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Status Tracked</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Specs carry a lifecycle: <code class="inline-code">draft</code> &rarr; <code class="inline-code">approved</code> &rarr; <code class="inline-code">deprecated</code>. Enforced by <code class="inline-code">vb validate --only-specs</code>.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>System Spec Categories</h2>
-      <p>VirtualBoard system specs cover essential cross-cutting concerns:</p>
-      <div class="grid three">
-        <article>
-          <h3>Database Schema</h3>
-          <p>Database design and schema specifications for the project.</p>
-        </article>
-        <article>
-          <h3>Caching & Performance</h3>
-          <p>Performance optimization and caching strategies.</p>
-        </article>
-        <article>
-          <h3>Observability & Incident Response</h3>
-          <p>Monitoring, logging, and incident response procedures.</p>
-        </article>
-        <article>
-          <h3>Security & Compliance</h3>
-          <p>Security policies, threat modeling, and compliance standards.</p>
-        </article>
-        <article>
-          <h3>Testing Strategy</h3>
-          <p>Test approaches, coverage requirements, and quality gates.</p>
-        </article>
-        <article>
-          <h3>Data Analytics</h3>
-          <p>Data pipeline and analytics dashboard specifications.</p>
-        </article>
+    <div class="section-divider"></div>
+
+    <!-- Quick Jump -->
+    <section class="py-12">
+      <div class="max-w-5xl mx-auto px-6">
+        <p class="text-xs text-muted-foreground font-semibold uppercase tracking-widest mb-4 text-center">Jump to spec</p>
+        <div class="flex flex-wrap gap-2 justify-center">
+          <a href="#tech-stack" class="badge badge--accent hover:opacity-80 transition-opacity">Tech Stack</a>
+          <a href="#local-dev" class="badge badge--accent hover:opacity-80 transition-opacity">Local Dev</a>
+          <a href="#hosting" class="badge badge--primary hover:opacity-80 transition-opacity">Hosting</a>
+          <a href="#cicd" class="badge badge--primary hover:opacity-80 transition-opacity">CI/CD</a>
+          <a href="#database" class="badge badge--secondary hover:opacity-80 transition-opacity">Database</a>
+          <a href="#caching" class="badge badge--secondary hover:opacity-80 transition-opacity">Caching</a>
+          <a href="#security" class="badge badge--warm hover:opacity-80 transition-opacity">Security</a>
+          <a href="#observability" class="badge badge--warm hover:opacity-80 transition-opacity">Observability</a>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>System Spec Implementation</h2>
-      <p>System specs are structured to provide consistent, reusable documentation:</p>
-      <div class="grid two">
-        <article>
-          <h3>Template-Based Approach</h3>
-          <p>All system specs are created from templates in the /templates/specs directory:</p>
-          <pre><code># Copy templates to /specs for your project
-cp -r templates/specs/* specs/</code></pre>
-        </article>
-        <article>
-          <h3>Schema Validation</h3>
-          <p>System specs validate against /schemas/system-spec.schema.json to ensure proper structure:</p>
-          <pre><code># Validation ensures:
-# - All required sections are present
-# - Content follows established formatting guidelines  
-# - Technical terminology is consistent across specs</code></pre>
-        </article>
+    <!-- Spec Template Catalog -->
+    <section class="py-12 lg:py-20">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--accent mb-4 mx-auto inline-flex">Template Catalog</p>
+          <h2 class="mb-4">All spec templates</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Click any template to see its full section structure. Copy to <code class="inline-code">specs/</code> and fill in your project's decisions.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-4 stagger">
+
+          <!-- ═══ Tech Stack ═══ -->
+          <div class="spec-panel" id="tech-stack">
+            <div class="spec-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px; background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Tech Stack</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">17 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Languages, runtimes, frameworks, data stores, messaging, and third-party integrations</p>
+              </div>
+              <div class="spec-chevron">&#9654;</div>
+            </div>
+            <div class="spec-body">
+              <div class="spec-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p>
+                    <code class="inline-code text-xs">templates/specs/tech-stack.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">spec_type</p>
+                    <code class="inline-code text-xs">tech-stack</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Sections</p>
+                <div class="flex flex-col">
+                  <div class="section-item"><span class="heading">Purpose</span> <span class="desc">Why this stack exists and how it enables product strategy across all platforms</span></div>
+                  <div class="section-item"><span class="heading">Scope &amp; Assumptions</span> <span class="desc">Products/platforms covered, out-of-scope constraints</span></div>
+                  <div class="section-item"><span class="heading">Delivery Context</span> <span class="desc">Product Surface Matrix (Web, iOS, Android, Desktop, APIs) with status</span></div>
+                  <div class="section-item"><span class="heading">Guiding Principles</span> <span class="desc">High-level guardrails for technology selection</span></div>
+                  <div class="section-item"><span class="heading">Architecture Overview</span> <span class="desc">Canonical diagrams and runtime topology</span></div>
+                  <div class="section-item"><span class="heading">Languages, Frameworks &amp; Tooling</span> <span class="desc">Backend, Web, Mobile, Desktop, shared libraries, build tools, testing stack</span></div>
+                  <div class="section-item"><span class="heading">Data &amp; Storage Technologies</span> <span class="desc">Relational, non-relational, caches, file/object storage</span></div>
+                  <div class="section-item"><span class="heading">Messaging &amp; Integrations</span> <span class="desc">Internal queues/streams and external partner integrations</span></div>
+                  <div class="section-item"><span class="heading">Third-Party Services &amp; SDKs</span> <span class="desc">Analytics, payments, auth, observability tools with support tiers</span></div>
+                  <div class="section-item"><span class="heading">Security &amp; Compliance</span> <span class="desc">Data classification, dependency governance, license compliance</span></div>
+                  <div class="section-item"><span class="heading">Operational Considerations</span> <span class="desc">Deployment targets, orchestration, capacity planning</span></div>
+                  <div class="section-item"><span class="heading">Extensibility &amp; Future Options</span> <span class="desc">Technology bets and sunset plans</span></div>
+                  <div class="section-item"><span class="heading">Decision Drivers &amp; Trade-Offs</span> <span class="desc">Stack justification with measurable outcomes</span></div>
+                  <div class="section-item"><span class="heading">Risks &amp; Mitigations</span> <span class="desc">Skill gaps, vendor lock-in, maturity concerns</span></div>
+                  <div class="section-item"><span class="heading">Adoption &amp; Rollout Plan</span> <span class="desc">Phased adoption with milestones and success metrics</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Local Development ═══ -->
+          <div class="spec-panel" id="local-dev">
+            <div class="spec-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px; background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Local Development</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">14 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Developer onboarding, toolchain requirements, secrets management, and troubleshooting</p>
+              </div>
+              <div class="spec-chevron">&#9654;</div>
+            </div>
+            <div class="spec-body">
+              <div class="spec-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p><code class="inline-code text-xs">templates/specs/local-development.md</code></div>
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">spec_type</p><code class="inline-code text-xs">local-development</code></div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Sections</p>
+                <div class="flex flex-col">
+                  <div class="section-item"><span class="heading">Purpose</span> <span class="desc">DX goals, onboarding time targets, problems the environment solves</span></div>
+                  <div class="section-item"><span class="heading">Success Criteria</span> <span class="desc">Target onboarding time, staging/production parity, supported OS/hardware</span></div>
+                  <div class="section-item"><span class="heading">Environment Support Matrix</span> <span class="desc">macOS, Windows, Linux, Cloud DevBox support status</span></div>
+                  <div class="section-item"><span class="heading">Prerequisites</span> <span class="desc">Accounts, access groups, VPN, SSO, tooling versions</span></div>
+                  <div class="section-item"><span class="heading">Quick Start Checklist</span> <span class="desc">6-step bootstrap: clone, toolchains, dependencies, secrets, services, tests</span></div>
+                  <div class="section-item"><span class="heading">Tooling &amp; Services Overview</span> <span class="desc">Commands table for Backend, Frontend, Mobile, Desktop</span></div>
+                  <div class="section-item"><span class="heading">Configuration &amp; Secrets</span> <span class="desc">Config locations, env var conventions, .env templates, secret rotation</span></div>
+                  <div class="section-item"><span class="heading">Data &amp; Seed Strategy</span> <span class="desc">Fixtures, snapshots, synthetic data tooling, reset/reseed commands</span></div>
+                  <div class="section-item"><span class="heading">Running the Stack</span> <span class="desc">Boot commands, debugger hooks, hot reload, CORS, emulators, background jobs</span></div>
+                  <div class="section-item"><span class="heading">Testing Workflows</span> <span class="desc">Unit/integration/e2e/perf commands, coverage, watch mode</span></div>
+                  <div class="section-item"><span class="heading">Troubleshooting &amp; Diagnostics</span> <span class="desc">Common failures, log locations, network tips, clean-room reset</span></div>
+                  <div class="section-item"><span class="heading">Automation &amp; Tooling</span> <span class="desc">Linting, formatting, DB migrations, dev containers, Nix flakes</span></div>
+                  <div class="section-item"><span class="heading">Security &amp; Compliance Notes</span> <span class="desc">PII redaction, GDPR/HIPAA/PCI requirements, machine hardening</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Hosting & Infrastructure ═══ -->
+          <div class="spec-panel" id="hosting">
+            <div class="spec-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Hosting &amp; Infrastructure</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">14 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Cloud/on-prem topology, networking, disaster recovery, and scaling strategy</p>
+              </div>
+              <div class="spec-chevron">&#9654;</div>
+            </div>
+            <div class="spec-body">
+              <div class="spec-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p><code class="inline-code text-xs">templates/specs/hosting-and-infrastructure.md</code></div>
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">spec_type</p><code class="inline-code text-xs">hosting-and-infrastructure</code></div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Sections</p>
+                <div class="flex flex-col">
+                  <div class="section-item"><span class="heading">Purpose</span> <span class="desc">Where the app runs and how providers satisfy availability, latency, sovereignty</span></div>
+                  <div class="section-item"><span class="heading">Environment Overview</span> <span class="desc">Dev, Stage, Prod, DR environments with provider, regions, purpose</span></div>
+                  <div class="section-item"><span class="heading">Provider Selection &amp; Rationale</span> <span class="desc">Evaluation criteria and alternatives considered</span></div>
+                  <div class="section-item"><span class="heading">Reference Architecture</span> <span class="desc">Load balancers, gateways, compute, data layers, CDN, IaC repos</span></div>
+                  <div class="section-item"><span class="heading">Network Topology &amp; Security</span> <span class="desc">VPC layout, subnets, peering, WAF, zero-trust, certificate management</span></div>
+                  <div class="section-item"><span class="heading">Compute &amp; Runtime Targets</span> <span class="desc">Kubernetes, serverless, VM families, autoscaling, GPU use cases</span></div>
+                  <div class="section-item"><span class="heading">Platform Services</span> <span class="desc">Database, Cache, Queue, CDN services with provisioning method</span></div>
+                  <div class="section-item"><span class="heading">Data Residency &amp; Compliance</span> <span class="desc">Regulatory constraints, multi-region strategy, encryption requirements</span></div>
+                  <div class="section-item"><span class="heading">Resilience &amp; Disaster Recovery</span> <span class="desc">RPO/RTO, backup cadence, failover automation, chaos testing</span></div>
+                  <div class="section-item"><span class="heading">Cost Management</span> <span class="desc">Budget owners, tagging strategy, reserved capacity, visibility tools</span></div>
+                  <div class="section-item"><span class="heading">Access &amp; Governance</span> <span class="desc">IAM roles, break-glass procedures, OPA/SCP guardrails</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ CI/CD Pipeline ═══ -->
+          <div class="spec-panel" id="cicd">
+            <div class="spec-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">CI/CD Pipeline</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">12 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Build/test/deploy stages, quality gates, security checks, and rollback strategy</p>
+              </div>
+              <div class="spec-chevron">&#9654;</div>
+            </div>
+            <div class="spec-body">
+              <div class="spec-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p><code class="inline-code text-xs">templates/specs/ci-cd-pipeline.md</code></div>
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">spec_type</p><code class="inline-code text-xs">ci-cd-pipeline</code></div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Sections</p>
+                <div class="flex flex-col">
+                  <div class="section-item"><span class="heading">Purpose</span> <span class="desc">Products served, release cadence goals (continuous, scheduled, nightly)</span></div>
+                  <div class="section-item"><span class="heading">Goals &amp; Non-Goals</span> <span class="desc">Release frequency, lead time, failure rate, MTTR targets</span></div>
+                  <div class="section-item"><span class="heading">Pipeline Overview</span> <span class="desc">Stage table with triggers, tooling, inputs, outputs, environments</span></div>
+                  <div class="section-item"><span class="heading">Triggers &amp; Branching Strategy</span> <span class="desc">Branch naming, protection rules, required checks, release model</span></div>
+                  <div class="section-item"><span class="heading">Build &amp; Package</span> <span class="desc">Commands, caching, artifact naming, SBOM generation, signing</span></div>
+                  <div class="section-item"><span class="heading">Test &amp; Quality Gates</span> <span class="desc">Unit/integration/e2e/perf suites, coverage thresholds, flaky test handling</span></div>
+                  <div class="section-item"><span class="heading">Security &amp; Compliance Checks</span> <span class="desc">SAST, DAST, dependency scanning, container scanning, license checks</span></div>
+                  <div class="section-item"><span class="heading">Deployment Stages</span> <span class="desc">Environment promotion, gating, blue/green, canary, feature flags</span></div>
+                  <div class="section-item"><span class="heading">Secrets &amp; Configuration</span> <span class="desc">Vault providers, rotation policies, parameterized configs per environment</span></div>
+                  <div class="section-item"><span class="heading">Failure Handling &amp; Recovery</span> <span class="desc">Auto-retry, rollback commands, artifact retention, incident escalation</span></div>
+                  <div class="section-item"><span class="heading">Compliance &amp; Auditability</span> <span class="desc">Logs, approvals, evidence retention, change management tickets</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Database Schema ═══ -->
+          <div class="spec-panel" id="database">
+            <div class="spec-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px; background: oklch(0.72 0.12 195 / 0.12); border-color: oklch(0.72 0.12 195 / 0.2);">
+                <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Database Schema</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">14 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Entity catalog, migration strategy, lifecycle, retention policies, and performance planning</p>
+              </div>
+              <div class="spec-chevron">&#9654;</div>
+            </div>
+            <div class="spec-body">
+              <div class="spec-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p><code class="inline-code text-xs">templates/specs/database-schema.md</code></div>
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">spec_type</p><code class="inline-code text-xs">database-schema</code></div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Sections</p>
+                <div class="flex flex-col">
+                  <div class="section-item"><span class="heading">Purpose</span> <span class="desc">Authoritative data model, scalability, integrity, governance expectations</span></div>
+                  <div class="section-item"><span class="heading">Data Classification &amp; Compliance</span> <span class="desc">Sensitivity levels, residency, encryption, regulatory mapping (GDPR, HIPAA, PCI)</span></div>
+                  <div class="section-item"><span class="heading">System Overview</span> <span class="desc">Database engines, versions, replication, ERD/UML/Mermaid definitions</span></div>
+                  <div class="section-item"><span class="heading">Entity Inventory</span> <span class="desc">Per-table docs: columns, types, constraints, indexes, partitioning</span></div>
+                  <div class="section-item"><span class="heading">Relationships &amp; Data Flows</span> <span class="desc">Foreign keys, cascades, cardinality, polymorphic relationships, caching</span></div>
+                  <div class="section-item"><span class="heading">Stored Routines &amp; Business Logic</span> <span class="desc">Functions, triggers, versioning, test coverage, idempotency</span></div>
+                  <div class="section-item"><span class="heading">Migrations &amp; Change Management</span> <span class="desc">Tooling (Prisma, Flyway, Atlas), review process, backward compatibility</span></div>
+                  <div class="section-item"><span class="heading">Performance &amp; Capacity Planning</span> <span class="desc">Data volumes, growth rates, sharding, benchmarks, slow query budgets</span></div>
+                  <div class="section-item"><span class="heading">Data Lifecycle &amp; Retention</span> <span class="desc">Archival, deletion windows, legal holds, backups, data masking</span></div>
+                  <div class="section-item"><span class="heading">Observability &amp; Quality</span> <span class="desc">Replication lag, deadlocks, queue depth, data quality checks</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Caching & Performance ═══ -->
+          <div class="spec-panel" id="caching">
+            <div class="spec-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px; background: oklch(0.72 0.12 195 / 0.12); border-color: oklch(0.72 0.12 195 / 0.2);">
+                <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Caching &amp; Performance</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">13 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Performance targets, cache layers, invalidation strategy, and performance budgets</p>
+              </div>
+              <div class="spec-chevron">&#9654;</div>
+            </div>
+            <div class="spec-body">
+              <div class="spec-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p><code class="inline-code text-xs">templates/specs/caching-and-performance.md</code></div>
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">spec_type</p><code class="inline-code text-xs">caching-and-performance</code></div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Sections</p>
+                <div class="flex flex-col">
+                  <div class="section-item"><span class="heading">Purpose</span> <span class="desc">How the app meets latency, throughput, and cost targets</span></div>
+                  <div class="section-item"><span class="heading">Performance Targets</span> <span class="desc">SLIs/SLOs per surface (web, mobile, APIs), p95 latency, FPS</span></div>
+                  <div class="section-item"><span class="heading">Workload &amp; Access Patterns</span> <span class="desc">Read/write mix, burst behavior, multi-region, offline considerations</span></div>
+                  <div class="section-item"><span class="heading">Caching Layers</span> <span class="desc">Edge CDN, application cache (Redis/Memcached), client cache with TTL strategies</span></div>
+                  <div class="section-item"><span class="heading">Invalidation &amp; Consistency</span> <span class="desc">Push vs pull, cache busting, read-after-write consistency, multi-device sync</span></div>
+                  <div class="section-item"><span class="heading">Warm-Up &amp; Precomputation</span> <span class="desc">Cache priming workflows, pre-generated data refresh cadence</span></div>
+                  <div class="section-item"><span class="heading">Failure &amp; Fallback Behavior</span> <span class="desc">Circuit breakers, exponential backoff, offline UX guidance</span></div>
+                  <div class="section-item"><span class="heading">Instrumentation &amp; Monitoring</span> <span class="desc">Hit ratio, eviction rate, memory usage, latency dashboards, alerts</span></div>
+                  <div class="section-item"><span class="heading">Performance Testing</span> <span class="desc">Load testing plans, regression guardrails, perf gates, profiling cadence</span></div>
+                  <div class="section-item"><span class="heading">Security &amp; Compliance</span> <span class="desc">PII/PCI in caches, encryption, key rotation, multi-tenant isolation</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Security & Compliance ═══ -->
+          <div class="spec-panel" id="security">
+            <div class="spec-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px; background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+                <svg class="w-5 h-5" style="color: var(--accent-warm);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Security &amp; Compliance</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">13 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Threat modeling, access control, data protection, compliance controls, and incident response</p>
+              </div>
+              <div class="spec-chevron">&#9654;</div>
+            </div>
+            <div class="spec-body">
+              <div class="spec-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p><code class="inline-code text-xs">templates/specs/security-and-compliance.md</code></div>
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">spec_type</p><code class="inline-code text-xs">security-and-compliance</code></div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Sections</p>
+                <div class="flex flex-col">
+                  <div class="section-item"><span class="heading">Purpose</span> <span class="desc">How the system protects data and satisfies regulatory obligations</span></div>
+                  <div class="section-item"><span class="heading">Scope &amp; Assumptions</span> <span class="desc">Trust boundaries, shared vendor responsibilities, attacker capabilities</span></div>
+                  <div class="section-item"><span class="heading">Data Classification &amp; Handling</span> <span class="desc">Categories, retention, residency, encryption, GDPR/HIPAA/PCI/SOC 2 mapping</span></div>
+                  <div class="section-item"><span class="heading">Threat Modeling</span> <span class="desc">Assets, actors, attack vectors via STRIDE/PASTA with trust boundary diagrams</span></div>
+                  <div class="section-item"><span class="heading">Identity, AuthN &amp; AuthZ</span> <span class="desc">MFA, SSO, session lifetimes, revocation, RBAC/ABAC/ReBAC models</span></div>
+                  <div class="section-item"><span class="heading">Data Protection Controls</span> <span class="desc">TLS versions, cipher suites, KMS/HSM, secrets management (Vault, SSM)</span></div>
+                  <div class="section-item"><span class="heading">Application Security Practices</span> <span class="desc">Secure coding, dependency governance, SBOM, SAST/DAST/IAST/fuzzing</span></div>
+                  <div class="section-item"><span class="heading">Infrastructure &amp; Network Security</span> <span class="desc">Segmentation, WAF, DDoS mitigation, zero-trust, container hardening</span></div>
+                  <div class="section-item"><span class="heading">Compliance Controls &amp; Evidence</span> <span class="desc">Policy owners, monitoring hooks, audit cadence, external assessments</span></div>
+                  <div class="section-item"><span class="heading">Vulnerability &amp; Incident Response</span> <span class="desc">Intake sources, SLAs, severity matrix, IR steps, tabletop schedule</span></div>
+                  <div class="section-item"><span class="heading">Third-Party Risk Management</span> <span class="desc">Vendor inventory, data sharing agreements, offboarding</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Observability & Incident Response ═══ -->
+          <div class="spec-panel" id="observability">
+            <div class="spec-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px; background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+                <svg class="w-5 h-5" style="color: var(--accent-warm);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Observability &amp; Incident Response</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">12 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">SLIs/SLOs, telemetry coverage, alerting strategy, and incident management lifecycle</p>
+              </div>
+              <div class="spec-chevron">&#9654;</div>
+            </div>
+            <div class="spec-body">
+              <div class="spec-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p><code class="inline-code text-xs">templates/specs/observability-and-incident-response.md</code></div>
+                  <div><p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">spec_type</p><code class="inline-code text-xs">observability-and-incident-response</code></div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Sections</p>
+                <div class="flex flex-col">
+                  <div class="section-item"><span class="heading">Purpose</span> <span class="desc">Instrumentation, monitoring, and incident support goals</span></div>
+                  <div class="section-item"><span class="heading">Objectives &amp; SLIs</span> <span class="desc">Business-aligned SLIs, SLOs/SLAs, reliability budgets, burn alerts</span></div>
+                  <div class="section-item"><span class="heading">Telemetry Coverage</span> <span class="desc">Client, Edge, API, Data/Infra layers with metrics, logging, tracing columns</span></div>
+                  <div class="section-item"><span class="heading">Instrumentation Standards</span> <span class="desc">OpenTelemetry, sampling rules, naming conventions, correlation IDs, privacy</span></div>
+                  <div class="section-item"><span class="heading">Dashboards &amp; Reporting</span> <span class="desc">Canonical dashboards per service, business KPIs vs system KPIs, release health</span></div>
+                  <div class="section-item"><span class="heading">Alerting Strategy</span> <span class="desc">PagerDuty/OpsGenie routing, severity levels, escalation, noise budgets</span></div>
+                  <div class="section-item"><span class="heading">Incident Response Lifecycle</span> <span class="desc">Detection, communication, mitigation (rollback, feature flags, kill switches), resolution</span></div>
+                  <div class="section-item"><span class="heading">Runbooks &amp; Playbooks</span> <span class="desc">Service-specific runbooks, synthetic checks, emergency access, load shedding</span></div>
+                  <div class="section-item"><span class="heading">Post-Incident Review</span> <span class="desc">Postmortem template, timeline capture, action item tracking, learning distribution</span></div>
+                  <div class="section-item"><span class="heading">Testing &amp; Validation</span> <span class="desc">Chaos experiments, game days, failover drills, alert SLO reviews</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- end spec list -->
       </div>
     </section>
 
-    <section>
-      <h2>System Spec Best Practices</h2>
-      <p>To get the most from VirtualBoard's system specification system:</p>
-      <ol>
-        <li>Use templates in /templates/specs to create project-specific system specs</li>
-        <li>Ensure all generated content follows the VirtualBoard design system</li>
-        <li>Validate system specs regularly to catch issues early</li>
-        <li>Update templates as the project evolves to maintain consistency</li>
-        <li>Use proper naming conventions for system spec files</li>
-      </ol>
+    <div class="section-divider"></div>
+
+    <!-- Frontmatter Schema -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--secondary mb-4 mx-auto inline-flex">Schema</p>
+          <h2 class="mb-4">Spec frontmatter</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Every spec file starts with validated YAML frontmatter
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="code-terminal">
+            <div class="code-terminal-bar">
+              <span class="code-terminal-dot code-terminal-dot--red"></span>
+              <span class="code-terminal-dot code-terminal-dot--yellow"></span>
+              <span class="code-terminal-dot code-terminal-dot--green"></span>
+            </div>
+            <div class="code-terminal-body">
+<pre><code><span style="color:var(--muted-foreground);">---</span>
+<span style="color:var(--primary);">spec_type:</span> tech-stack
+<span style="color:var(--primary);">title:</span> "Acme Corp Tech Stack"
+<span style="color:var(--primary);">owner:</span> platform-team
+<span style="color:var(--primary);">status:</span> approved
+<span style="color:var(--primary);">last_updated:</span> 2026-04-12
+<span style="color:var(--primary);">applicability:</span>
+  <span style="color:var(--accent);">-</span> all-services
+<span style="color:var(--primary);">related_initiatives:</span>
+  <span style="color:var(--accent);">-</span> FTR-0001
+<span style="color:var(--muted-foreground);">---</span></code></pre>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <div class="vb-card" style="padding:1rem 1.25rem;">
+              <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-2">Required fields</p>
+              <ul class="bullet-list space-y-1 text-sm">
+                <li><code class="inline-code">spec_type</code> &mdash; one of 8 recognized types</li>
+                <li><code class="inline-code">title</code> &mdash; human-readable name</li>
+                <li><code class="inline-code">status</code> &mdash; draft, approved, or deprecated</li>
+                <li><code class="inline-code">last_updated</code> &mdash; YYYY-MM-DD format</li>
+                <li><code class="inline-code">applicability</code> &mdash; which services/products</li>
+              </ul>
+            </div>
+            <div class="callout callout--info" style="font-size:0.8rem;">
+              <strong>Validated by:</strong> <code class="inline-code">schemas/system-spec.schema.json</code> via <code class="inline-code">vb validate --only-specs</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Getting Started -->
+    <section class="py-20 lg:py-28 section-gradient">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--warm mb-4 mx-auto inline-flex">Getting Started</p>
+          <h2 class="mb-4">Use specs in your project</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger">
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">1</div>
+              <h3 class="text-base font-semibold">Copy templates</h3>
+            </div>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <span class="code-terminal-dot code-terminal-dot--red"></span>
+                <span class="code-terminal-dot code-terminal-dot--yellow"></span>
+                <span class="code-terminal-dot code-terminal-dot--green"></span>
+              </div>
+              <div class="code-terminal-body">
+                <code>cp -r templates/specs/* specs/</code>
+              </div>
+            </div>
+          </div>
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">2</div>
+              <h3 class="text-base font-semibold">Fill in decisions</h3>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Replace placeholder text with your project's specific decisions. Update <code class="inline-code">status</code> from <code class="inline-code">draft</code> to <code class="inline-code">approved</code> as decisions are reviewed.
+            </p>
+          </div>
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">3</div>
+              <h3 class="text-base font-semibold">Validate</h3>
+            </div>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <span class="code-terminal-dot code-terminal-dot--red"></span>
+                <span class="code-terminal-dot code-terminal-dot--yellow"></span>
+                <span class="code-terminal-dot code-terminal-dot--green"></span>
+              </div>
+              <div class="code-terminal-body">
+<pre><code>vb validate --only-specs
+vb validate tech-stack.md</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">4</div>
+              <h3 class="text-base font-semibold">Maintain over time</h3>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Specs are living documents. Update <code class="inline-code">last_updated</code> when decisions change. Set <code class="inline-code">status: deprecated</code> for replaced decisions &mdash; keep them as historical record.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <p>VirtualBoard Template · Released under the MIT License</p>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="max-w-6xl mx-auto px-6">
+      <p>
+        VirtualBoard Template &middot; Released under the
+        <a href="https://github.com/virtualboard/template-base/blob/main/LICENSE" target="_blank" rel="noreferrer">MIT License</a>
+      </p>
+      <p class="mt-1">
+        Created by <a href="https://astucia.ai" target="_blank" rel="noreferrer" class="footer-brand">Astucia AI&#8482;</a>
+      </p>
+    </div>
   </footer>
+
 </body>
 </html>

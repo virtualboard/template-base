@@ -3,418 +3,572 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VirtualBoard Template · Features</title>
-  <meta name="description" content="VirtualBoard feature specs: Comprehensive documentation for AI agent collaboration and software development.">
-  <meta name="keywords" content="features, AI agents, virtualboard, specs, documentation">
-  <meta name="author" content="VirtualBoard">
+  <title>Features -- VirtualBoard Template</title>
+  <meta name="description" content="Feature specification system, templates, validation, and recent security hardening in the VirtualBoard Template.">
 
-  <style>
-    :root {
-      color-scheme: light dark;
-      --background: oklch(0.13 0.01 240);
-      --foreground: oklch(0.95 0.005 240);
-      --primary: oklch(0.65 0.12 220);
-      --secondary: oklch(0.7 0.15 190);
-      --mred: oklch(0.6 0.01 240);
-      --muted-foreground: oklch(0.6 0.01 240);
-      --border: oklch(0.20 0.01 240);
-      --card: oklch(0.16 0.01 240);
-      --accent: oklch(0.75 0.18 160);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="globals.css">
 
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--background);
-      color: var(--foreground);
-      line-height: 1.6;
-    }
-
-    nav {
-      background: var(--card);
-      border-bottom: 1px solid var(--border/50);
-      padding: 0 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 8px rgba(18, 28, 42, 0.08);
-    }
-
-    nav .container {
-      max-width: 960px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 0;
-      gap: 1rem;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--foreground);
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-
-    .nav-brand .logo-small {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-
-    .nav-brand .logo-small img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .nav-main {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex: 1;
-      justify-content: flex-end;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--muted-foreground);
-      font-weight: 500;
-      transition: color 0.2s ease;
-      position: relative;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--primary);
-    }
-
-    .nav-links a.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1.25rem;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--primary);
-    }
-
-    .github-link {
-      display: flex;
-      align-items: center;
-      color: var(--muted-foreground);
-      transition: color 0.2s ease;
-    }
-
-    .github-link:hover { color: var(--primary); }
-
-    header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
-      padding: 4rem 1.5rem 3rem;
-      border-bottom: 1px solid var(--border/50);
-    }
-
-    .hero {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    .hero h1 {
-      font-size: 2.8rem;
-      margin: 0;
-      letter-spacing: -0.02em;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      color: var(--muted-foreground);
-      margin-top: 0.75rem;
-    }
-
-    .badge-row {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(0, 212, 255, 0.1);
-      color: var(--primary);
-      padding: 0.45rem 0.85rem;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 1.5rem 4rem;
-    }
-
-    section {
-      margin: 3rem 0;
-      background: var(--card);
-      border: 1px solid var(--border/50);
-      border-radius: 1rem;
-      padding: 2.5rem;
-      box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 1.9rem;
-      letter-spacing: -0.02em;
-    }
-
-    h3 {
-      font-size: 1.4rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    ul, ol {
-      padding-left: 1.5rem;
-      margin: 1rem 0;
-    }
-
-    li {
-      margin-bottom: 0.5rem;
-    }
-
-    code, pre {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      background: rgba(0, 212, 255, 0.08);
-      border-radius: 0.5rem;
-    }
-
-    pre {
-      padding: 1rem;
-      overflow-x: auto;
-      font-size: 0.9rem;
-    }
-
-    .grid {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-
-    article {
-      background: var(--background);
-      border: 1px solid var(--border/50);
-      border-radius: 0.9rem;
-      padding: 1.5rem;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-
-    .cta-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      margin-top: 1rem;
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    footer {
-      text-align: center;
-      padding: 3rem 1.5rem 4rem;
-      color: var(--muted-foreground);
-    }
-
-    footer a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --background: #0f172a;
-        --card: #111c36;
-        --foreground: #f1f5f9;
-        --muted-foreground: #cbd5f5b3;
-        --border: #1e2a44;
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background:   'oklch(0.12 0.008 260)',
+            foreground:   'oklch(0.94 0.005 260)',
+            primary:      'oklch(0.68 0.14 230)',
+            'primary-foreground': 'oklch(0.12 0.008 260)',
+            secondary:    'oklch(0.72 0.12 195)',
+            muted:        'oklch(0.22 0.008 260)',
+            'muted-foreground': 'oklch(0.55 0.01 260)',
+            border:       'oklch(0.22 0.008 260)',
+            card:         'oklch(0.155 0.008 260)',
+            accent:       'oklch(0.78 0.16 155)',
+          }
+        }
       }
-
-      section { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
-      article { background: rgba(15, 23, 42, 0.6); }
     }
-  </style>
+  </script>
 </head>
-<body>
-  <nav>
-    <div class="container">
-      <a href="index.html" class="nav-brand">
-        <div class="logo-small">
-          <img src="avatar.png" alt="VirtualBoard" />
-        </div>
-        <span>VirtualBoard Template</span>
-      </a>
-      <div class="nav-main">
-        <ul class="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="features.html" class="active">Features</a></li>
-          <li><a href="specs.html">Specs</a></li>
-          <li><a href="workflow.html">Workflow</a></li>
-          <li><a href="agents.html">Agents</a></li>
-          <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">CLI</a></li>
-        </ul>
-        <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="github-link" aria-label="GitHub">
-          <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
+<body class="min-h-screen bg-background text-foreground">
+
+  <!-- Navigation -->
+  <nav class="site-nav">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2.5 text-foreground hover:text-primary transition-colors">
+          <div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+            <img src="avatar.png" alt="VirtualBoard" class="w-full h-full object-cover" />
+          </div>
+          <span class="font-semibold text-sm tracking-tight">VirtualBoard Template</span>
         </a>
+
+        <div class="flex items-center gap-6">
+          <ul class="hidden md:flex items-center gap-5">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="features.html" class="nav-link nav-link--active">Features</a></li>
+            <li><a href="workflow.html" class="nav-link">Workflow</a></li>
+            <li><a href="agents.html" class="nav-link">Agents</a></li>
+            <li><a href="specs.html" class="nav-link">Specs</a></li>
+            <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a></li>
+          </ul>
+          <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="md:hidden flex flex-wrap gap-4 pb-3 justify-center">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="features.html" class="nav-link nav-link--active">Features</a>
+        <a href="workflow.html" class="nav-link">Workflow</a>
+        <a href="agents.html" class="nav-link">Agents</a>
+        <a href="specs.html" class="nav-link">Specs</a>
+        <a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a>
       </div>
     </div>
   </nav>
 
-  <header>
-    <div class="hero">
-      <h1>Feature Specs</h1>
-      <p>Comprehensive documentation for AI agent collaboration and software development.</p>
-      <div class="badge-row">
-        <span class="badge">50+ Examples</span>
-        <span class="badge">Agent Ready</span>
-        <span class="badge">Workflow Integrated</span>
-      </div>
-    </div>
-  </header>
-
   <main>
-    <section>
-      <h2>Feature Specification System</h2>
-      <p>VirtualBoard's feature specification system provides a standardized approach for AI agents and humans to collaborate on software development:</p>
-      <div class="grid three">
-        <article>
-          <h3>Markdown-First</h3>
-          <p>All important information lives in Markdown files that are easy to diff, parse, and index for both humans and AI agents.</p>
-        </article>
-        <article>
-          <h3>Parallel Development</h3>
-          <p>Multiple agents can work on different features simultaneously without stepping on each other's toes.</p>
-        </article>
-        <article>
-          <h3>Automation Ready</h3>
-          <p>Simple rules that are trivially validated by CI and followed by agents to enable seamless automation.</p>
-        </article>
+    <!-- Hero -->
+    <section class="hero text-center">
+      <div class="max-w-5xl mx-auto px-6 relative">
+        <div class="animate-fade-up">
+          <h1 class="mb-4">
+            Feature <span class="text-primary">Specs</span>
+          </h1>
+          <p class="text-lg text-muted-foreground max-w-xl mx-auto">
+            Standardized feature specifications for AI agent collaboration and software development
+          </p>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>Feature Spec Templates</h2>
-      <p>VirtualBoard provides templates for creating feature specifications:</p>
-      <div class="grid three">
-        <article>
-          <h3>Feature Spec Template</h3>
-          <p>The canonical feature spec template for creating comprehensive feature documentation:</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/feature.md" target="_blank" rel="noreferrer">View Template →</a>
-        </article>
-        <article>
-          <h3>PR Template</h3>
-          <p>The pull request template that ensures all PRs follow the same structure and validation:</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/pr-template.md" target="_blank" rel="noreferrer">View PR Template →</a>
-        </article>
-        <article>
-          <h3>Rules Template</h3>
-          <p>The machine-readable agent rules and validation parameters:</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/templates/rules.yml" target="_blank" rel="noreferrer">View Rules →</a>
-        </article>
+    <!-- Feature Spec System -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--primary mb-4 mx-auto inline-flex">Specification System</p>
+          <h2 class="mb-4">Built for parallel development</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            A structured approach for humans and AI agents to collaborate on features
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 stagger">
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Markdown-First</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              All specs live in Markdown with YAML frontmatter. Easy to diff, parse, and index for both humans and AI agents.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Parallel Development</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Multiple agents work on different features simultaneously. Ownership claims prevent conflicts.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Automation Ready</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Simple rules that are trivially validated by CI and followed by agents to enable seamless automation.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>Feature Spec Implementation</h2>
-      <p>VirtualBoard provides both CLI tool integration and shell script fallbacks for managing features:</p>
-      <div class="grid two">
-        <article>
-          <h3>CLI Tool Integration</h3>
-          <p>Use the <code>vb</code> CLI tool when available:</p>
-          <pre><code># Check for Virtual Board CLI
-if command -v vb &gt; /dev/null; then
-    echo "Virtual Board CLI found"
-    vb version
-    vb help
-    # Use vb commands for task management
-else
-    echo "Virtual Board CLI not found, using shell scripts"
-    # Fall back to shell scripts or plain bash
-fi</code></pre>
-        </article>
-        <article>
-          <h3>Fallback to Shell Scripts</h3>
-          <p>When the CLI tool is not available, use shell scripts:</p>
-          <pre><code># Make scripts executable
-chmod +x .virtualboard/scripts/*.sh
+    <div class="section-divider"></div>
 
-# Use shell scripts
-./.virtualboard/scripts/ftr-new.sh "User Authentication" auth frontend
-./.virtualboard/scripts/ftr-move.sh FTR-0001 in-progress agent-cursor-1
-./.virtualboard/scripts/ftr-validate.sh
-./.virtualboard/scripts/ftr-index.sh</code></pre>
-        </article>
+    <!-- Feature Spec Templates -->
+    <section class="py-20 lg:py-28 section-gradient">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--accent mb-4 mx-auto inline-flex">3 Templates</p>
+          <h2 class="mb-4">Templates included</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Click to expand and see the full structure of each template
+          </p>
+        </div>
+
+        <style>
+          .tmpl-panel { background: var(--card); border: 1px solid var(--border-subtle); border-radius: 12px; overflow: hidden; transition: border-color 0.3s ease; }
+          .tmpl-panel:hover, .tmpl-panel.open { border-color: var(--border); }
+          .tmpl-header { display: flex; align-items: center; gap: 1rem; padding: 1.25rem 1.5rem; cursor: pointer; transition: background 0.2s ease; user-select: none; }
+          .tmpl-header:hover { background: var(--card-hover); }
+          .tmpl-chevron { margin-left: auto; color: var(--muted-foreground); transition: transform 0.25s ease, color 0.25s ease; flex-shrink: 0; }
+          .tmpl-panel.open .tmpl-chevron { transform: rotate(90deg); color: var(--primary); }
+          .tmpl-body { display: none; border-top: 1px solid var(--border-subtle); }
+          .tmpl-panel.open .tmpl-body { display: block; }
+          .tmpl-body-inner { padding: 1.5rem; }
+          .tmpl-section { display: flex; align-items: flex-start; gap: 0.625rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border-subtle); font-size: 0.8125rem; }
+          .tmpl-section:last-child { border-bottom: none; }
+          .tmpl-section .s-heading { font-weight: 600; color: var(--foreground); flex-shrink: 0; }
+          .tmpl-section .s-desc { color: var(--muted-foreground); line-height: 1.5; }
+        </style>
+
+        <div class="flex flex-col gap-4 stagger">
+
+          <!-- ═══ Feature Spec ═══ -->
+          <div class="tmpl-panel" id="feature-template">
+            <div class="tmpl-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px; background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Feature Spec</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">13 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Canonical template for feature documentation with YAML frontmatter and structured body</p>
+              </div>
+              <div class="tmpl-chevron">&#9654;</div>
+            </div>
+            <div class="tmpl-body">
+              <div class="tmpl-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p>
+                    <code class="inline-code text-xs">templates/feature.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Created by</p>
+                    <code class="inline-code text-xs">vb new "Title" label1 label2</code>
+                  </div>
+                </div>
+
+                <!-- Frontmatter -->
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3">Frontmatter fields</p>
+                <div class="flex flex-col mb-5">
+                  <div class="tmpl-section"><span class="s-heading">id</span> <span class="s-desc">Unique identifier (<code class="inline-code">FTR-XXXX</code> pattern, auto-assigned by <code class="inline-code">vb new</code>)</span></div>
+                  <div class="tmpl-section"><span class="s-heading">title</span> <span class="s-desc">Human-readable feature name</span></div>
+                  <div class="tmpl-section"><span class="s-heading">status</span> <span class="s-desc">Workflow state: <code class="inline-code">backlog</code>, <code class="inline-code">in-progress</code>, <code class="inline-code">blocked</code>, <code class="inline-code">review</code>, <code class="inline-code">done</code></span></div>
+                  <div class="tmpl-section"><span class="s-heading">owner</span> <span class="s-desc">Agent or person currently responsible (single owner at a time)</span></div>
+                  <div class="tmpl-section"><span class="s-heading">priority</span> <span class="s-desc"><code class="inline-code">P0</code> (critical) through <code class="inline-code">P3</code> (low)</span></div>
+                  <div class="tmpl-section"><span class="s-heading">complexity</span> <span class="s-desc">T-shirt sizing: <code class="inline-code">XS</code>, <code class="inline-code">S</code>, <code class="inline-code">M</code>, <code class="inline-code">L</code>, <code class="inline-code">XL</code></span></div>
+                  <div class="tmpl-section"><span class="s-heading">labels</span> <span class="s-desc">Kebab-case tags for filtering and agent role detection</span></div>
+                  <div class="tmpl-section"><span class="s-heading">dependencies</span> <span class="s-desc">List of <code class="inline-code">FTR-XXXX</code> IDs that must be <code class="inline-code">done</code> first</span></div>
+                  <div class="tmpl-section"><span class="s-heading">epic</span> <span class="s-desc">Parent epic reference (<code class="inline-code">EP-XXXX</code>)</span></div>
+                  <div class="tmpl-section"><span class="s-heading">risk_notes</span> <span class="s-desc">Free-text risk or concern flags</span></div>
+                </div>
+
+                <!-- Body Sections -->
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3">Body sections</p>
+                <div class="flex flex-col">
+                  <div class="tmpl-section"><span class="s-heading">Summary</span> <span class="s-desc">One-paragraph overview of the problem and the proposed change</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Problem Statement</span> <span class="s-desc">Who is impacted, what pain exists, why now</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Goals &amp; Non-Goals</span> <span class="s-desc">Explicit scope boundaries to prevent scope creep</span></div>
+                  <div class="tmpl-section"><span class="s-heading">User Stories</span> <span class="s-desc">As a &lt;role&gt;, I want &lt;capability&gt; so that &lt;benefit&gt;</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Requirements</span> <span class="s-desc">Functional and non-functional (performance, reliability, security, a11y, i18n)</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Acceptance Criteria</span> <span class="s-desc">Testable checkbox list that defines "done" for this feature</span></div>
+                  <div class="tmpl-section"><span class="s-heading">UI/UX Notes</span> <span class="s-desc">Wireframes, component changes, empty states, responsive considerations</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Data &amp; API</span> <span class="s-desc">Data model diffs, API endpoints (request/response), migration plans</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Rollout &amp; Migration</span> <span class="s-desc">Feature flags, phased rollout plan, telemetry, rollback strategy</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Monitoring &amp; Metrics</span> <span class="s-desc">KPIs, dashboards, alerts to instrument for this feature</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Security &amp; Compliance</span> <span class="s-desc">Threats, mitigations, PII handling, audit logging requirements</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Implementation Notes</span> <span class="s-desc">Libraries, patterns, risks, tech debt considerations</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Open Questions</span> <span class="s-desc">Unresolved decisions or research spikes blocking implementation</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ PR Template ═══ -->
+          <div class="tmpl-panel" id="pr-template">
+            <div class="tmpl-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px; background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">PR Template</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">7 sections</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Structured pull request checklist ensuring consistent review standards</p>
+              </div>
+              <div class="tmpl-chevron">&#9654;</div>
+            </div>
+            <div class="tmpl-body">
+              <div class="tmpl-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p>
+                    <code class="inline-code text-xs">templates/pr-template.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Used by</p>
+                    <code class="inline-code text-xs">/work-on --create-pr</code>
+                  </div>
+                </div>
+
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3">Sections</p>
+                <div class="flex flex-col">
+                  <div class="tmpl-section"><span class="s-heading">Overview</span> <span class="s-desc">Brief description of changes made in this PR</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Feature Spec</span> <span class="s-desc">Checklist: link to spec, spec is in <code class="inline-code">review</code> status, all acceptance criteria implemented</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Acceptance Criteria</span> <span class="s-desc">Checkbox list mirroring the feature spec's criteria for sign-off</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Risk Assessment</span> <span class="s-desc">Low / Medium / High impact classification with breaking-change notes</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Rollback Plan</span> <span class="s-desc">Feature flag toggle, DB reversibility, data loss assessment</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Testing</span> <span class="s-desc">Unit, integration, manual, and performance testing checklists</span></div>
+                  <div class="tmpl-section"><span class="s-heading">Checklist</span> <span class="s-desc">Code conventions, docs updated, no warnings, a11y, security review</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Rules Config ═══ -->
+          <div class="tmpl-panel" id="rules-template">
+            <div class="tmpl-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon" style="margin-bottom:0; width:40px; height:40px; background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Rules Config</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">6 blocks</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Machine-readable YAML defining agent behavior, validation, and state transitions</p>
+              </div>
+              <div class="tmpl-chevron">&#9654;</div>
+            </div>
+            <div class="tmpl-body">
+              <div class="tmpl-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Template file</p>
+                    <code class="inline-code text-xs">templates/rules.yml</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Read by</p>
+                    <span class="text-xs text-muted-foreground">Agents at startup via <code class="inline-code">RULES.md</code> reference</span>
+                  </div>
+                </div>
+
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3">Configuration blocks</p>
+                <div class="flex flex-col">
+                  <div class="tmpl-section"><span class="s-heading">agent</span> <span class="s-desc">Max concurrent features (3), conflict resolution strategy, error retry attempts (2), lock TTL (60 min)</span></div>
+                  <div class="tmpl-section"><span class="s-heading">validation</span> <span class="s-desc">Frontmatter schema path, circular dependency checks, updated-date enforcement, max label count (10)</span></div>
+                  <div class="tmpl-section"><span class="s-heading">naming</span> <span class="s-desc">ID pattern (<code class="inline-code">FTR-\d{4}</code>), filename pattern, max description words (6)</span></div>
+                  <div class="tmpl-section"><span class="s-heading">transitions</span> <span class="s-desc">Allowed: backlog&rarr;in-progress, in-progress&rarr;blocked/review, blocked&rarr;in-progress, review&rarr;in-progress/done. Forbidden: done&rarr;any</span></div>
+                  <div class="tmpl-section"><span class="s-heading">dependencies</span> <span class="s-desc">Circular check enabled, require done before in-progress, max depth (10)</span></div>
+                  <div class="tmpl-section"><span class="s-heading">errors</span> <span class="s-desc">Templated error messages for ownership conflicts, circular deps, invalid transitions, missing dependencies</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>Feature Spec Validation</h2>
-      <p>VirtualBoard enforces strict validation rules to ensure consistency:</p>
-      <div class="grid two">
-        <article>
-          <h3>Schema Validation</h3>
-          <p>All feature specs must validate against <code>schemas/frontmatter.schema.json</code> to ensure proper structure and required fields.</p>
-        </article>
-        <article>
-          <h3>Folder Consistency</h3>
-          <p>The spec's folder location must match its <code>status</code> field in the frontmatter to maintain system integrity.</p>
-        </article>
+    <div class="section-divider"></div>
+
+    <!-- CLI Integration -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--primary mb-4 mx-auto inline-flex">CLI Integration</p>
+          <h2 class="mb-4">Feature operations via <code class="inline-code" style="font-size: inherit;">vb</code></h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            All feature operations run through the required CLI
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger">
+          <div class="vb-card">
+            <h3 class="text-base font-semibold mb-3">Bootstrap Check</h3>
+            <p class="text-sm text-muted-foreground mb-3">
+              Run once at the start of any task that touches feature specs:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+<pre># Install if missing, upgrade if outdated
+./scripts/install-vb-cli.sh --ensure-latest
+vb version</pre>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground mt-3">
+              Non-interactive: installs when missing, upgrades when outdated, exits cleanly when current.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <h3 class="text-base font-semibold mb-3">Core Commands</h3>
+            <p class="text-sm text-muted-foreground mb-3">
+              Create, move, validate, and index features:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+<pre>vb new "User Auth" auth frontend
+vb move FTR-0001 in-progress --owner alice
+vb validate
+vb index</pre>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground mt-3">
+              <code class="inline-code">vb move</code> updates frontmatter and relocates the file in one step.
+            </p>
+          </div>
+        </div>
+
+        <div class="text-center mt-10">
+          <a href="https://virtualboard.github.io/vb-cli/features.html" target="_blank" rel="noreferrer" class="text-sm text-primary hover:text-foreground transition-colors font-medium">
+            See the full CLI command reference
+            <svg class="w-3.5 h-3.5 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </a>
+        </div>
       </div>
-      <p>Validation ensures:</p>
-      <ul>
-        <li>All required sections are present</li>
-        <li>Content follows established formatting guidelines</li>
-        <li>Technical terminology is consistent across specs</li>
-        <li>All links and references are valid</li>
-      </ul>
     </section>
 
-    <section>
-      <h2>Feature Spec Best Practices</h2>
-      <p>To get the most from VirtualBoard's feature specification system:</p>
-      <ol>
-        <li>Use the proper naming conventions for files and branches</li>
-        <li>Ensure all generated content follows the VirtualBoard design system</li>
-        <li>Update feature specs and system specs as agents generate new content</li>
-        <li>Use the CLI tool when available for better integration and automation</li>
-        <li>Validate features regularly to catch issues early</li>
-      </ol>
+    <div class="section-divider"></div>
+
+    <!-- Security & Hardening -->
+    <section id="security" class="py-20 lg:py-28 section-gradient">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--warm mb-4 mx-auto inline-flex">Security &middot; v0.8.1</p>
+          <h2 class="mb-4">Security & Hardening</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Supply-chain integrity, audit logging, operational locking, and agent sandboxing
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger">
+          <!-- SHA-256 Checksums -->
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: oklch(0.75 0.14 55);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">SHA-256 Checksum Verification</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              The <code class="inline-code">install-vb-cli.sh</code> installer now fetches <code class="inline-code">checksums.txt</code> from the release and verifies the downloaded binary before installation. Prevents supply-chain tampering.
+            </p>
+          </div>
+
+          <!-- .vb-version Pinning -->
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: oklch(0.75 0.14 55);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Version Pinning</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              The <code class="inline-code">.vb-version</code> file pins the CLI to a specific release tag. The installer reads it instead of always fetching <code class="inline-code">latest</code>, ensuring reproducible builds.
+            </p>
+          </div>
+
+          <!-- --allow-sudo -->
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: oklch(0.75 0.14 55);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Explicit Sudo with --allow-sudo</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Silent sudo escalation removed from the installer. The <code class="inline-code">--allow-sudo</code> flag must be passed explicitly to permit elevated privileges during installation.
+            </p>
+          </div>
+
+          <!-- Untrusted Content -->
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: oklch(0.75 0.14 55);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Untrusted-Content Delimiters</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Feature spec bodies are wrapped in <code class="inline-code">&lt;untrusted-content&gt;</code> tags. Agents treat body text as data, not instructions, preventing prompt injection through spec content.
+            </p>
+          </div>
+
+          <!-- Gitleaks -->
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: oklch(0.75 0.14 55);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Gitleaks Pre-Commit</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Secret scanning via gitleaks added to pre-commit hooks. Prevents accidental credential leaks before they reach the repository.
+            </p>
+          </div>
+
+          <!-- Worktree Hardening -->
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: oklch(0.75 0.14 55);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Worktree Path Hardening</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Default worktree path changed from <code class="inline-code">/tmp</code> to <code class="inline-code">~/.local/state/virtualboard/worktrees</code>. Prevents cross-project collisions and world-readable temp exposure.
+            </p>
+          </div>
+
+          <!-- Audit Logging (CLI v0.8.0) -->
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: oklch(0.75 0.14 55);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Append-Only Audit Log</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Every feature operation (create, move, delete, update) is logged to <code class="inline-code">.virtualboard/audit.jsonl</code> with a SHA-256 hash chain for tamper evidence. Thread-safe and compliance-ready.
+            </p>
+          </div>
+
+          <!-- Operational Locking (CLI v0.8.0) -->
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: oklch(0.75 0.14 55);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Operational Locking</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              <code class="inline-code">vb new</code> and <code class="inline-code">vb move</code> now use atomic file-based locking to prevent duplicate ID allocation and concurrent-move race conditions. 1-minute TTL for automatic crash recovery.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Validation -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <h2 class="mb-4">Validation Rules</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Ensuring quality and consistency across features and system specs
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger">
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-3">Schema Validation</h3>
+            <p class="text-sm text-muted-foreground mb-3">
+              Features and specs validate against JSON Schema definitions:
+            </p>
+            <ul class="bullet-list space-y-1.5 text-sm">
+              <li>Required frontmatter fields (id, title, status, created, updated)</li>
+              <li>Valid status values and date formats</li>
+              <li>Allowed priority (P0-P3) and complexity (XS-XL) levels</li>
+              <li>Label format enforcement (kebab-case)</li>
+              <li>System spec validation (spec_type, status, applicability)</li>
+            </ul>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-3">Workflow Rules</h3>
+            <p class="text-sm text-muted-foreground mb-3">
+              Features must be in the correct directory for their status:
+            </p>
+            <ul class="bullet-list space-y-1.5 text-sm">
+              <li>File path must match frontmatter status value</li>
+              <li>Dependencies must exist and be in <code class="inline-code">done</code> status</li>
+              <li>No circular dependency chains allowed</li>
+              <li>Filename format: <code class="inline-code">{id}-{slug}.md</code></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="code-terminal mt-8 max-w-3xl mx-auto">
+          <div class="code-terminal-bar">
+            <div class="code-terminal-dot code-terminal-dot--red"></div>
+            <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+            <div class="code-terminal-dot code-terminal-dot--green"></div>
+          </div>
+          <div class="code-terminal-body">
+<pre><code><span style="color:var(--muted-foreground);"># Validate everything (features + specs)</span>
+vb validate
+
+<span style="color:var(--muted-foreground);"># Validate only features or only specs</span>
+vb validate --only-features
+vb validate --only-specs
+
+<span style="color:var(--muted-foreground);"># Validate a specific spec by filename</span>
+vb validate tech-stack.md
+
+<span style="color:var(--muted-foreground);"># Auto-fix what can be fixed</span>
+vb validate --fix</code></pre>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <p>VirtualBoard Template · Released under the MIT License</p>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="max-w-6xl mx-auto px-6">
+      <p>
+        VirtualBoard Template &middot; Released under the
+        <a href="https://github.com/virtualboard/template-base/blob/main/LICENSE" target="_blank" rel="noreferrer">MIT License</a>
+      </p>
+      <p class="mt-1">
+        Created by <a href="https://astucia.ai" target="_blank" rel="noreferrer" class="footer-brand">Astucia AI&#8482;</a>
+      </p>
+    </div>
   </footer>
+
 </body>
 </html>

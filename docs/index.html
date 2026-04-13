@@ -3,751 +3,484 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VirtualBoard Template · Home</title>
-  <meta name="description" content="A lightweight, automation-ready system for managing features with multiple AI agents using Markdown-first approach and bash scripts.">
-  <meta name="keywords" content="feature management, AI agents, markdown, workflow, project management, virtualboard, template">
-  <meta name="author" content="VirtualBoard">
+  <title>VirtualBoard Template -- Markdown-First Feature Management</title>
+  <meta name="description" content="A complete implementation of the VirtualBoard Feature Spec Workflow system. AI agent collaboration, Markdown-first approach, zero dependencies.">
 
-  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://virtualboard.github.io/virtualboard-template-base/">
-  <meta property="og:title" content="VirtualBoard Feature Spec Workflow Template">
-  <meta property="og:description" content="A lightweight, automation-ready system for managing features with multiple AI agents using Markdown-first approach and bash scripts.">
+  <meta property="og:url" content="https://virtualboard.github.io/template-base/">
+  <meta property="og:title" content="VirtualBoard Template">
+  <meta property="og:description" content="A complete implementation of the VirtualBoard Feature Spec Workflow system with AI agent collaboration.">
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://virtualboard.github.io/virtualboard-template-base/">
-  <meta property="twitter:title" content="VirtualBoard Feature Spec Workflow Template">
-  <meta property="twitter:description" content="A lightweight, automation-ready system for managing features with multiple AI agents using Markdown-first approach and bash scripts.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="globals.css">
 
-  <style>
-    :root {
-      color-scheme: light dark;
-      --background: oklch(0.13 0.01 240);
-      --foreground: oklch(0.95 0.005 240);
-      --primary: oklch(0.65 0.12 220);
-      --secondary: oklch(0.7 0.15 190);
-      --muted: oklch(0.25 0.01 240);
-      --muted-foreground: oklch(0.6 0.01 240);
-      --border: oklch(0.20 0.01 240);
-      --card: oklch(0.16 0.01 240);
-      --accent: oklch(0.75 0.18 160);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background: var(--background);
-      color: var(--foreground);
-      line-height: 1.6;
-    }
-
-    /* Navbar Styles */
-    nav {
-      background: var(--card);
-      border-bottom: 1px solid var(--border/50);
-      padding: 0 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 8px rgba(18, 28, 42, 0.08);
-    }
-
-    nav .container {
-      max-width: 960px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 0;
-      gap: 1rem;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--foreground);
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-
-    .nav-main {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex: 1;
-      justify-content: flex-end;
-    }
-
-    .github-link {
-      display: flex;
-      align-items: center;
-      color: var(--muted-foreground);
-      transition: color 0.2s ease;
-    }
-
-    .github-link:hover {
-      color: var(--primary);
-    }
-
-    .github-link svg {
-      width: 24px;
-      height: 24px;
-    }
-
-    .nav-brand .logo-small {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-
-    .nav-brand .logo-small img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--muted-foreground);
-      font-weight: 500;
-      transition: color 0.2s ease;
-      position: relative;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--primary);
-    }
-
-    .nav-links a.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1.25rem;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--primary);
-    }
-
-    @media (max-width: 768px) {
-      nav .container {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .nav-links {
-        gap: 1rem;
-        flex-wrap: wrap;
-        justify-content: center;
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background:   'oklch(0.12 0.008 260)',
+            foreground:   'oklch(0.94 0.005 260)',
+            primary:      'oklch(0.68 0.14 230)',
+            'primary-foreground': 'oklch(0.12 0.008 260)',
+            secondary:    'oklch(0.72 0.12 195)',
+            muted:        'oklch(0.22 0.008 260)',
+            'muted-foreground': 'oklch(0.55 0.01 260)',
+            border:       'oklch(0.22 0.008 260)',
+            card:         'oklch(0.155 0.008 260)',
+            accent:       'oklch(0.78 0.16 155)',
+          }
+        }
       }
     }
-
-    header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
-      padding: 4rem 1.5rem 3rem;
-      border-bottom: 1px solid var(--border/50);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .logo {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      overflow: hidden;
-      box-shadow: 0 8px 32px rgba(30, 58, 138, 0.3);
-      flex-shrink: 0;
-      transition: transform 0.3s ease;
-    }
-
-    .logo:hover {
-      transform: scale(1.05);
-    }
-
-    .logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-    }
-
-    .logo:hover img {
-      transform: scale(1.1);
-    }
-
-    .logo-text {
-      font-size: 2.5rem;
-      font-weight: 700;
-      background: var(--primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -0.02em;
-    }
-
-    @media (max-width: 768px) {
-      .logo-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-      }
-
-      .logo {
-        width: 60px;
-        height: 60px;
-      }
-
-      .logo-text {
-        font-size: 2rem;
-      }
-
-      .hero-title {
-        font-size: 2rem;
-        text-align: center;
-      }
-    }
-
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    .hero-title {
-      font-size: clamp(2.4rem, 4vw + 1rem, 3.6rem);
-      margin: 0;
-      letter-spacing: -0.04em;
-    }
-
-    .hero-tagline {
-      font-size: 1.2rem;
-      margin: 1rem 0;
-      color: var(--muted-foreground);
-      max-width: 620px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-
-    .hero-actions a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.75rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      border: 1px solid transparent;
-    }
-
-    .hero-actions a.primary {
-      background: var(--primary);
-      color: #fff;
-      box-shadow: 0 12px 30px rgba(0, 212, 255, 0.25);
-    }
-
-    .hero-actions a.primary:hover {
-      background: var(--primary/90);
-      transform: translateY(-1px);
-      box-shadow: 0 16px 40px rgba(0, 212, 255, 0.35);
-    }
-
-    .hero-actions a.secondary {
-      background: transparent;
-      border-color: var(--border/50);
-      color: var(--foreground);
-    }
-
-    main section {
-      margin: 3.5rem 0;
-      background: var(--card);
-      border: 1px solid var(--border/50);
-      border-radius: 1rem;
-      padding: 2.5rem;
-      box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 1.8rem;
-      letter-spacing: -0.02em;
-    }
-
-    p {
-      margin: 0.75rem 0;
-    }
-
-    ul {
-      padding-left: 1.1rem;
-    }
-
-    .grid {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .grid.two {
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    }
-
-    article {
-      background: var(--background);
-      border-radius: 0.9rem;
-      padding: 1.5rem;
-      border: 1px solid var(--border/50);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-
-    footer {
-      text-align: center;
-      padding: 3rem 1.5rem 4rem;
-      color: var(--muted-foreground);
-    }
-
-    footer a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(0, 212, 255, 0.1);
-      color: var(--primary);
-      padding: 0.45rem 0.85rem;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .highlight {
-      background: var(--primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 600;
-    }
-
-    /* Tab styles */
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      border-bottom: 2px solid var(--border/50);
-      margin-bottom: 2rem;
-      overflow-x: auto;
-    }
-
-    .tab-button {
-      padding: 0.75rem 1.5rem;
-      border: none;
-      background: transparent;
-      color: var(--muted-foreground);
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -2px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .tab-button:hover {
-      color: var(--foreground);
-      background: rgba(0, 212, 255, 0.05);
-    }
-
-    .tab-button.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-    }
-
-    .tab-content {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .code-block {
-      background: var(--background);
-      border-radius: 0.75rem;
-      padding: 1.25rem;
-      margin: 1.5rem 0;
-      border: 1px solid var(--border/50);
-      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-      font-size: 0.9rem;
-      overflow-x: auto;
-    }
-
-    .code-block code {
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .info-box {
-      padding: 1rem;
-      background: rgba(0, 212, 255, 0.1);
-      border-left: 3px solid var(--primary);
-      border-radius: 0.5rem;
-      margin: 1.5rem 0;
-    }
-
-    .success-box {
-      padding: 1rem;
-      background: rgba(50, 215, 75, 0.1);
-      border-left: 3px solid var(--accent);
-      border-radius: 0.5rem;
-      margin: 1.5rem 0;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --background: #0f172a;
-        --card: #111c36;
-        --foreground: #f1f5f9;
-        --muted-foreground: #cbd5f5b3;
-        --border: #1e2a44;
-      }
-
-      main section {
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-      }
-
-      article {
-        background: rgba(15, 23, 42, 0.6);
-        box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.12);
-      }
-
-      nav {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      }
-    }
-  </style>
+  </script>
 </head>
-<body>
-  <nav>
-    <div class="container">
-      <a href="index.html" class="nav-brand">
-        <div class="logo-small">
-          <img src="avatar.png" alt="VirtualBoard" />
-        </div>
-        <span>VirtualBoard Template</span>
-      </a>
-      <div class="nav-main">
-        <ul class="nav-links">
-          <li><a href="index.html" class="active">Home</a></li>
-          <li><a href="features.html">Features</a></li>
-          <li><a href="specs.html">Specs</a></li>
-          <li><a href="workflow.html">Workflow</a></li>
-          <li><a href="agents.html">Agents</a></li>
-          <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">CLI</a></li>
-        </ul>
-        <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="github-link" aria-label="GitHub">
-          <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
+<body class="min-h-screen bg-background text-foreground">
+
+  <!-- Navigation -->
+  <nav class="site-nav">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2.5 text-foreground hover:text-primary transition-colors">
+          <div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+            <img src="avatar.png" alt="VirtualBoard" class="w-full h-full object-cover" />
+          </div>
+          <span class="font-semibold text-sm tracking-tight">VirtualBoard Template</span>
         </a>
+
+        <div class="flex items-center gap-6">
+          <ul class="hidden md:flex items-center gap-5">
+            <li><a href="index.html" class="nav-link nav-link--active">Home</a></li>
+            <li><a href="features.html" class="nav-link">Features</a></li>
+            <li><a href="workflow.html" class="nav-link">Workflow</a></li>
+            <li><a href="agents.html" class="nav-link">Agents</a></li>
+            <li><a href="specs.html" class="nav-link">Specs</a></li>
+            <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a></li>
+          </ul>
+
+          <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile nav -->
+      <div class="md:hidden flex flex-wrap gap-4 pb-3 justify-center">
+        <a href="index.html" class="nav-link nav-link--active">Home</a>
+        <a href="features.html" class="nav-link">Features</a>
+        <a href="workflow.html" class="nav-link">Workflow</a>
+        <a href="agents.html" class="nav-link">Agents</a>
+        <a href="specs.html" class="nav-link">Specs</a>
+        <a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a>
       </div>
     </div>
   </nav>
 
-  <header>
-    <div class="container">
-      <div class="logo-container">
-        <div class="logo">
-          <img src="avatar.png" alt="VirtualBoard Logo" />
-        </div>
-        <h1 class="logo-text">virtualboard</h1>
-      </div>
-      <h2 class="hero-title">Template</h2>
-      <p class="hero-tagline">A complete implementation of the VirtualBoard Feature Spec Workflow system. Ready-to-use template with AI agent collaboration, Markdown-first approach, and zero dependencies.</p>
-      <div class="hero-actions">
-        <a class="primary" href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">Get Virtual Board CLI</a>
-        <a class="secondary" href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer">View on GitHub</a>
-      </div>
-      <div class="badge-row">
-        <span class="badge">Template · v0.4.0</span>
-        <span class="badge">Claude Code Plugin</span>
-        <span class="badge">Zero Dependencies</span>
-        <span class="badge">AI Ready</span>
-        <span class="badge">Markdown First</span>
-      </div>
-    </div>
-  </header>
+  <main>
+    <!-- Hero -->
+    <section class="hero text-center">
+      <div class="max-w-5xl mx-auto px-6 relative">
+        <div class="animate-fade-up flex flex-col items-center">
+          <div class="w-16 h-16 rounded-2xl overflow-hidden mb-8 shadow-lg shadow-primary/20 ring-1 ring-white/10 transition-transform hover:scale-105">
+            <img src="avatar.png" alt="VirtualBoard" class="w-full h-full object-cover" />
+          </div>
 
-  <main class="container">
-    <section>
-      <h2>IDE Integration</h2>
-      <p>VirtualBoard integrates seamlessly with multiple AI-powered development tools. Choose your IDE below to get started:</p>
+          <h1 class="mb-6">
+            virtualboard <span class="text-primary">template</span>
+          </h1>
 
-      <div class="tabs">
-        <button class="tab-button active" onclick="switchTab(event, 'claude-code')">Claude Code</button>
-        <button class="tab-button" onclick="switchTab(event, 'cursor')">Cursor</button>
-        <button class="tab-button" onclick="switchTab(event, 'opencode')">OpenCode</button>
-      </div>
+          <p class="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-10" style="animation-delay: 0.1s">
+            A complete implementation of the VirtualBoard Feature Spec Workflow system. Ready-to-use template with AI agent collaboration, Markdown-first approach, and zero dependencies.
+          </p>
 
-      <div id="claude-code" class="tab-content active">
-        <h3>Claude Code Plugin</h3>
-        <p>VirtualBoard is available as a <span class="highlight">Claude Code plugin</span>! Install it directly to get instant access to 10 specialized AI agent roles and 30+ commands.</p>
+          <!-- Badges -->
+          <div class="flex flex-wrap gap-2.5 justify-center mb-12 stagger">
+            <span class="badge badge--primary">CLI v0.8.1</span>
+            <span class="badge badge--accent">Claude Code Plugin</span>
+            <span class="badge badge--warm">Zero Dependencies</span>
+            <span class="badge badge--muted">Audit Logging</span>
+            <span class="badge badge--secondary">Markdown First</span>
+          </div>
 
-        <div class="code-block">
-          <code>claude plugin marketplace add virtualboard/template-base<br>claude plugin install virtualboard</code>
-        </div>
-
-        <div class="grid two">
-          <article>
-            <h3>10 Specialized Agent Roles</h3>
-            <ul>
-              <li>Project Manager</li>
-              <li>System Architect</li>
-              <li>Backend/Frontend/Fullstack Developer</li>
-              <li>QA Engineer</li>
-              <li>DevOps Engineer</li>
-              <li>Security Engineer</li>
-              <li>Data Engineer</li>
-              <li>UX/Product Designer</li>
-            </ul>
-          </article>
-          <article>
-            <h3>30+ Agent Commands</h3>
-            <ul>
-              <li>GPP - Project Progress Report</li>
-              <li>GBG - Backlog Grooming</li>
-              <li>GAD - Architecture Diagram</li>
-              <li>GAE - API Endpoint</li>
-              <li>GC - Component Generation</li>
-              <li>GTP - Test Plan</li>
-              <li>And 23+ more specialized commands!</li>
-            </ul>
-          </article>
-        </div>
-
-        <div class="info-box">
-          <strong>Plugin Benefits:</strong> Automatic updates, built-in validation, and seamless integration with Claude Code's agent system.
-        </div>
-
-        <h3>/work-on Skill</h3>
-        <p>The plugin includes a <span class="highlight">/work-on skill</span> for working on features in isolated git worktrees:</p>
-        <div class="code-block">
-          <code>/work-on FTR-0042                    # Interactive mode<br>/work-on FTR-0042 --autonomous       # Autonomous mode<br>/work-on FTR-0042 --base-branch dev  # Branch from dev<br>/work-on FTR-0042 --create-pr        # Create PR after push</code>
-        </div>
-        <div class="grid two">
-          <article>
-            <h3>Features</h3>
-            <ul>
-              <li>Creates git worktree with feature branch</li>
-              <li>Detects and resumes existing work</li>
-              <li>Configurable base branch</li>
-              <li>Automatic commit footer</li>
-            </ul>
-          </article>
-          <article>
-            <h3>Configuration</h3>
-            <ul>
-              <li>VIRTUALBOARD_WORKTREE_PATH</li>
-              <li>VIRTUALBOARD_BASE_BRANCH</li>
-              <li>VIRTUALBOARD_POST_PUSH</li>
-              <li>VIRTUALBOARD_SESSION_MODE</li>
-            </ul>
-          </article>
+          <!-- CTA -->
+          <div class="flex flex-wrap gap-3 justify-center">
+            <a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="btn btn--primary">
+              Get VirtualBoard CLI
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+            <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="btn btn--ghost">
+              View on GitHub
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div id="cursor" class="tab-content">
-        <h3>Cursor IDE Integration</h3>
-        <p>VirtualBoard includes a <code>.cursor/rules/virtualboard.mdc</code> file that enables automatic integration with <a href="https://cursor.sh/" target="_blank" rel="noreferrer" style="color: var(--primary);">Cursor IDE</a>.</p>
+    <!-- IDE Integration -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--primary mb-4 mx-auto inline-flex">IDE Integration</p>
+          <h2 class="mb-4">Works with your tools</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Seamless integration with Claude Code, Cursor, and OpenCode
+          </p>
+        </div>
 
-        <div class="grid two">
-          <article>
-            <h3>Project-Level Installation</h3>
-            <p>Copy the <code>.cursor</code> folder to your project root to enable VirtualBoard for that specific project:</p>
-            <div class="code-block">
-              <code>cp -r .cursor /path/to/your/project/</code>
+        <!-- Tabs -->
+        <div class="tab-group">
+          <button class="tab-btn active" onclick="switchTab(event, 'claude-code')">Claude Code</button>
+          <button class="tab-btn" onclick="switchTab(event, 'cursor')">Cursor</button>
+          <button class="tab-btn" onclick="switchTab(event, 'opencode')">OpenCode</button>
+        </div>
+
+        <!-- Claude Code Tab -->
+        <div id="claude-code" class="tab-panel active">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger">
+            <div class="vb-card">
+              <div class="card-icon">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+              </div>
+              <h3 class="text-base font-semibold mb-2">One-Command Install</h3>
+              <p class="text-sm text-muted-foreground leading-relaxed mb-3">
+                Use the CLI to install the Claude Code plugin automatically:
+              </p>
+              <div class="code-terminal">
+                <div class="code-terminal-bar">
+                  <div class="code-terminal-dot code-terminal-dot--red"></div>
+                  <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                  <div class="code-terminal-dot code-terminal-dot--green"></div>
+                </div>
+                <div class="code-terminal-body">
+<pre><span style="color:var(--muted-foreground);"># Automated via vb CLI</span>
+vb install claude-code
+
+<span style="color:var(--muted-foreground);"># Or manually via claude CLI</span>
+claude plugin add virtualboard/template-base
+claude plugin install virtualboard</pre>
+                </div>
+              </div>
             </div>
-            <p><strong>Recommended for:</strong> Single project or project-specific customizations</p>
-          </article>
 
-          <article>
-            <h3>Global Installation</h3>
-            <p>Add the VirtualBoard rule globally in Cursor Settings:</p>
-            <ol style="font-size: 0.95rem; line-height: 1.7;">
-              <li>Open Cursor Settings (Cmd/Ctrl + ,)</li>
-              <li>Navigate to "Cursor Settings" → "Rules for AI"</li>
-              <li>Click "Edit in settings.json"</li>
-              <li>Add the VirtualBoard rule configuration</li>
-            </ol>
-            <p><strong>Recommended for:</strong> Using VirtualBoard across all your projects</p>
-          </article>
+            <div class="vb-card">
+              <div class="card-icon">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <h3 class="text-base font-semibold mb-2">/work-on Skill</h3>
+              <p class="text-sm text-muted-foreground leading-relaxed mb-3">
+                Work on features in isolated git worktrees with the built-in skill:
+              </p>
+              <div class="code-terminal">
+                <div class="code-terminal-bar">
+                  <div class="code-terminal-dot code-terminal-dot--red"></div>
+                  <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                  <div class="code-terminal-dot code-terminal-dot--green"></div>
+                </div>
+                <div class="code-terminal-body">
+<pre>/work-on FTR-0042
+/work-on FTR-0042 --autonomous
+/work-on FTR-0042 --create-pr</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout--info mt-6">
+            <strong>10 specialized agent roles</strong> and <strong>31 commands</strong> available out of the box. Includes PM, Architect, Frontend/Backend/Fullstack Dev, QA, DevOps, Security, Data, and UX roles.
+          </div>
         </div>
 
-        <div class="info-box">
-          <strong>Note:</strong> Project-level rules (<code>.cursor/rules/</code>) take precedence over global rules.
+        <!-- Cursor Tab -->
+        <div id="cursor" class="tab-panel">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="vb-card">
+              <h3 class="text-base font-semibold mb-2">One-Command Install</h3>
+              <p class="text-sm text-muted-foreground leading-relaxed mb-3">
+                Use the CLI to download and install Cursor rules automatically:
+              </p>
+              <div class="code-terminal">
+                <div class="code-terminal-bar">
+                  <div class="code-terminal-dot code-terminal-dot--red"></div>
+                  <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                  <div class="code-terminal-dot code-terminal-dot--green"></div>
+                </div>
+                <div class="code-terminal-body">
+<pre>vb install cursor
+<span style="color:var(--muted-foreground);"># Downloads .cursor/rules/virtualboard.mdc</span>
+<span style="color:var(--muted-foreground);"># Use --force to skip confirmation</span></pre>
+                </div>
+              </div>
+            </div>
+            <div class="vb-card">
+              <h3 class="text-base font-semibold mb-2">Manual Install</h3>
+              <p class="text-sm text-muted-foreground leading-relaxed mb-3">
+                Alternatively, copy the <code class="inline-code">.cursor</code> folder to your project root, or add the VirtualBoard rule globally via Cursor Settings &gt; Rules for AI.
+              </p>
+              <div class="code-terminal">
+                <div class="code-terminal-bar">
+                  <div class="code-terminal-dot code-terminal-dot--red"></div>
+                  <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                  <div class="code-terminal-dot code-terminal-dot--green"></div>
+                </div>
+                <div class="code-terminal-body">
+                  <code>cp -r .cursor /path/to/your/project/</code>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div id="opencode" class="tab-content">
-        <h3>OpenCode Integration</h3>
-        <p>VirtualBoard agents can be easily integrated into <a href="https://github.com/stackblitz/opencode" target="_blank" rel="noreferrer" style="color: var(--primary);">OpenCode</a>, an open source AI coding tool.</p>
-
-        <h4>One-Time Setup</h4>
-        <p>Copy the VirtualBoard agent files to OpenCode's agent directory:</p>
-        <div class="code-block">
-          <code>mkdir -p .opencode/agent && cp -Rf .virtualboard/agents .opencode/agent</code>
-        </div>
-
-        <h4>Activate the Agents</h4>
-        <p>Restart your OpenCode session to load the agents.</p>
-
-        <div class="success-box">
-          <strong>What Gets Copied:</strong>
-          <ul style="margin: 0.5rem 0 0 0; padding-left: 1.5rem;">
-            <li>All agent role definitions (<code>agents/*.md</code>)</li>
-            <li>Agent command system (<code>prompts/agents/</code>)</li>
-            <li>Shared rules of engagement (<code>agents/RULES.md</code>)</li>
-          </ul>
-        </div>
-
-        <h4>Using the Agents</h4>
-        <p>Once reloaded, all VirtualBoard agents (PM, Architect, Frontend Dev, Backend Dev, QA, etc.) will be available in OpenCode.</p>
-
-        <div class="grid two">
-          <article>
-            <h3>Benefits</h3>
-            <ul>
-              <li>Native agent integration</li>
-              <li>Quick access to specialized commands</li>
-              <li>Consistent agent behavior</li>
-              <li>No additional configuration</li>
-            </ul>
-          </article>
-          <article>
-            <h3>Available Agents</h3>
-            <ul>
-              <li>All 10 specialized roles</li>
-              <li>30+ agent commands</li>
-              <li>Feature lifecycle management</li>
-              <li>Automated validation</li>
-            </ul>
-          </article>
+        <!-- OpenCode Tab -->
+        <div id="opencode" class="tab-panel">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="vb-card">
+              <h3 class="text-base font-semibold mb-2">One-Command Install</h3>
+              <p class="text-sm text-muted-foreground leading-relaxed mb-3">
+                Use the CLI to copy agent files to OpenCode's agent directory:
+              </p>
+              <div class="code-terminal">
+                <div class="code-terminal-bar">
+                  <div class="code-terminal-dot code-terminal-dot--red"></div>
+                  <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                  <div class="code-terminal-dot code-terminal-dot--green"></div>
+                </div>
+                <div class="code-terminal-body">
+                  <code>vb install opencode</code>
+                </div>
+              </div>
+            </div>
+            <div class="vb-card">
+              <h3 class="text-base font-semibold mb-2">Manual Install</h3>
+              <p class="text-sm text-muted-foreground leading-relaxed mb-3">
+                Copy agent files manually and restart your session:
+              </p>
+              <div class="code-terminal">
+                <div class="code-terminal-bar">
+                  <div class="code-terminal-dot code-terminal-dot--red"></div>
+                  <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                  <div class="code-terminal-dot code-terminal-dot--green"></div>
+                </div>
+                <div class="code-terminal-body">
+                  <code>mkdir -p .opencode/agent && cp -Rf .virtualboard/agents .opencode/agent</code>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section>
-      <h2>What is this Template?</h2>
-      <div class="grid two">
-        <article>
-          <h3>Complete Implementation</h3>
-          <p>This is a <span class="highlight">template repository</span> that provides a complete implementation of the VirtualBoard Feature Spec Workflow system. It's designed to be used with the <a href="https://github.com/virtualboard/vb-cli" style="color: var(--primary);">Virtual Board CLI</a> to initialize new projects with a standardized feature management workflow.</p>
-        </article>
-        <article>
-          <h3>Key Benefits</h3>
-          <ul>
-            <li>Zero dependencies - pure bash scripts</li>
-            <li>Universal compatibility across Unix systems</li>
-            <li>AI agent collaboration ready</li>
-            <li>Markdown-first approach</li>
-            <li>Automated validation and indexing</li>
-            <li>Built-in code quality tools and pre-commit hooks</li>
-          </ul>
-        </article>
+    <div class="section-divider"></div>
+
+    <!-- What Is This Template -->
+    <section class="py-20 lg:py-28 section-gradient">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--accent mb-4 mx-auto inline-flex">Template Repository</p>
+          <h2 class="mb-4">What is this template?</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Everything you need to manage features with AI agents
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger">
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Markdown-First</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              All specs live in Markdown files with YAML frontmatter. Easy to diff, parse, and index for humans and AI agents alike.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">10 Agent Roles</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Pre-configured roles for PM, Architect, Frontend, Backend, Fullstack, QA, DevOps, Security, Data, and UX agents.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Validation Built In</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              JSON Schema validation for frontmatter, workflow rules enforcement, and dependency checking via the <code class="inline-code">vb</code> CLI.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">System Spec Templates</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Eight reusable blueprints covering tech stack, infrastructure, CI/CD, database, caching, security, and more.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Security Hardened</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              SHA-256 checksum verification, <code class="inline-code">--allow-sudo</code> flag, gitleaks pre-commit hooks, and untrusted-content delimiters.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2);">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Zero Dependencies</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Pure Markdown and the single <code class="inline-code">vb</code> binary. No Node.js, no npm, no runtime dependencies required.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>System Specification Templates</h2>
-      <p>The <code>templates/specs/</code> directory ships with eight reusable blueprints so every project can document foundational architecture decisions. Copy templates to your project's <code>specs/</code> directory before stories start moving.</p>
-      <div class="grid two">
-        <article>
-          <h3>Architecture & Delivery</h3>
-          <ul>
-            <li><strong>Tech Stack:</strong> Languages, runtimes, frameworks, third-parties.</li>
-            <li><strong>Hosting & Infrastructure:</strong> Cloud/on-prem topology, networking, DR.</li>
-            <li><strong>CI/CD Pipeline:</strong> Build/test/deploy stages, gates, approvals.</li>
-            <li><strong>Observability & Incident Response:</strong> Telemetry coverage, alerting, playbooks.</li>
-          </ul>
-        </article>
-        <article>
-          <h3>Data & Safety</h3>
-          <ul>
-            <li><strong>Local Development:</strong> Toolchain requirements, secrets, seeding, troubleshooting.</li>
-            <li><strong>Database Schema:</strong> Entity catalog, migrations, lifecycle & retention.</li>
-            <li><strong>Caching & Performance:</strong> Cache layers, SLIs/SLOs, invalidation strategy.</li>
-            <li><strong>Security & Compliance:</strong> Threat model, controls, audit requirements.</li>
-          </ul>
-        </article>
+    <div class="section-divider"></div>
+
+    <!-- Quick Start -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--warm mb-4 mx-auto inline-flex">Quick Start</p>
+          <h2 class="mb-4">Up and running in minutes</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Initialize a workspace and start managing features
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger">
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">1</div>
+              <h3 class="text-base font-semibold">Install the CLI</h3>
+            </div>
+            <p class="text-sm text-muted-foreground mb-3">
+              Bootstrap with the installer script or download the binary directly:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+                <code>./scripts/install-vb-cli.sh --ensure-latest</code>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground mt-3">
+              Verifies SHA-256 checksums before installing. Reads <code class="inline-code">.vb-version</code> to pin to a specific release.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">2</div>
+              <h3 class="text-base font-semibold">Initialize Workspace</h3>
+            </div>
+            <p class="text-sm text-muted-foreground mb-3">
+              Set up the <code class="inline-code">.virtualboard/</code> directory structure:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+                <code>vb init</code>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground mt-3">
+              Downloads the template archive. Use <code class="inline-code">vb init --update</code> to interactively diff and update.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">3</div>
+              <h3 class="text-base font-semibold">Create Features</h3>
+            </div>
+            <p class="text-sm text-muted-foreground mb-3">
+              Scaffold feature specs with labels and frontmatter:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+                <code>vb new "User Authentication" security auth</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">4</div>
+              <h3 class="text-base font-semibold">Validate and Move</h3>
+            </div>
+            <p class="text-sm text-muted-foreground mb-3">
+              Enforce rules and progress features through the workflow:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+<pre>vb validate
+vb move FTR-0001 in-progress --owner alice</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-10">
+          <a href="workflow.html" class="btn btn--ghost text-sm">
+            View Full Workflow
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
       </div>
-      <p style="margin-top: 1rem; padding: 1rem; background: rgba(50, 215, 75, 0.1); border-left: 3px solid var(--accent); border-radius: 0.5rem;">
-        Each template carries validated frontmatter (<code>schemas/system-spec.schema.json</code>) so <code>vb validate</code> and <code>./scripts/ftr-validate.sh</code> enforce metadata just like feature specs.
-      </p>
-      <p style="margin-top: 1rem;">
-        <a href="specs.html" style="color: var(--primary); font-weight: 600; text-decoration: none;">Explore the detailed specs catalog &rarr;</a>
-      </p>
     </section>
   </main>
 
-  <footer>
-    <p>VirtualBoard Template · Released under the MIT License</p>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="max-w-6xl mx-auto px-6">
+      <p>
+        VirtualBoard Template &middot; Released under the
+        <a href="https://github.com/virtualboard/template-base/blob/main/LICENSE" target="_blank" rel="noreferrer">MIT License</a>
+      </p>
+      <p class="mt-1">
+        Created by <a href="https://astucia.ai" target="_blank" rel="noreferrer" class="footer-brand">Astucia AI&#8482;</a>
+      </p>
+    </div>
   </footer>
 
   <script>
     function switchTab(event, tabId) {
-      // Hide all tab contents
-      const tabContents = document.querySelectorAll('.tab-content');
-      tabContents.forEach(content => content.classList.remove('active'));
-
-      // Remove active class from all buttons
-      const tabButtons = document.querySelectorAll('.tab-button');
-      tabButtons.forEach(button => button.classList.remove('active'));
-
-      // Show selected tab and mark button as active
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       event.currentTarget.classList.add('active');
     }
   </script>
+
 </body>
 </html>

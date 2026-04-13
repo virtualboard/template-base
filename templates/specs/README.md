@@ -30,7 +30,7 @@ This directory contains cross-cutting specification templates that complement fe
 
 ## Validation
 
-All system specs share the same schema (`schemas/system-spec.schema.json`). `vb validate` and `./scripts/ftr-validate.sh` verify that:
+All system specs share the same schema (`schemas/system-spec.schema.json`). `vb validate` verifies that:
 
 - `spec_type`, `status`, and `applicability` use allowed values.
 - `last_updated` is either a real ISO date or the placeholder `YYYY-MM-DD` while templating.

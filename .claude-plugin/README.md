@@ -133,10 +133,12 @@ Each feature is a Markdown file with:
    cp -r /path/to/template-base/{features,agents,prompts,scripts,templates,schemas} .virtualboard
    ```
 
-2. **Make scripts executable:**
+2. **Install the latest `vb` CLI (required):**
    ```bash
-   chmod +x scripts/*.sh
+   ./scripts/install-vb-cli.sh --ensure-latest
+   vb version
    ```
+   `--ensure-latest` installs when missing, upgrades via `vb upgrade` (with `sudo vb upgrade` fallback) when outdated, and is a no-op when already up to date.
 
 3. **Start using agents:**
    ```bash
@@ -147,24 +149,26 @@ Each feature is a Markdown file with:
 
 ### Working with Features
 
+All feature commands run through the `vb` CLI. Ensure the latest version is installed first: `./scripts/install-vb-cli.sh --ensure-latest`.
+
 **Create a new feature:**
 ```bash
-./scripts/ftr-new.sh "User Authentication" security backend
+vb new "User Authentication" security backend
 ```
 
 **Move feature to in-progress:**
 ```bash
-./scripts/ftr-move.sh FTR-0001 in-progress fullstack_dev
+vb move FTR-0001 in-progress --owner fullstack_dev
 ```
 
 **Validate all features:**
 ```bash
-./scripts/ftr-validate.sh
+vb validate
 ```
 
 **Generate feature index:**
 ```bash
-./scripts/ftr-index.sh
+vb index
 ```
 
 ### Using Agent Commands
@@ -225,12 +229,9 @@ your-project/
 │   │   └── ux_designer/
 │   ├── common/              # Shared templates
 │   └── AGENTS.md            # Commands overview
-├── scripts/                 # Automation scripts
-│   ├── ftr-new.sh
-│   ├── ftr-move.sh
-│   ├── ftr-validate.sh
-│   ├── ftr-index.sh
-│   └── install-vb-cli.sh
+├── scripts/                 # Bootstrap + helper scripts
+│   ├── install-vb-cli.sh    # Bootstrap installer for the `vb` CLI
+│   └── worktree-setup.sh    # Git worktree setup for /work-on skill
 ├── templates/               # Templates
 │   ├── feature.md           # Feature spec template
 │   ├── pr-template.md       # Pull request template
@@ -241,13 +242,15 @@ your-project/
 
 ## Virtual Board CLI
 
-For enhanced task management, install the [Virtual Board CLI](https://github.com/virtualboard/vb-cli):
+The [Virtual Board CLI (`vb`)](https://github.com/virtualboard/vb-cli) is **required** for all feature workflow operations. Install or upgrade it with the bootstrap script:
 
 ```bash
-./scripts/install-vb-cli.sh
+./scripts/install-vb-cli.sh --ensure-latest
 ```
 
-The CLI provides streamlined commands:
+`--ensure-latest` is non-interactive and handles every state: install when missing, `vb upgrade` (with `sudo vb upgrade` fallback) when outdated, no-op when already up to date. Agents should run this at the start of any task.
+
+Core commands:
 ```bash
 vb new "Feature Title" label1 label2
 vb move FTR-0001 in-progress --owner fullstack_dev
@@ -272,9 +275,9 @@ vb upgrade
 
 ### For Development
 - **Markdown-first** - Easy to version control and review
-- **Automation-ready** - Scripts for common operations
+- **Automation-ready** - One CLI entry point for every workflow operation
 - **CI/CD friendly** - Validation hooks for continuous integration
-- **Zero dependencies** - Pure bash scripts, no Node.js required
+- **Zero runtime dependencies** - A single static `vb` binary, no Node.js required
 
 ## Configuration
 
@@ -312,11 +315,7 @@ The system includes comprehensive validation:
 
 Run validation:
 ```bash
-# Using CLI
 vb validate
-
-# Using scripts
-./scripts/ftr-validate.sh
 ```
 
 ## Integration
@@ -326,21 +325,16 @@ vb validate
 Add to your CI pipeline:
 
 ```yaml
-- name: Validate Features
+- name: Install Virtual Board CLI
   run: |
-    if command -v vb &> /dev/null; then
-      vb validate
-    else
-      ./scripts/ftr-validate.sh
-    fi
+    ./scripts/install-vb-cli.sh --ensure-latest
+    vb version
+
+- name: Validate Features
+  run: vb validate
 
 - name: Generate Index
-  run: |
-    if command -v vb &> /dev/null; then
-      vb index
-    else
-      ./scripts/ftr-index.sh
-    fi
+  run: vb index
 ```
 
 ### Pre-commit Hooks
@@ -352,8 +346,8 @@ Add to `.pre-commit-config.yaml`:
   hooks:
     - id: validate-features
       name: Validate feature specs
-      entry: ./scripts/ftr-validate.sh
-      language: script
+      entry: vb validate
+      language: system
       pass_filenames: false
 ```
 
@@ -399,17 +393,18 @@ Add to `.pre-commit-config.yaml`:
 - Not allowed to move to that status
 - Check lifecycle rules in `agents/RULES.md`
 
-### Scripts not executable
+### `vb: command not found`
 
-- Run: `chmod +x scripts/*.sh`
+- Install (or upgrade) the CLI: `./scripts/install-vb-cli.sh --ensure-latest`
+- Verify with `vb version`
 
 ## Contributing
 
 Contributions welcome! Please:
 1. Follow existing patterns
 2. Update documentation
-3. Test with validation scripts
-4. Update feature index
+3. Run `vb validate` before committing
+4. Regenerate the feature index with `vb index`
 
 ## License
 

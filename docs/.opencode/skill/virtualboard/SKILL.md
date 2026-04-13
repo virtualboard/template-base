@@ -79,51 +79,38 @@ updated: 2025-12-29  # MUST update to today's date (YYYY-MM-DD)
 
 ## Using Virtual Board
 
-### Check CLI Availability
+### Ensure the Latest CLI Is Installed (Required)
 
 ```bash
-# Check if VirtualBoard CLI is installed
-command -v vb &> /dev/null && echo "CLI available" || echo "Use scripts"
+# Install if missing, upgrade if outdated, no-op if already latest
+./scripts/install-vb-cli.sh --ensure-latest
+vb version
 ```
+
+`--ensure-latest` is non-interactive: installs the latest release when missing, runs `vb upgrade` (with `sudo vb upgrade` fallback) when outdated, and exits cleanly when already up to date. The `vb` CLI is required — there are no shell-script fallbacks for feature operations.
 
 ### Common Operations
 
 **Create New Feature (as PM agent):**
 ```bash
-# Using CLI
 vb new "Feature Title" label1 label2
-
-# Using scripts
-./scripts/ftr-new.sh "Feature Title" label1 label2
 ```
 
 **Move Feature Between States:**
 ```bash
-# Using CLI (recommended)
 vb move FTR-0001 in-progress --owner backend_dev
-
-# Using scripts
-./scripts/ftr-move.sh FTR-0001 in-progress backend_dev
 ```
 
-**IMPORTANT:** After moving, manually verify frontmatter is updated!
+`vb move` updates frontmatter (`status`, `updated`, `owner`) and relocates the file in one step.
 
 **Validate All Features:**
 ```bash
-# Using CLI
 vb validate
-
-# Using scripts
-./scripts/ftr-validate.sh
 ```
 
 **Generate Feature Index:**
 ```bash
-# Using CLI
 vb index
-
-# Using scripts
-./scripts/ftr-index.sh
 ```
 
 ### Workflow Example
@@ -202,12 +189,9 @@ prompts/             # Agent commands
 │   └── [other roles]/
 └── common/          # Shared templates
 
-scripts/             # Automation scripts
-├── ftr-new.sh
-├── ftr-move.sh
-├── ftr-validate.sh
-├── ftr-index.sh
-└── install-vb-cli.sh
+scripts/             # Bootstrap + helper scripts
+├── install-vb-cli.sh    # Bootstrap installer for the `vb` CLI
+└── worktree-setup.sh    # Git worktree setup for /work-on skill
 
 templates/           # Templates for features and PRs
 ├── feature.md
@@ -229,16 +213,16 @@ The system enforces:
 
 **Always validate before committing:**
 ```bash
-vb validate || ./scripts/ftr-validate.sh
+vb validate
 ```
 
 ## Best Practices
 
 ### DO
 - ✅ Always read agent files before starting work
-- ✅ Always update frontmatter when moving files (status, owner, updated)
-- ✅ Always validate before committing
-- ✅ Use the CLI (`vb`) when available
+- ✅ Always use `vb move` — it updates frontmatter (status, owner, updated) automatically
+- ✅ Always run `vb validate` before committing
+- ✅ Ensure the latest `vb` CLI is installed (`./scripts/install-vb-cli.sh --ensure-latest`)
 - ✅ Follow the agent's specific workflow for your adopted role
 - ✅ Reference feature IDs (FTR-####) in all commits and PRs
 - ✅ Link PRs and commits in feature's Links section
@@ -272,32 +256,29 @@ Use VirtualBoard when:
 → Not allowed to move to that status, check `agents/RULES.md`
 
 **"Location mismatch"**
-→ File location doesn't match frontmatter status field
+→ File location doesn't match frontmatter status field — use `vb move` instead of editing by hand
 
-**Scripts permission denied**
-→ Run `chmod +x scripts/*.sh`
+**"`vb: command not found`"**
+→ Install the CLI: `./scripts/install-vb-cli.sh --ensure-latest`
 
 ## Quick Start for New Users
 
 If this is your first time in a VirtualBoard repository:
 
 ```bash
-# 1. Check if CLI is installed
-command -v vb
+# 1. Ensure the latest CLI is installed (required)
+./scripts/install-vb-cli.sh --ensure-latest
 
-# 2. If not, install it (optional but recommended)
-./scripts/install-vb-cli.sh
-
-# 3. Read the agent system overview
+# 2. Read the agent system overview
 cat agents/AGENTS.md
 
-# 4. Check available work
+# 3. Check available work
 cat features/INDEX.md
 
-# 5. Adopt appropriate agent role based on task
+# 4. Adopt appropriate agent role based on task
 cat agents/backend_dev.md  # Example
 
-# 6. Start working!
+# 5. Start working!
 ```
 
 ## QA Agent Special: Browser Automation Testing
@@ -316,11 +297,11 @@ See `prompts/agents/qa/examples/GBAT-example.md` for complete walkthrough.
 
 ## Integration
 
-VirtualBoard has zero dependencies (pure bash scripts) and integrates with:
+VirtualBoard runs on a single static `vb` binary (no Node.js/npm required) and integrates with:
 - Claude Code (via `.claude/CLAUDE.md` and plugins)
 - Cursor IDE (via `.cursor/rules/virtualboard.mdc`)
 - OpenCode (via this SKILL.md)
-- Any CI/CD pipeline (validation scripts)
+- Any CI/CD pipeline (`vb validate`, `vb index`)
 
 ## Resources
 

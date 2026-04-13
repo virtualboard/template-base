@@ -3,444 +3,417 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VirtualBoard Template · Workflow</title>
-  <meta name="description" content="VirtualBoard feature spec workflow: Markdown-first approach to AI agent collaboration and software development lifecycle.">
-  <meta name="keywords" content="workflow, AI agents, markdown, collaboration, virtualboard">
-  <meta name="author" content="VirtualBoard">
+  <title>Workflow -- VirtualBoard Template</title>
+  <meta name="description" content="Understanding the VirtualBoard feature specification workflow. Learn how features move from backlog to completion.">
 
-  <style>
-    :root {
-      color-scheme: light dark;
-      --background: oklch(0.13 0.01 240);
-      --foreground: oklch(0.95 0.005 240);
-      --primary: oklch(0.65 0.12 220);
-      --secondary: oklch(0.7 0.15 190);
-      --mred: oklch(0.6 0.01 240);
-      --muted-foreground: oklch(0.6 0.01 240);
-      --border: oklch(0.20 0.01 240);
-      --card: oklch(0.16 0.01 240);
-      --accent: oklch(0.75 0.18 160);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="globals.css">
 
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--background);
-      color: var(--foreground);
-      line-height: 1.6;
-    }
-
-    nav {
-      background: var(--card);
-      border-bottom: 1px solid var(--border/50);
-      padding: 0 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 8px rgba(18, 28, 42, 0.08);
-    }
-
-    nav .container {
-      max-width: 960px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 0;
-      gap: 1rem;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--foreground);
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-
-    .nav-brand .logo-small {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-
-    .nav-brand .logo-small img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .nav-main {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex: 1;
-      justify-content: flex-end;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--muted-foreground);
-      font-weight: 500;
-      transition: color 0.2s ease;
-      position: relative;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--primary);
-    }
-
-    .nav-links a.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1.25rem;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--primary);
-    }
-
-    .github-link {
-      display: flex;
-      align-items: center;
-      color: var(--muted-foreground);
-      transition: color 0.2s ease;
-    }
-
-    .github-link:hover { color: var(--primary); }
-
-    header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
-      padding: 4rem 1.5rem 3rem;
-      border-bottom: 1px solid var(--border/50);
-    }
-
-    .hero {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    .hero h1 {
-      font-size: 2.8rem;
-      margin: 0;
-      letter-spacing: -0.02em;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      color: var(--muted-foreground);
-      margin-top: 0.75rem;
-    }
-
-    .badge-row {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(0, 212, 255, 0.1);
-      color: var(--primary);
-      padding: 0.45rem 0.85rem;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 1.5rem 4rem;
-    }
-
-    section {
-      margin: 3rem 0;
-      background: var(--card);
-      border: 1px solid var(--border/50);
-      border-radius: 1rem;
-      padding: 2.5rem;
-      box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 1.9rem;
-      letter-spacing: -0.02em;
-    }
-
-    h3 {
-      font-size: 1.4rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    ul, ol {
-      padding-left: 1.5rem;
-      margin: 1rem 0;
-    }
-
-    li {
-      margin-bottom: 0.5rem;
-    }
-
-    code, pre {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      background: rgba(0, 212, 255, 0.08);
-      border-radius: 0.5rem;
-    }
-
-    pre {
-      padding: 1rem;
-      overflow-x: auto;
-      font-size: 0.9rem;
-    }
-
-    .grid {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-
-    article {
-      background: var(--background);
-      border: 1px solid var(--border/50);
-      border-radius: 0.9rem;
-      padding: 1.5rem;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-
-    .cta-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      margin-top: 1rem;
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    footer {
-      text-align: center;
-      padding: 3rem 1.5rem 4rem;
-      color: var(--muted-foreground);
-    }
-
-    footer a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --background: #0f172a;
-        --card: #111c36;
-        --foreground: #f1f5f9;
-        --muted-foreground: #cbd5f5b3;
-        --border: #1e2a44;
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background:   'oklch(0.12 0.008 260)',
+            foreground:   'oklch(0.94 0.005 260)',
+            primary:      'oklch(0.68 0.14 230)',
+            'primary-foreground': 'oklch(0.12 0.008 260)',
+            secondary:    'oklch(0.72 0.12 195)',
+            muted:        'oklch(0.22 0.008 260)',
+            'muted-foreground': 'oklch(0.55 0.01 260)',
+            border:       'oklch(0.22 0.008 260)',
+            card:         'oklch(0.155 0.008 260)',
+            accent:       'oklch(0.78 0.16 155)',
+          }
+        }
       }
-
-      section { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
-      article { background: rgba(15, 23, 42, 0.6); }
     }
-  </style>
+  </script>
 </head>
-<body>
-  <nav>
-    <div class="container">
-      <a href="index.html" class="nav-brand">
-        <div class="logo-small">
-          <img src="avatar.png" alt="VirtualBoard" />
-        </div>
-        <span>VirtualBoard Template</span>
-      </a>
-      <div class="nav-main">
-        <ul class="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="features.html">Features</a></li>
-          <li><a href="specs.html">Specs</a></li>
-          <li><a href="workflow.html" class="active">Workflow</a></li>
-          <li><a href="agents.html">Agents</a></li>
-          <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">CLI</a></li>
-        </ul>
-        <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="github-link" aria-label="GitHub">
-          <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
+<body class="min-h-screen bg-background text-foreground">
+
+  <!-- Navigation -->
+  <nav class="site-nav">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2.5 text-foreground hover:text-primary transition-colors">
+          <div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+            <img src="avatar.png" alt="VirtualBoard" class="w-full h-full object-cover" />
+          </div>
+          <span class="font-semibold text-sm tracking-tight">VirtualBoard Template</span>
         </a>
+
+        <div class="flex items-center gap-6">
+          <ul class="hidden md:flex items-center gap-5">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="features.html" class="nav-link">Features</a></li>
+            <li><a href="workflow.html" class="nav-link nav-link--active">Workflow</a></li>
+            <li><a href="agents.html" class="nav-link">Agents</a></li>
+            <li><a href="specs.html" class="nav-link">Specs</a></li>
+            <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a></li>
+          </ul>
+          <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="md:hidden flex flex-wrap gap-4 pb-3 justify-center">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="features.html" class="nav-link">Features</a>
+        <a href="workflow.html" class="nav-link nav-link--active">Workflow</a>
+        <a href="agents.html" class="nav-link">Agents</a>
+        <a href="specs.html" class="nav-link">Specs</a>
+        <a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a>
       </div>
     </div>
   </nav>
 
-  <header>
-    <div class="hero">
-      <h1>Workflow</h1>
-      <p>Markdown-first approach to AI agent collaboration and software development lifecycle.</p>
-      <div class="badge-row">
-        <span class="badge">50+ Examples</span>
-        <span class="badge">Agent Ready</span>
-        <span class="badge">Workflow Integrated</span>
-      </div>
-    </div>
-  </header>
-
   <main>
-    <section>
-      <h2>Feature Spec Workflow</h2>
-      <p>VirtualBoard's feature specification workflow provides a standardized approach for AI agents and humans to collaborate on software development:</p>
-      <div class="grid three">
-        <article>
-          <h3>Markdown-First</h3>
-          <p>All important information lives in Markdown files that are easy to diff, parse, and index for both humans and AI agents.</p>
-        </article>
-        <article>
-          <h3>Parallel Development</h3>
-          <p>Multiple agents can work on different features simultaneously without stepping on each other's toes.</p>
-        </article>
-        <article>
-          <h3>Automation Ready</h3>
-          <p>Simple rules that are trivially validated by CI and followed by agents to enable seamless automation.</p>
-        </article>
+    <!-- Hero -->
+    <section class="hero text-center">
+      <div class="max-w-5xl mx-auto px-6 relative">
+        <div class="animate-fade-up">
+          <h1 class="mb-4">
+            How It <span class="text-primary">Works</span>
+          </h1>
+          <p class="text-lg text-muted-foreground max-w-xl mx-auto">
+            Understanding the VirtualBoard feature specification workflow
+          </p>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>Feature Lifecycle</h2>
-      <p>Features follow a well-defined lifecycle that ensures proper tracking and coordination:</p>
-      <div class="grid three">
-        <article>
-          <h3>Backlog</h3>
-          <p>Features ready to be claimed and worked on. These features are not assigned to any specific agent or human yet.</p>
-          <p class="cta-link">View backlog features →</p>
-        </article>
-        <article>
-          <h3>In Progress</h3>
-          <p>Features being actively worked on by an agent or human. These features have an assigned owner and are in the process of implementation.</p>
-          <p class="cta-link">View in-progress features →</p>
-        </article>
-        <article>
-          <h3>Review</h3>
-          <p>Features ready for review and approval. These features have completed implementation and are awaiting feedback or merge.</p>
-          <p class="cta-link">View review features →</p>
-        </article>
+    <!-- Workflow Diagram -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--primary mb-4 mx-auto inline-flex">Feature Status</p>
+          <h2 class="mb-4">Workflow</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Features move through five distinct states
+          </p>
+        </div>
+
+        <!-- SVG Diagram -->
+        <div class="max-w-4xl mx-auto mb-10">
+          <div class="vb-card" style="padding: 2.5rem 2rem;">
+            <svg viewBox="0 0 840 340" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full" style="max-width: 840px; margin: 0 auto; display: block;">
+              <defs>
+                <marker id="arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <path d="M0 0 L8 3 L0 6 Z" fill="oklch(0.40 0.01 260)" />
+                </marker>
+                <marker id="arrow-primary" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <path d="M0 0 L8 3 L0 6 Z" fill="oklch(0.68 0.14 230)" />
+                </marker>
+                <marker id="arrow-danger" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <path d="M0 0 L8 3 L0 6 Z" fill="oklch(0.55 0.15 25)" />
+                </marker>
+                <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <path d="M0 0 L8 3 L0 6 Z" fill="oklch(0.62 0.10 195)" />
+                </marker>
+              </defs>
+
+              <!-- Connection lines -->
+              <line x1="148" y1="120" x2="238" y2="120" stroke="oklch(0.40 0.01 260)" stroke-width="1.5" marker-end="url(#arrow-muted)" stroke-dasharray="6 4" />
+              <line x1="418" y1="120" x2="508" y2="120" stroke="oklch(0.40 0.01 260)" stroke-width="1.5" marker-end="url(#arrow-muted)" stroke-dasharray="6 4" />
+              <line x1="688" y1="120" x2="732" y2="120" stroke="oklch(0.40 0.01 260)" stroke-width="1.5" marker-end="url(#arrow-muted)" stroke-dasharray="6 4" />
+              <path d="M 338 162 L 338 240" stroke="oklch(0.55 0.15 25)" stroke-width="1.5" marker-end="url(#arrow-danger)" stroke-dasharray="5 4" opacity="0.7" />
+              <path d="M 320 240 L 320 162" stroke="oklch(0.55 0.15 25)" stroke-width="1.5" marker-end="url(#arrow-danger)" stroke-dasharray="5 4" opacity="0.7" />
+              <path d="M 560 155 C 560 210, 390 210, 370 155" stroke="oklch(0.62 0.10 195)" stroke-width="1.5" fill="none" marker-end="url(#arrow-cyan)" stroke-dasharray="5 4" opacity="0.6" />
+
+              <!-- BACKLOG -->
+              <rect x="20" y="78" width="128" height="84" rx="14" fill="oklch(0.17 0.008 260)" stroke="oklch(0.28 0.008 260)" stroke-width="1" />
+              <rect x="50" y="92" width="38" height="38" rx="10" fill="oklch(0.22 0.008 260)" stroke="oklch(0.30 0.008 260)" stroke-width="0.75" />
+              <path d="M63 101h-2a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-10a2 2 0 00-2-2h-2m-4 0a2 2 0 012-2h2a2 2 0 012 2m-6 0a2 2 0 002 2h2a2 2 0 002-2" stroke="oklch(0.50 0.01 260)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+              <text x="84" y="134" fill="oklch(0.94 0.005 260)" font-family="DM Sans, sans-serif" font-weight="700" font-size="14" text-anchor="middle">backlog</text>
+              <text x="84" y="151" fill="oklch(0.45 0.01 260)" font-family="DM Sans, sans-serif" font-size="10" text-anchor="middle">New features</text>
+
+              <!-- IN-PROGRESS -->
+              <rect x="250" y="78" width="158" height="84" rx="14" fill="oklch(0.68 0.14 230 / 0.06)" stroke="oklch(0.68 0.14 230 / 0.3)" stroke-width="1" />
+              <rect x="286" y="92" width="38" height="38" rx="10" fill="oklch(0.68 0.14 230 / 0.15)" stroke="oklch(0.68 0.14 230 / 0.3)" stroke-width="0.75" />
+              <circle cx="305" cy="111" r="4" stroke="oklch(0.68 0.14 230)" stroke-width="1.2" fill="none" />
+              <path d="M305 105v-2m0 16v-2m-5.2-1a6 6 0 010-6m10.4 0a6 6 0 010 6" stroke="oklch(0.68 0.14 230)" stroke-width="1.2" stroke-linecap="round" fill="none" />
+              <text x="329" y="134" fill="oklch(0.94 0.005 260)" font-family="DM Sans, sans-serif" font-weight="700" font-size="14" text-anchor="middle">in-progress</text>
+              <text x="329" y="151" fill="oklch(0.45 0.01 260)" font-family="DM Sans, sans-serif" font-size="10" text-anchor="middle">Active work</text>
+
+              <!-- REVIEW -->
+              <rect x="520" y="78" width="158" height="84" rx="14" fill="oklch(0.72 0.12 195 / 0.06)" stroke="oklch(0.72 0.12 195 / 0.3)" stroke-width="1" />
+              <rect x="556" y="92" width="38" height="38" rx="10" fill="oklch(0.72 0.12 195 / 0.15)" stroke="oklch(0.72 0.12 195 / 0.3)" stroke-width="0.75" />
+              <path d="M566 111c2-4 6-6 9-6s7 2 9 6c-2 4-6 6-9 6s-7-2-9-6z" stroke="oklch(0.72 0.12 195)" stroke-width="1.2" fill="none" />
+              <circle cx="575" cy="111" r="2.5" stroke="oklch(0.72 0.12 195)" stroke-width="1.2" fill="none" />
+              <text x="599" y="134" fill="oklch(0.94 0.005 260)" font-family="DM Sans, sans-serif" font-weight="700" font-size="14" text-anchor="middle">review</text>
+              <text x="599" y="151" fill="oklch(0.45 0.01 260)" font-family="DM Sans, sans-serif" font-size="10" text-anchor="middle">QA / code review</text>
+
+              <!-- DONE -->
+              <rect x="740" y="78" width="88" height="84" rx="14" fill="oklch(0.78 0.16 155 / 0.08)" stroke="oklch(0.78 0.16 155 / 0.3)" stroke-width="1" />
+              <rect x="756" y="92" width="38" height="38" rx="10" fill="oklch(0.78 0.16 155 / 0.12)" stroke="oklch(0.78 0.16 155 / 0.25)" stroke-width="0.75" />
+              <path d="M768 109l5 5 9-9" stroke="oklch(0.78 0.16 155)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+              <text x="784" y="147" fill="oklch(0.94 0.005 260)" font-family="DM Sans, sans-serif" font-weight="700" font-size="14" text-anchor="middle">done</text>
+              <text x="784" y="156" fill="oklch(0.45 0.01 260)" font-family="DM Sans, sans-serif" font-size="10" text-anchor="middle">Completed</text>
+
+              <!-- BLOCKED -->
+              <rect x="274" y="248" width="110" height="84" rx="14" fill="oklch(0.65 0.2 25 / 0.06)" stroke="oklch(0.65 0.2 25 / 0.25)" stroke-width="1" stroke-dasharray="4 3" />
+              <rect x="310" y="260" width="38" height="38" rx="10" fill="oklch(0.65 0.2 25 / 0.12)" stroke="oklch(0.65 0.2 25 / 0.25)" stroke-width="0.75" />
+              <path d="M329 270l7 12h-14z" stroke="oklch(0.65 0.2 25)" stroke-width="1.3" stroke-linejoin="round" fill="none" />
+              <line x1="329" y1="275" x2="329" y2="277.5" stroke="oklch(0.65 0.2 25)" stroke-width="1.3" stroke-linecap="round" />
+              <circle cx="329" cy="279.5" r="0.7" fill="oklch(0.65 0.2 25)" />
+              <text x="329" y="310" fill="oklch(0.65 0.2 25)" font-family="DM Sans, sans-serif" font-weight="700" font-size="13" text-anchor="middle">blocked</text>
+              <text x="329" y="322" fill="oklch(0.45 0.01 260)" font-family="DM Sans, sans-serif" font-size="10" text-anchor="middle">Stalled work</text>
+
+              <!-- Labels -->
+              <text x="465" y="216" fill="oklch(0.45 0.01 260)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle" font-style="italic">changes requested</text>
+              <text x="420" y="340" fill="oklch(0.38 0.008 260)" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle" letter-spacing="0.5">backlog &rarr; in-progress &rarr; review &rarr; done | in-progress &harr; blocked | review &rarr; in-progress</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="max-w-2xl mx-auto text-center">
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            Each state maps to a directory under <code class="inline-code">.virtualboard/features/</code>. The CLI enforces transitions &mdash; dependencies must be satisfied before <code class="inline-code">in-progress</code>, work can be paused via <code class="inline-code">blocked</code>, and every feature passes through <code class="inline-code">review</code> before reaching <code class="inline-code">done</code>.
+          </p>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>Workflow Implementation</h2>
-      <p>VirtualBoard provides both CLI tool integration and shell script fallbacks for managing the workflow:</p>
-      <div class="grid two">
-        <article>
-          <h3>CLI Tool Integration</h3>
-          <p>Use the <code>vb</code> CLI tool when available:</p>
-          <pre><code># Check for Virtual Board CLI
-if command -v vb &gt; /dev/null; then
-    echo "Virtual Board CLI found"
-    vb version
-    vb help
-    # Use vb commands for task management
-else
-    echo "Virtual Board CLI not found, using shell scripts"
-    # Fall back to shell scripts or plain bash
-fi</code></pre>
-        </article>
-        <article>
-          <h3>Fallback to Shell Scripts</h3>
-          <p>When the CLI tool is not available, use shell scripts:</p>
-          <pre><code># Make scripts executable
-chmod +x .virtualboard/scripts/*.sh
+    <div class="section-divider"></div>
 
-# Use shell scripts
-./.virtualboard/scripts/ftr-new.sh "User Authentication" auth frontend
-./.virtualboard/scripts/ftr-move.sh FTR-0001 in-progress agent-cursor-1
-./.virtualboard/scripts/ftr-validate.sh
-./.virtualboard/scripts/ftr-index.sh</code></pre>
-        </article>
+    <!-- Getting Started -->
+    <section class="py-20 lg:py-28 section-gradient">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <h2 class="mb-4">Getting Started</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Four simple steps to manage your feature specifications
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger">
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">1</div>
+              <h3 class="text-base font-semibold">Initialize Workspace</h3>
+            </div>
+            <p class="text-sm text-muted-foreground mb-3">
+              Create a <code class="inline-code">.virtualboard/</code> directory structure:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+                <code>vb init</code>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground mt-3">
+              Downloads the template archive. Use <code class="inline-code">vb init --update</code> to update an existing workspace.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">2</div>
+              <h3 class="text-base font-semibold">Create Features</h3>
+            </div>
+            <p class="text-sm text-muted-foreground mb-3">
+              Scaffold new feature specs with consistent structure:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+                <code>vb new "User Authentication" security auth</code>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground mt-3">
+              Each feature gets a unique ID, YAML frontmatter, and standard sections.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">3</div>
+              <h3 class="text-base font-semibold">Validate and Move</h3>
+            </div>
+            <p class="text-sm text-muted-foreground mb-3">
+              Check for issues and progress features through the workflow:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+<pre>vb validate
+vb move FTR-0001 in-progress --owner alice
+vb move FTR-0001 review</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">4</div>
+              <h3 class="text-base font-semibold">Generate Indexes</h3>
+            </div>
+            <p class="text-sm text-muted-foreground mb-3">
+              Create stakeholder-friendly views of all features:
+            </p>
+            <div class="code-terminal">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+                <code>vb index</code>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground mt-3">
+              Outputs Markdown, JSON, and HTML indexes sorted by status and priority.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>/work-on Skill (Claude Code)</h2>
-      <p>The Claude Code plugin includes a <code>/work-on</code> skill for working on features in isolated git worktrees:</p>
-      <div class="grid two">
-        <article>
-          <h3>Usage</h3>
-          <pre><code>/work-on FTR-0042                 # Interactive
-/work-on FTR-0042 --autonomous    # Autonomous
-/work-on FTR-0042 --base-branch dev # From dev
-/work-on FTR-0042 --create-pr     # Create PR</code></pre>
-          <p>The skill creates a git worktree with branch <code>feature/FTR-XXXX/slug</code>, detects existing work, and manages the full implementation cycle.</p>
-        </article>
-        <article>
-          <h3>Configuration</h3>
-          <p>Environment variables:</p>
-          <ul>
-            <li><code>VIRTUALBOARD_WORKTREE_PATH</code> - Worktree location</li>
-            <li><code>VIRTUALBOARD_BASE_BRANCH</code> - Base branch</li>
-            <li><code>VIRTUALBOARD_POST_PUSH</code> - Post-push action</li>
-            <li><code>VIRTUALBOARD_SESSION_MODE</code> - Session mode</li>
-          </ul>
-          <p>See <code>skills/work-on/config.md</code> for details.</p>
-        </article>
+    <div class="section-divider"></div>
+
+    <!-- Feature Lifecycle -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <h2 class="mb-4">Feature Lifecycle</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Understanding each stage of the feature workflow
+          </p>
+        </div>
+
+        <div class="space-y-4 stagger">
+          <div class="vb-card">
+            <h3 class="text-lg font-semibold mb-3">Backlog</h3>
+            <p class="text-sm text-muted-foreground mb-3">
+              New features start in the backlog directory. They include:
+            </p>
+            <ul class="bullet-list space-y-1.5 text-sm">
+              <li>Unique feature ID (FTR-XXXX)</li>
+              <li>Title, labels, and metadata</li>
+              <li>Overview and acceptance criteria sections</li>
+              <li>Status set to <code class="inline-code">backlog</code></li>
+            </ul>
+            <p class="text-xs text-muted-foreground mt-3">Transitions to: <code class="inline-code">in-progress</code></p>
+          </div>
+
+          <div class="vb-card">
+            <h3 class="text-lg font-semibold mb-3">In Progress</h3>
+            <p class="text-sm text-muted-foreground mb-3">
+              When work begins, features move to <code class="inline-code">in-progress</code>. Requirements:
+            </p>
+            <ul class="bullet-list space-y-1.5 text-sm">
+              <li>All dependencies must be in <code class="inline-code">done</code> status</li>
+              <li>Owner must be assigned (can be set during move)</li>
+              <li>No circular dependency chains</li>
+            </ul>
+            <p class="text-xs text-muted-foreground mt-3">Transitions to: <code class="inline-code">blocked</code>, <code class="inline-code">review</code></p>
+          </div>
+
+          <div class="vb-card">
+            <h3 class="text-lg font-semibold mb-3">Blocked</h3>
+            <p class="text-sm text-muted-foreground">
+              Features that cannot proceed due to unresolved dependencies, external blockers, or other issues. This is a temporary state &mdash; once the blocker resolves, the feature transitions back to <code class="inline-code">in-progress</code>.
+            </p>
+            <p class="text-xs text-muted-foreground mt-3">Transitions to: <code class="inline-code">in-progress</code></p>
+          </div>
+
+          <div class="vb-card">
+            <h3 class="text-lg font-semibold mb-3">Review</h3>
+            <p class="text-sm text-muted-foreground">
+              Implementation complete, awaiting QA, code review, or stakeholder sign-off. If changes are requested, the feature returns to <code class="inline-code">in-progress</code>. Once approved, it transitions to <code class="inline-code">done</code>.
+            </p>
+            <p class="text-xs text-muted-foreground mt-3">Transitions to: <code class="inline-code">in-progress</code>, <code class="inline-code">done</code></p>
+          </div>
+
+          <div class="vb-card">
+            <h3 class="text-lg font-semibold mb-3">Done</h3>
+            <p class="text-sm text-muted-foreground">
+              Terminal state. No further transitions allowed. Done features serve as dependencies for other features and remain as documentation of delivered work.
+            </p>
+            <p class="text-xs text-muted-foreground mt-3">Terminal state (no outgoing transitions)</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>Workflow Best Practices</h2>
-      <p>To get the most from VirtualBoard's feature specification workflow:</p>
-      <ol>
-        <li>Use the proper naming conventions for files and branches</li>
-        <li>Ensure all generated content follows the VirtualBoard design system</li>
-        <li>Update feature specs and system specs as agents generate new content</li>
-        <li>Use the CLI tool when available for better integration and automation</li>
-        <li>Validate features regularly to catch issues early</li>
-      </ol>
-    </section>
+    <div class="section-divider"></div>
 
-    <section>
-      <h2>Feature Spec Validation</h2>
-      <p>VirtualBoard enforces strict validation rules to ensure consistency:</p>
-      <div class="grid two">
-        <article>
-          <h3>Schema Validation</h3>
-          <p>All feature specs must validate against <code>schemas/frontmatter.schema.json</code> to ensure proper structure and required fields.</p>
-        </article>
-        <article>
-          <h3>Folder Consistency</h3>
-          <p>The spec's folder location must match its <code>status</code> field in the frontmatter to maintain system integrity.</p>
-        </article>
+    <!-- /work-on Skill -->
+    <section class="py-20 lg:py-28 section-gradient">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--secondary mb-4 mx-auto inline-flex">Claude Code Skill</p>
+          <h2 class="mb-4">/work-on Skill</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Work on features in isolated git worktrees
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger">
+          <div class="vb-card">
+            <h3 class="text-base font-semibold mb-3">Usage</h3>
+            <div class="code-terminal mb-3">
+              <div class="code-terminal-bar">
+                <div class="code-terminal-dot code-terminal-dot--red"></div>
+                <div class="code-terminal-dot code-terminal-dot--yellow"></div>
+                <div class="code-terminal-dot code-terminal-dot--green"></div>
+              </div>
+              <div class="code-terminal-body">
+<pre>/work-on FTR-0042
+/work-on FTR-0042 --autonomous
+/work-on FTR-0042 --create-pr
+/work-on FTR-0042 --cleanup</pre>
+              </div>
+            </div>
+            <p class="text-xs text-muted-foreground">
+              Creates branch <code class="inline-code">feature/FTR-XXXX/slug</code>, detects existing work, and manages the full implementation cycle.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <h3 class="text-base font-semibold mb-3">Configuration</h3>
+            <p class="text-sm text-muted-foreground mb-3">Environment variables:</p>
+            <ul class="bullet-list space-y-1.5 text-sm">
+              <li><code class="inline-code">VIRTUALBOARD_WORKTREE_PATH</code> &mdash; Worktree location (default: <code class="inline-code">~/.local/state/virtualboard/worktrees</code>)</li>
+              <li><code class="inline-code">VIRTUALBOARD_BASE_BRANCH</code> &mdash; Base branch</li>
+              <li><code class="inline-code">VIRTUALBOARD_POST_PUSH</code> &mdash; Post-push action</li>
+              <li><code class="inline-code">VIRTUALBOARD_SESSION_MODE</code> &mdash; Session mode</li>
+            </ul>
+            <div class="callout callout--warn mt-4">
+              <strong>Worktree path hardened:</strong> Default changed from <code class="inline-code">/tmp</code> to <code class="inline-code">~/.local/state/virtualboard/worktrees</code> to prevent cross-project collisions and avoid world-readable temp directories.
+            </div>
+          </div>
+        </div>
       </div>
-      <p>Validation ensures:</p>
-      <ul>
-        <li>All required sections are present</li>
-        <li>Content follows established formatting guidelines</li>
-        <li>Technical terminology is consistent across specs</li>
-        <li>All links and references are valid</li>
-      </ul>
     </section>
   </main>
 
-  <footer>
-    <p>VirtualBoard Template · Released under the MIT License</p>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="max-w-6xl mx-auto px-6">
+      <p>
+        VirtualBoard Template &middot; Released under the
+        <a href="https://github.com/virtualboard/template-base/blob/main/LICENSE" target="_blank" rel="noreferrer">MIT License</a>
+      </p>
+      <p class="mt-1">
+        Created by <a href="https://astucia.ai" target="_blank" rel="noreferrer" class="footer-brand">Astucia AI&#8482;</a>
+      </p>
+    </div>
   </footer>
+
 </body>
 </html>

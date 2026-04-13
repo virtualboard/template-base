@@ -3,431 +3,1104 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VirtualBoard Template · Agents</title>
-  <meta name="description" content="VirtualBoard agent system: Structured support for AI agent workflows with role-specific command catalogs.">
-  <meta name="keywords" content="agents, AI agents, virtualboard, roles, workflows">
-  <meta name="author" content="VirtualBoard">
+  <title>Agents -- VirtualBoard Template</title>
+  <meta name="description" content="VirtualBoard agent system: 10 specialized AI agent roles with 31 commands for collaborative software development.">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="globals.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background:   'oklch(0.12 0.008 260)',
+            foreground:   'oklch(0.94 0.005 260)',
+            primary:      'oklch(0.68 0.14 230)',
+            'primary-foreground': 'oklch(0.12 0.008 260)',
+            secondary:    'oklch(0.72 0.12 195)',
+            muted:        'oklch(0.22 0.008 260)',
+            'muted-foreground': 'oklch(0.55 0.01 260)',
+            border:       'oklch(0.22 0.008 260)',
+            card:         'oklch(0.155 0.008 260)',
+            accent:       'oklch(0.78 0.16 155)',
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
-    :root {
-      color-scheme: light dark;
-      --background: oklch(0.13 0.01 240);
-      --foreground: oklch(0.95 0.005 240);
-      --primary: oklch(0.65 0.12 220);
-      --secondary: oklch(0.7 0.15 190);
-      --mred: oklch(0.6 0.01 240);
-      --muted-foreground: oklch(0.6 0.01 240);
-      --border: oklch(0.20 0.01 240);
-      --card: oklch(0.16 0.01 240);
-      --accent: oklch(0.75 0.18 160);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--background);
-      color: var(--foreground);
-      line-height: 1.6;
-    }
-
-    nav {
+    /* Agent detail panels */
+    .agent-panel {
       background: var(--card);
-      border-bottom: 1px solid var(--border/50);
-      padding: 0 1.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 8px rgba(18, 28, 42, 0.08);
-    }
-
-    nav .container {
-      max-width: 960px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 0;
-      gap: 1rem;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--foreground);
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-
-    .nav-brand .logo-small {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
       overflow: hidden;
+      transition: border-color 0.3s ease;
     }
-
-    .nav-brand .logo-small img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .agent-panel:hover,
+    .agent-panel.open {
+      border-color: var(--border);
     }
-
-    .nav-main {
+    .agent-header {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      flex: 1;
-      justify-content: flex-end;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      user-select: none;
     }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .nav-links a {
-      text-decoration: none;
+    .agent-header:hover { background: var(--card-hover); }
+    .agent-chevron {
+      margin-left: auto;
       color: var(--muted-foreground);
-      font-weight: 500;
-      transition: color 0.2s ease;
-      position: relative;
+      transition: transform 0.25s ease, color 0.25s ease;
+      flex-shrink: 0;
     }
-
-    .nav-links a:hover,
-    .nav-links a.active {
+    .agent-panel.open .agent-chevron {
+      transform: rotate(90deg);
       color: var(--primary);
     }
-
-    .nav-links a.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1.25rem;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--primary);
+    .agent-body {
+      display: none;
+      border-top: 1px solid var(--border-subtle);
     }
+    .agent-panel.open .agent-body { display: block; }
+    .agent-body-inner { padding: 1.5rem; }
 
-    .github-link {
-      display: flex;
-      align-items: center;
-      color: var(--muted-foreground);
-      transition: color 0.2s ease;
+    /* Command rows */
+    .cmd-row {
+      background: oklch(0.13 0.006 260);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      transition: border-color 0.2s ease, background 0.2s ease;
     }
-
-    .github-link:hover { color: var(--primary); }
-
-    header {
-      background: radial-gradient(circle at top left, rgba(0, 212, 255, 0.15), transparent 60%), var(--card);
-      padding: 4rem 1.5rem 3rem;
-      border-bottom: 1px solid var(--border/50);
+    .cmd-row:hover {
+      border-color: var(--border);
+      background: oklch(0.145 0.008 260);
     }
-
-    .hero {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    .hero h1 {
-      font-size: 2.8rem;
-      margin: 0;
-      letter-spacing: -0.02em;
-    }
-
-    .hero p {
-      font-size: 1.1rem;
-      color: var(--muted-foreground);
-      margin-top: 0.75rem;
-    }
-
-    .badge-row {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .badge {
+    .cmd-trigger {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      background: rgba(0, 212, 255, 0.1);
+      padding: 0.2rem 0.55rem;
+      background: oklch(0.68 0.14 230 / 0.12);
       color: var(--primary);
-      padding: 0.45rem 0.85rem;
-      border-radius: 999px;
-      font-size: 0.9rem;
+      border: 1px solid oklch(0.68 0.14 230 / 0.2);
+      border-radius: 5px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
       font-weight: 600;
+      letter-spacing: 0.02em;
     }
-
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 1.5rem 4rem;
-    }
-
-    section {
-      margin: 3rem 0;
-      background: var(--card);
-      border: 1px solid var(--border/50);
-      border-radius: 1rem;
-      padding: 2.5rem;
-      box-shadow: 0 18px 40px rgba(18, 28, 42, 0.08);
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 1.9rem;
-      letter-spacing: -0.02em;
-    }
-
-    h3 {
-      font-size: 1.4rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    ul, ol {
-      padding-left: 1.5rem;
-      margin: 1rem 0;
-    }
-
-    li {
-      margin-bottom: 0.5rem;
-    }
-
-    code, pre {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      background: rgba(0, 212, 255, 0.08);
-      border-radius: 0.5rem;
-    }
-
-    pre {
-      padding: 1rem;
-      overflow-x: auto;
-      font-size: 0.9rem;
-    }
-
-    .grid {
-      display: grid;
-      gap: 1.5rem;
-    }
-
-    .grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-    .grid.three { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-
-    article {
-      background: var(--background);
-      border: 1px solid var(--border/50);
-      border-radius: 0.9rem;
-      padding: 1.5rem;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-
-    .cta-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      margin-top: 1rem;
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    footer {
-      text-align: center;
-      padding: 3rem 1.5rem 4rem;
+    .cmd-output {
+      font-size: 0.75rem;
       color: var(--muted-foreground);
+      font-family: 'IBM Plex Mono', monospace;
+      padding: 0.15rem 0.5rem;
+      background: oklch(0.18 0.006 260);
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
     }
 
-    footer a {
-      color: var(--primary);
-      text-decoration: none;
-    }
+    /* Agent icon colors per category */
+    .icon-plan   { background: oklch(0.68 0.14 230 / 0.12); border-color: oklch(0.68 0.14 230 / 0.2); }
+    .icon-plan svg { color: var(--primary); }
+    .icon-build  { background: oklch(0.78 0.16 155 / 0.12); border-color: oklch(0.78 0.16 155 / 0.2); }
+    .icon-build svg { color: var(--accent); }
+    .icon-test   { background: oklch(0.72 0.12 195 / 0.12); border-color: oklch(0.72 0.12 195 / 0.2); }
+    .icon-test svg { color: var(--secondary); }
+    .icon-ops    { background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2); }
+    .icon-ops svg { color: var(--accent-warm); }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --background: #0f172a;
-        --card: #111c36;
-        --foreground: #f1f5f9;
-        --muted-foreground: #cbd5f5b3;
-        --border: #1e2a44;
-      }
-
-      section { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
-      article { background: rgba(15, 23, 42, 0.6); }
-    }
+    /* Quick-jump anchors */
+    [id] { scroll-margin-top: 5rem; }
   </style>
 </head>
-<body>
-  <nav>
-    <div class="container">
-      <a href="index.html" class="nav-brand">
-        <div class="logo-small">
-          <img src="avatar.png" alt="VirtualBoard" />
-        </div>
-        <span>VirtualBoard Template</span>
-      </a>
-      <div class="nav-main">
-        <ul class="nav-links">
-          <li><a href="index.html">Home</a></li>
-          <li><a href="features.html">Features</a></li>
-          <li><a href="specs.html">Specs</a></li>
-          <li><a href="workflow.html">Workflow</a></li>
-          <li><a href="agents.html" class="active">Agents</a></li>
-          <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer">CLI</a></li>
-        </ul>
-        <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="github-link" aria-label="GitHub">
-          <svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
+<body class="min-h-screen bg-background text-foreground">
+
+  <!-- Navigation -->
+  <nav class="site-nav">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2.5 text-foreground hover:text-primary transition-colors">
+          <div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+            <img src="avatar.png" alt="VirtualBoard" class="w-full h-full object-cover" />
+          </div>
+          <span class="font-semibold text-sm tracking-tight">VirtualBoard Template</span>
         </a>
+
+        <div class="flex items-center gap-6">
+          <ul class="hidden md:flex items-center gap-5">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="features.html" class="nav-link">Features</a></li>
+            <li><a href="workflow.html" class="nav-link">Workflow</a></li>
+            <li><a href="agents.html" class="nav-link nav-link--active">Agents</a></li>
+            <li><a href="specs.html" class="nav-link">Specs</a></li>
+            <li><a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a></li>
+          </ul>
+          <a href="https://github.com/virtualboard/template-base" target="_blank" rel="noreferrer" class="text-muted-foreground hover:text-foreground transition-colors" aria-label="GitHub">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="md:hidden flex flex-wrap gap-4 pb-3 justify-center">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="features.html" class="nav-link">Features</a>
+        <a href="workflow.html" class="nav-link">Workflow</a>
+        <a href="agents.html" class="nav-link nav-link--active">Agents</a>
+        <a href="specs.html" class="nav-link">Specs</a>
+        <a href="https://virtualboard.github.io/vb-cli/" target="_blank" rel="noreferrer" class="nav-link">CLI Docs</a>
       </div>
     </div>
   </nav>
 
-  <header>
-    <div class="hero">
-      <h1>Agent System</h1>
-      <p>Structured support for AI agent workflows with role-specific command catalogs.</p>
-      <div class="badge-row">
-        <span class="badge">50+ Examples</span>
-        <span class="badge">Agent Ready</span>
-        <span class="badge">Workflow Integrated</span>
-      </div>
-    </div>
-  </header>
-
   <main>
-    <section>
-      <h2>VirtualBoard Agent System</h2>
-      <p>VirtualBoard provides structured support for AI agent workflows with role-specific command catalogs:</p>
-      <div class="grid three">
-        <article>
-          <h3>Command Detection</h3>
-          <p>Agents check for available commands in the /prompts/agents/{role}/ directory:</p>
-          <ul>
-            <li>First found takes precedence: .virtualboard/agents/ or .claude/agents/</li>
-            <li>Read AGENTS.md from the found directory to understand the agent system</li>
-            <li>Analyze the current task to determine appropriate agent role</li>
-            <li>Announce adopted role and follow specific workflow</li>
-          </ul>
-        </article>
-        <article>
-          <h3>Workflow Integration</h3>
-          <p>Agent commands integrate with VirtualBoard's feature specification workflow:</p>
-          <ul>
-            <li>Read /prompts/agents/{role}/README.md for available commands</li>
-            <li>Display command catalog to user when starting session</li>
-            <li>Identify if user's request matches defined command/trigger phrase</li>
-            <li>Read full command file for detailed workflow instructions</li>
-            <li>Follow exact workflow specified in the command file</li>
-          </ul>
-        </article>
-        <article>
-          <h3>Command Catalogs</h3>
-          <p>Each agent role has its own command catalog in the /prompts/agents directory:</p>
-          <ul>
-            <li>Project Manager (PM)</li>
-            <li>Architect</li>
-            <li>Frontend Developer</li>
-            <li>Backend Developer</li>
-            <li>Fullstack Developer</li>
-            <li>DevOps Engineer</li>
-          </ul>
-        </article>
+    <!-- Hero -->
+    <section class="hero text-center">
+      <div class="max-w-5xl mx-auto px-6 relative">
+        <div class="animate-fade-up">
+          <span class="badge badge--primary mb-5 inline-flex">10 Roles &middot; 31 Commands</span>
+          <h1 class="mb-4">
+            Agent <span class="text-primary">System</span>
+          </h1>
+          <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Specialized AI agent roles with role-specific command catalogs covering the full software development lifecycle. Fully extensible.
+          </p>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>Agent Role Command Catalogs</h2>
-      <p>Each agent role has its own command catalog in the /prompts/agents directory:</p>
-      <div class="grid three">
-        <article>
-          <h3>Project Manager</h3>
-          <p>Generate project progress reports and manage feature tracking.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/pm/README.md" target="_blank" rel="noreferrer">View PM Commands →</a>
-        </article>
-        <article>
-          <h3>Architect</h3>
-          <p>Generate architecture diagrams, reviews, and technical debt reports.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/architect/README.md" target="_blank" rel="noreferrer">View Architect Commands →</a>
-        </article>
-        <article>
-          <h3>Frontend Developer</h3>
-          <p>Generate components, storybooks, and accessibility audits.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/frontend_dev/README.md" target="_blank" rel="noreferrer">View Frontend Commands →</a>
-        </article>
-        <article>
-          <h3>Backend Developer</h3>
-          <p>Generate API documentation, endpoints, and data migrations.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/backend_dev/README.md" target="_blank" rel="noreferrer">View Backend Commands →</a>
-        </article>
-        <article>
-          <h3>Fullstack Developer</h3>
-          <p>Generate full features, integration contracts, and end-to-end tests.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/fullstack_dev/README.md" target="_blank" rel="noreferrer">View Fullstack Commands →</a>
-        </article>
-        <article>
-          <h3>DevOps Engineer</h3>
-          <p>Generate deployment checklists, incident responses, and readiness reports.</p>
-          <a class="cta-link" href="https://github.com/virtualboard/template-base/blob/main/prompts/agents/devops_engineer/README.md" target="_blank" rel="noreferrer">View DevOps Commands →</a>
-        </article>
+    <!-- How It Works -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--primary mb-4 mx-auto inline-flex">Architecture</p>
+          <h2 class="mb-4">How agents work</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Automatic role detection, command catalogs, and continuous operation
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 stagger">
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Role Detection</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Agents analyze the task, feature labels, and workflow stage to automatically select the appropriate role from the <code class="inline-code">agents/</code> directory.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Command Catalogs</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Each role has trigger-coded commands in <code class="inline-code">prompts/agents/{role}/</code> with detailed workflow instructions and output templates.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Continuous Loop</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Agents follow a continuous delivery loop: find work, claim it, execute, transition to the next state, and immediately look for new tasks.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>Agent System Implementation</h2>
-      <p>VirtualBoard provides structured support for agent workflows:</p>
-      <div class="grid two">
-        <article>
-          <h3>Command Detection</h3>
-          <p>Agents check for available commands in the /prompts/agents/{role}/ directory:</p>
-          <pre><code># Check for agent directories in this order (first found takes precedence):
-# .virtualboard/agents/ (project-specific agents)
-# .claude/agents/ (project-level agents)
+    <div class="section-divider"></div>
 
-# If either exists:
-# Read AGENTS.md from the found directory to understand the agent system
-# Analyze the current task to determine the appropriate agent role
-# Announce your adopted role (e.g., "I am working as a Frontend Developer agent")
-# Follow that agent's specific workflow for the entire task
-# Maintain role consistency throughout the task lifecycle</code></pre>
-        </article>
-        <article>
-          <h3>Workflow Integration</h3>
-          <p>Agent commands integrate with VirtualBoard's feature specification workflow:</p>
-          <pre><code># When adopting an agent role:
-# 1. Read /prompts/agents/{role}/README.md to understand available commands
-# 2. Display available commands to the user when starting a session  
-# 3. Identify if the user's request matches a defined command/trigger phrase
-# 4. Read the full command file for detailed workflow instructions
-# 5. Follow the exact workflow specified in the command file
-# 6. Use the provided templates for consistent output format</code></pre>
-        </article>
+    <!-- Quick Jump -->
+    <section class="py-12">
+      <div class="max-w-5xl mx-auto px-6">
+        <p class="text-xs text-muted-foreground font-semibold uppercase tracking-widest mb-4 text-center">Jump to role</p>
+        <div class="flex flex-wrap gap-2 justify-center">
+          <a href="#pm" class="badge badge--primary hover:opacity-80 transition-opacity">PM</a>
+          <a href="#architect" class="badge badge--primary hover:opacity-80 transition-opacity">Architect</a>
+          <a href="#frontend" class="badge badge--accent hover:opacity-80 transition-opacity">Frontend</a>
+          <a href="#backend" class="badge badge--accent hover:opacity-80 transition-opacity">Backend</a>
+          <a href="#fullstack" class="badge badge--accent hover:opacity-80 transition-opacity">Fullstack</a>
+          <a href="#qa" class="badge badge--secondary hover:opacity-80 transition-opacity">QA</a>
+          <a href="#devops" class="badge badge--warm hover:opacity-80 transition-opacity">DevOps</a>
+          <a href="#security" class="badge badge--warm hover:opacity-80 transition-opacity">Security</a>
+          <a href="#data" class="badge badge--warm hover:opacity-80 transition-opacity">Data</a>
+          <a href="#ux" class="badge badge--primary hover:opacity-80 transition-opacity">UX Designer</a>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>Agent System Best Practices</h2>
-      <p>To get the most from VirtualBoard's agent system:</p>
-      <ol>
-        <li>Each agent should read their role-specific documentation before acting</li>
-        <li>Follow command catalog instructions for each agent role</li>
-        <li>Use the proper naming conventions for agent commands and outputs</li>
-        <li>Ensure all generated content follows the VirtualBoard design system</li>
-        <li>Update feature specs and system specs as agents generate new content</li>
-      </ol>
+    <!-- Agent Role Catalog -->
+    <section class="py-12 lg:py-20">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--accent mb-4 mx-auto inline-flex">Role Catalog</p>
+          <h2 class="mb-4">All agents &amp; commands</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Click any role to expand its full command catalog with trigger codes, descriptions, and output locations.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-4 stagger">
+
+          <!-- ═══ PM ═══ -->
+          <div class="agent-panel" id="pm">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-plan" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Project Manager</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">2 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Sprint planning, task prioritization, coordination, and stakeholder updates</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/pm.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/pm/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GPP</span>
+                      <span class="text-sm font-semibold">Generate Project Progress Report</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                      Scans all feature files across status folders, verifies implementation against acceptance criteria, identifies gaps and blockers, and produces a comprehensive status report with metrics and recommended next steps.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="cmd-output">.virtualboard/reports/{date}_Project_Progress_Report.md</span>
+                    </div>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GBG</span>
+                      <span class="text-sm font-semibold">Generate Backlog Grooming</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                      Performs a comprehensive backlog refinement session: reviews all backlog items, validates priorities, checks for stale features, identifies missing estimates, and reorganizes the backlog for the next sprint.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="cmd-output">.virtualboard/reports/{date}_Backlog_Grooming.md</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Architect ═══ -->
+          <div class="agent-panel" id="architect">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-plan" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">System Architect</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">3 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">System design, technical specifications, and architectural standards</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/architect.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/architect/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GAD</span>
+                      <span class="text-sm font-semibold">Generate Architecture Decision</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                      Documents architectural decisions with the ADR (Architecture Decision Record) format. Analyzes 2-3 alternative approaches, evaluates pros/cons for each, and produces a formal decision record with rationale and consequences.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="cmd-output">.virtualboard/architecture/decisions/ADR-{NNNN}-{slug}.md</span>
+                    </div>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GAR</span>
+                      <span class="text-sm font-semibold">Generate Architecture Report</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                      Creates architecture analysis reports covering system structure, component relationships, scalability concerns, and recommendations for improvement.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="cmd-output">.virtualboard/architecture/reports/</span>
+                    </div>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GTD</span>
+                      <span class="text-sm font-semibold">Generate Technical Debt Report</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                      Analyzes and prioritizes technical debt across the codebase. Identifies areas of concern, estimates remediation effort, and recommends a prioritized paydown sequence.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="cmd-output">.virtualboard/architecture/tech-debt/</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Frontend Dev ═══ -->
+          <div class="agent-panel" id="frontend">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-build" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Frontend Developer</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">3 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">UI components, responsive design, accessibility, and client-side interactions</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/frontend_dev.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/frontend_dev/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GC</span>
+                      <span class="text-sm font-semibold">Generate Component</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Scaffolds a new UI component with tests, following the project's component conventions. Includes props/types, styling, and initial test coverage.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GCS</span>
+                      <span class="text-sm font-semibold">Generate Component Story</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Creates a Storybook story for an existing component with multiple variants, interactive controls, and documentation annotations.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GAA</span>
+                      <span class="text-sm font-semibold">Generate Accessibility Audit</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Checks a component or page for WCAG 2.1 accessibility compliance. Reports color contrast, ARIA roles, keyboard navigation, and screen reader compatibility issues.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Backend Dev ═══ -->
+          <div class="agent-panel" id="backend">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-build" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Backend Developer</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">3 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">APIs, databases, authentication, and server-side logic</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/backend_dev.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/backend_dev/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GAE</span>
+                      <span class="text-sm font-semibold">Generate API Endpoint</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Scaffolds a REST or GraphQL endpoint with request/response validation, error handling, and route registration following the project's API conventions.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GDM</span>
+                      <span class="text-sm font-semibold">Generate Database Migration</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Creates a database migration file with up/down operations, data type definitions, index creation, and rollback safety checks.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GAD</span>
+                      <span class="text-sm font-semibold">Generate API Documentation</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Auto-generates OpenAPI/Swagger documentation from existing endpoints, including request schemas, response examples, and authentication requirements.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Fullstack Dev ═══ -->
+          <div class="agent-panel" id="fullstack">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-build" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Fullstack Developer</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">3 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">End-to-end features with both frontend and backend work</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/fullstack_dev.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/fullstack_dev/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GFF</span>
+                      <span class="text-sm font-semibold">Generate Full Feature</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Scaffolds a complete vertical-slice feature: UI components, API endpoints, database models, and integration wiring. Delivers the entire stack in one pass.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GIC</span>
+                      <span class="text-sm font-semibold">Generate Integration Contract</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Defines API contracts between frontend and backend: request/response schemas, error formats, and contract tests to prevent drift between layers.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GETE</span>
+                      <span class="text-sm font-semibold">Generate End-to-End Test</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Creates end-to-end tests for a user flow, covering the full path from UI interaction through API calls to database verification.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ QA ═══ -->
+          <div class="agent-panel" id="qa">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-test" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">QA Engineer</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">4 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Testing, quality assurance, test automation, and regression testing</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/qa.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/qa/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GTP</span>
+                      <span class="text-sm font-semibold">Generate Test Plan</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                      Creates a comprehensive test plan from a feature spec: maps acceptance criteria to scenarios, covers positive/negative/edge cases, defines test data requirements, and produces a prioritized execution checklist.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="cmd-output">.virtualboard/testing/plans/TP-{FTR-XXXX}-{name}.md</span>
+                    </div>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GBR</span>
+                      <span class="text-sm font-semibold">Generate Bug Report</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                      Documents bugs with structured reproduction steps, expected vs. actual behavior, environment details, severity classification, and suggested fix areas.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="cmd-output">.virtualboard/testing/bugs/</span>
+                    </div>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GTCR</span>
+                      <span class="text-sm font-semibold">Generate Test Coverage Report</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                      Analyzes test coverage gaps across the project. Identifies untested paths, measures coverage by feature area, and recommends high-value tests to write next.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="cmd-output">.virtualboard/testing/coverage/</span>
+                    </div>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GBAT</span>
+                      <span class="text-sm font-semibold">Generate Browser Automation Tests</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                      Creates Playwright browser automation tests with full page-object models, user flow scripts, visual regression snapshots, and CI integration configuration.
+                    </p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="cmd-output">.virtualboard/testing/automation/</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ DevOps ═══ -->
+          <div class="agent-panel" id="devops">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-ops" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">DevOps Engineer</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">3 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">CI/CD, infrastructure, deployment, monitoring, and reliability</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/devops_engineer.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/devops/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GDC</span>
+                      <span class="text-sm font-semibold">Generate Deployment Checklist</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Creates a pre-deployment verification checklist covering environment readiness, database migrations, configuration changes, rollback procedures, and monitoring thresholds.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GIR</span>
+                      <span class="text-sm font-semibold">Generate Incident Report</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Documents incidents with a detailed timeline, root cause analysis, impact assessment, remediation steps taken, and follow-up action items to prevent recurrence.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GDRR</span>
+                      <span class="text-sm font-semibold">Generate Deployment Readiness Report</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Comprehensive deployment assessment covering test results, performance benchmarks, security sign-off status, infrastructure readiness, and go/no-go recommendation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Security ═══ -->
+          <div class="agent-panel" id="security">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-ops" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Security Engineer</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">3 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Security reviews, threat modeling, compliance, and risk management</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/security_compliance_engineer.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/security/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GSA</span>
+                      <span class="text-sm font-semibold">Generate Security Audit</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Performs a comprehensive security audit of the project. Examines authentication, authorization, input validation, dependency vulnerabilities, secrets management, and produces a prioritized findings report.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GTM</span>
+                      <span class="text-sm font-semibold">Generate Threat Model</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Creates a threat model using STRIDE methodology. Maps data flows, identifies trust boundaries, enumerates threats per component, and recommends mitigations with priority ranking.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GSR</span>
+                      <span class="text-sm font-semibold">Generate Security Review</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Reviews code and configuration for security vulnerabilities: injection flaws, broken authentication, sensitive data exposure, and security misconfiguration. Produces actionable fix recommendations.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ Data Engineer ═══ -->
+          <div class="agent-panel" id="data">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-ops" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">Data Engineer</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">4 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">Data pipelines, analytics dashboards, metrics, and telemetry</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/data_analytics_engineer.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/data_engineer/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GDP</span>
+                      <span class="text-sm font-semibold">Generate Data Pipeline</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Creates an ETL/ELT pipeline definition with source extraction, transformation logic, loading targets, scheduling configuration, and data quality validation steps.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GMD</span>
+                      <span class="text-sm font-semibold">Generate Metrics Dashboard</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Builds an analytics dashboard definition with KPI selections, chart specifications, data source mappings, filter configurations, and refresh schedules.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GDQ</span>
+                      <span class="text-sm font-semibold">Generate Data Quality Check</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Creates data validation and quality rules: completeness checks, referential integrity, freshness thresholds, statistical anomaly detection, and alerting configuration.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">ERD</span>
+                      <span class="text-sm font-semibold">Entity Relationship Diagram</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Generates a data model diagram for database schemas: entities, attributes, relationships, cardinality, and index annotations in a visual format.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ UX Designer ═══ -->
+          <div class="agent-panel" id="ux">
+            <div class="agent-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="card-icon icon-plan" style="margin-bottom:0; width:40px; height:40px;">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h3 class="text-base font-semibold">UX/Product Designer</h3>
+                  <span class="badge badge--muted" style="font-size:0.65rem; padding:0.15rem 0.5rem;">3 commands</span>
+                </div>
+                <p class="text-sm text-muted-foreground mt-0.5">User experience design, wireframes, prototypes, and design systems</p>
+              </div>
+              <div class="agent-chevron">&#9654;</div>
+            </div>
+            <div class="agent-body">
+              <div class="agent-body-inner">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Identity file</p>
+                    <code class="inline-code text-xs">agents/ux_product_designer.md</code>
+                  </div>
+                  <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Commands directory</p>
+                    <code class="inline-code text-xs">prompts/agents/ux_designer/</code>
+                  </div>
+                </div>
+                <p class="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-3 mt-5">Commands</p>
+                <div class="flex flex-col gap-3">
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GUJ</span>
+                      <span class="text-sm font-semibold">Generate User Journey</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Maps a complete user journey with personas, touchpoints, emotions, pain points, and opportunities. Produces a visual journey map with actionable insights.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GWF</span>
+                      <span class="text-sm font-semibold">Generate Wireframe</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Creates wireframe documentation for screens and flows: layout specifications, component placement, interaction patterns, responsive breakpoints, and annotation notes.
+                    </p>
+                  </div>
+                  <div class="cmd-row">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                      <span class="cmd-trigger">GDS</span>
+                      <span class="text-sm font-semibold">Generate Design System Component</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
+                      Documents a design system component: visual specs, usage guidelines, variants, states, accessibility requirements, and code implementation notes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- end role list -->
+      </div>
     </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Adoption Process -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--secondary mb-4 mx-auto inline-flex">Workflow</p>
+          <h2 class="mb-4">Adoption process</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            How AI agents select, adopt, and operate within their roles
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger">
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">1</div>
+              <h3 class="text-base font-semibold">Analyze the Task</h3>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Examine feature labels (<code class="inline-code">frontend</code>, <code class="inline-code">backend</code>, <code class="inline-code">security</code>), content keywords, workflow stage, and dependencies to determine the best role.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">2</div>
+              <h3 class="text-base font-semibold">Read the Agent File</h3>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Load <code class="inline-code">agents/{role}.md</code> for identity, responsibilities, and workflow. Load <code class="inline-code">prompts/agents/{role}/README.md</code> for the command catalog.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">3</div>
+              <h3 class="text-base font-semibold">Adopt and Announce</h3>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Announce the adopted role ("I am working as a Frontend Developer agent") and follow that role's workflow for the entire task lifecycle.
+            </p>
+          </div>
+
+          <div class="vb-card">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="step-num">4</div>
+              <h3 class="text-base font-semibold">Execute &amp; Loop</h3>
+            </div>
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              Claim features, execute work, transition status, and immediately look for the next task. Agents operate continuously until the backlog is clear.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout callout--info mt-8 max-w-3xl mx-auto">
+          <strong>Shared guardrails:</strong> All agents follow <code class="inline-code">agents/RULES.md</code> for universal constraints including read-first behavior, ownership respect, transition validation, and the <a href="features.html#security" class="text-primary hover:text-foreground transition-colors">untrusted-content policy</a>.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Extensibility -->
+    <section class="py-20 lg:py-28 section-gradient">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="badge badge--warm mb-4 mx-auto inline-flex">Extensible</p>
+          <h2 class="mb-4">Make it yours</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            The agent system is designed to be extended. Add new roles, create custom commands, or modify existing ones to match your team's workflow.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 stagger">
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: var(--accent-warm);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Add a new agent</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed mb-3">
+              Create <code class="inline-code">agents/your_role.md</code> following the existing format: identity, responsibilities, workflow, and skill levels. Add it to the role-detection table in <code class="inline-code">AGENTS.md</code>.
+            </p>
+            <div class="code-terminal" style="font-size: 0.75rem;">
+              <div class="code-terminal-bar">
+                <span class="code-terminal-dot code-terminal-dot--red"></span>
+                <span class="code-terminal-dot code-terminal-dot--yellow"></span>
+                <span class="code-terminal-dot code-terminal-dot--green"></span>
+              </div>
+              <div class="code-terminal-body">
+                <pre><code>agents/
+  your_role.md          <span style="color:var(--muted-foreground);"># Role identity</span>
+prompts/agents/your_role/
+  README.md             <span style="color:var(--muted-foreground);"># Command catalog</span>
+  YourRole-Command.md   <span style="color:var(--muted-foreground);"># Command file</span></code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: var(--accent-warm);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Add a new command</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed mb-3">
+              Create a command file in <code class="inline-code">prompts/agents/{role}/</code> with the naming convention <code class="inline-code">{Role}-{Command_Name}.md</code>. Define trigger phrases, step-by-step workflow, and output format. Register it in the role's <code class="inline-code">README.md</code>.
+            </p>
+            <div class="callout callout--info" style="font-size: 0.8rem;">
+              <strong>Naming convention:</strong> <code class="inline-code">{Role}-{Command_Name}.md</code> with a short trigger code alias (e.g., <code class="inline-code">GTP</code>, <code class="inline-code">GAD</code>).
+            </div>
+          </div>
+
+          <div class="vb-card">
+            <div class="card-icon" style="background: oklch(0.75 0.14 55 / 0.12); border-color: oklch(0.75 0.14 55 / 0.2);">
+              <svg class="w-5 h-5" style="color: var(--accent-warm);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold mb-2">Customize guardrails</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed mb-3">
+              Edit <code class="inline-code">agents/RULES.md</code> to adjust shared constraints, add project-specific policies, or modify the state machine transitions. Changes apply to all agents immediately.
+            </p>
+            <div class="callout callout--warn" style="font-size: 0.8rem;">
+              <strong>Tip:</strong> Keep rules concise. Agents load RULES.md every turn, so every line costs tokens. Move detailed procedures into command files instead.
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-10 text-center">
+          <p class="text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            The agent system is pure Markdown. No compilation, no build step, no runtime dependency. Edit a file and the next agent turn picks up the changes. Use <code class="inline-code">vb validate</code> to verify your feature specs remain valid after any changes.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- File Structure Reference -->
+    <section class="py-20 lg:py-28">
+      <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-10">
+          <h2 class="mb-4">File structure</h2>
+          <p class="text-muted-foreground max-w-xl mx-auto">
+            Where everything lives in the repository
+          </p>
+        </div>
+
+        <div class="code-terminal">
+          <div class="code-terminal-bar">
+            <span class="code-terminal-dot code-terminal-dot--red"></span>
+            <span class="code-terminal-dot code-terminal-dot--yellow"></span>
+            <span class="code-terminal-dot code-terminal-dot--green"></span>
+          </div>
+          <div class="code-terminal-body">
+            <pre><code><span style="color:var(--primary);">agents/</span>
+  AGENTS.md                    <span style="color:var(--muted-foreground);"># Role selection guide &amp; task-type mapping</span>
+  RULES.md                     <span style="color:var(--muted-foreground);"># Universal guardrails &amp; state transitions</span>
+  pm.md                        <span style="color:var(--muted-foreground);"># Project Manager identity</span>
+  architect.md                 <span style="color:var(--muted-foreground);"># System Architect identity</span>
+  frontend_dev.md              <span style="color:var(--muted-foreground);"># Frontend Developer identity</span>
+  backend_dev.md               <span style="color:var(--muted-foreground);"># Backend Developer identity</span>
+  fullstack_dev.md             <span style="color:var(--muted-foreground);"># Fullstack Developer identity</span>
+  qa.md                        <span style="color:var(--muted-foreground);"># QA Engineer identity</span>
+  devops_engineer.md           <span style="color:var(--muted-foreground);"># DevOps Engineer identity</span>
+  security_compliance_engineer.md  <span style="color:var(--muted-foreground);"># Security Engineer identity</span>
+  data_analytics_engineer.md   <span style="color:var(--muted-foreground);"># Data Engineer identity</span>
+  ux_product_designer.md       <span style="color:var(--muted-foreground);"># UX Designer identity</span>
+
+<span style="color:var(--primary);">prompts/agents/</span>
+  pm/                          <span style="color:var(--muted-foreground);"># GPP, GBG</span>
+  architect/                   <span style="color:var(--muted-foreground);"># GAD, GAR, GTD</span>
+  frontend_dev/                <span style="color:var(--muted-foreground);"># GC, GCS, GAA</span>
+  backend_dev/                 <span style="color:var(--muted-foreground);"># GAE, GDM, GAD</span>
+  fullstack_dev/               <span style="color:var(--muted-foreground);"># GFF, GIC, GETE</span>
+  qa/                          <span style="color:var(--muted-foreground);"># GTP, GBR, GTCR, GBAT</span>
+  devops/                      <span style="color:var(--muted-foreground);"># GDC, GIR, GDRR</span>
+  security/                    <span style="color:var(--muted-foreground);"># GSA, GTM, GSR</span>
+  data_engineer/               <span style="color:var(--muted-foreground);"># GDP, GMD, GDQ, ERD</span>
+  ux_designer/                 <span style="color:var(--muted-foreground);"># GUJ, GWF, GDS</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <footer>
-    <p>VirtualBoard Template · Released under the MIT License</p>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="max-w-6xl mx-auto px-6">
+      <p>
+        VirtualBoard Template &middot; Released under the
+        <a href="https://github.com/virtualboard/template-base/blob/main/LICENSE" target="_blank" rel="noreferrer">MIT License</a>
+      </p>
+      <p class="mt-1">
+        Created by <a href="https://astucia.ai" target="_blank" rel="noreferrer" class="footer-brand">Astucia AI&#8482;</a>
+      </p>
+    </div>
   </footer>
+
 </body>
 </html>

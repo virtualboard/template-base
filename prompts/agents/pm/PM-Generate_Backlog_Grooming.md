@@ -634,12 +634,12 @@ P3 (Low):       ████░░░░░░ W features (WW%)
 
 5. **Update feature index** after changes:
    ```bash
-   vb index || ./scripts/ftr-index.sh
+   vb index
    ```
 
 6. **Validate changes:**
    ```bash
-   vb validate || ./scripts/ftr-validate.sh
+   vb validate
    ```
 
 7. **Generate final report** with all findings and recommendations
@@ -666,8 +666,8 @@ P3 (Low):       ████░░░░░░ W features (WW%)
 ### Tools to Use
 
 - **Codebase search:** Use `Grep` tool to search for implementation evidence
-- **File operations:** Use `vb move` or `ftr-move.sh` for feature transitions
-- **Validation:** Use `vb validate` or `ftr-validate.sh` after changes
+- **File operations:** Use `vb move` for feature transitions (requires the `vb` CLI — run `./scripts/install-vb-cli.sh --ensure-latest` before starting)
+- **Validation:** Use `vb validate` after changes
 - **User interaction:** Use `AskUserQuestion` tool for decision points
 - **Report generation:** Use `Write` tool to create report file
 
