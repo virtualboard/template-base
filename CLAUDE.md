@@ -71,7 +71,7 @@ vb index                                 # Regenerate features/INDEX.md
 vb index -v                              # Verbose: show change details
 vb list                                  # List features
 vb show FTR-0001                         # Show feature details
-vb update FTR-0001 --set priority=P0    # Update frontmatter fields
+vb update FTR-0001 --field priority=P0    # Update frontmatter fields
 vb delete FTR-0001                       # Delete feature (with confirmation)
 vb lock FTR-0001                         # Acquire feature lock
 vb template FTR-0001                     # Apply canonical template
