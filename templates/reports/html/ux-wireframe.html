@@ -1,0 +1,121 @@
+<!--
+  Template: ux-wireframe.html
+  Used by:  prompts/agents/ux_designer/UXDesigner-Generate_Wireframe.md (GWF)
+  Pairs with: .virtualboard/design/wireframes/WF-{feature}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    SCREEN_NAME
+    FIDELITY               – "Low-fi" | "Mid-fi" | "Hi-fi"
+    DEVICE                 – "Desktop" | "Tablet" | "Mobile"
+    OVERVIEW_HTML
+    WIREFRAME_HTML         – inline SVG, <img>, or ASCII layout
+    INTERACTION_NOTES_HTML
+    ACCESSIBILITY_NOTES_HTML
+    OPEN_QUESTIONS_HTML
+
+  Per-template list placeholders:
+    ANNOTATIONS            items: NUMBER, ELEMENT, NOTE
+    USER_FLOWS             items: NAME, STEPS_HTML
+    STATES                 items: NAME, DESC
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="overview">
+    <h2><span class="num">01</span>Overview</h2>
+    <p class="lead">{{SCREEN_NAME}} &middot; {{FIDELITY}} &middot; {{DEVICE}}</p>
+    {{OVERVIEW_HTML}}
+  </section>
+
+  <section id="wireframe">
+    <h2><span class="num">02</span>Wireframe</h2>
+    <p class="lead">Inline rendering. Hover annotations align to the table below.</p>
+    {{WIREFRAME_HTML}}
+  </section>
+
+  <section id="annotations">
+    <h2><span class="num">03</span>Annotations</h2>
+    <p class="lead">Element-by-element notes.</p>
+    <table class="component-table">
+      <thead><tr><th style="width: 60px;">#</th><th>Element</th><th>Note</th></tr></thead>
+      <tbody>
+        {{#ANNOTATIONS}}
+        <tr><td>{{NUMBER}}</td><td>{{ELEMENT}}</td><td>{{NOTE}}</td></tr>
+        {{/ANNOTATIONS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_ANNOTATIONS}}
+  </section>
+
+  <section id="states">
+    <h2><span class="num">04</span>States</h2>
+    <p class="lead">Loading, empty, error, success — anything that visibly changes the screen.</p>
+    <table class="component-table">
+      <thead><tr><th>State</th><th>Description</th></tr></thead>
+      <tbody>
+        {{#STATES}}
+        <tr><td>{{NAME}}</td><td>{{DESC}}</td></tr>
+        {{/STATES}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_STATES}}
+  </section>
+
+  <section id="flows">
+    <h2><span class="num">05</span>User Flows</h2>
+    <p class="lead">How a user moves through the screen toward their goal.</p>
+    <div>
+      {{#USER_FLOWS}}
+      <div class="card" style="margin-bottom: 14px;">
+        <h3 style="margin-top: 0;">{{NAME}}</h3>
+        {{STEPS_HTML}}
+      </div>
+      {{/USER_FLOWS}}
+    </div>
+    {{LIST_EMPTY_USER_FLOWS}}
+  </section>
+
+  <section id="interactions">
+    <h2><span class="num">06</span>Interaction &amp; Accessibility Notes</h2>
+    <p class="lead">Behavior that doesn't show in the wireframe but matters in the build.</p>
+    <h3>Interactions</h3>
+    {{INTERACTION_NOTES_HTML}}
+    <h3>Accessibility</h3>
+    {{ACCESSIBILITY_NOTES_HTML}}
+  </section>
+
+  <section id="questions">
+    <h2><span class="num">07</span>Open Questions</h2>
+    {{OPEN_QUESTIONS_HTML}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

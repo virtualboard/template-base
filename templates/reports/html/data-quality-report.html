@@ -1,0 +1,131 @@
+<!--
+  Template: data-quality-report.html
+  Used by:  prompts/agents/data_engineer/DataEngineer-Generate_Data_Quality_Check.md (GDQ)
+  Pairs with: .virtualboard/reports/{YYYY-MM-DD}_Data_Quality_Report_{Entity}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    ENTITY                 – e.g. "users" / "orders"
+    EXECUTIVE_SUMMARY_HTML
+    KPI_TOTAL_RULES, KPI_PASSED, KPI_FAILED, KPI_WARNINGS
+    NULL_RATE_PCT, DUPLICATE_RATE_PCT, FRESHNESS_HOURS
+    OVERALL_STATUS         – "Healthy" | "Needs Attention" | "Critical"
+    OVERALL_STATUS_CLASS   – "ok" | "" | "danger"
+    SCHEMA_NOTES_HTML
+    REMEDIATION_HTML
+    NEXT_RUN_DATE
+
+  Per-template list placeholders:
+    RULES                  items: ID, NAME, TYPE (completeness|uniqueness|validity|consistency|freshness),
+                                  STATUS (pass|warn|fail), DETAILS, IMPACT
+    BAD_ROWS_SAMPLE        items: KEY, COLUMN, VALUE, REASON
+    DIMENSION_SCORES       items: DIMENSION, SCORE, NOTES
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">Data quality posture for <code>{{ENTITY}}</code>.</p>
+    {{EXECUTIVE_SUMMARY_HTML}}
+    <div class="callout"><p><strong>Status:</strong> <span class="risk-sev" data-sev="medium" style="margin-left: 6px;">{{OVERALL_STATUS}}</span></p></div>
+  </section>
+
+  <section id="kpis">
+    <h2><span class="num">02</span>Quality at a Glance</h2>
+    <p class="lead">Aggregate rule outcomes and hot-spot rates.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_TOTAL_RULES}}</div><div class="l">Rules</div></div>
+      <div class="stat" style="border-left: 3px solid var(--accent);"><div class="n">{{KPI_PASSED}}</div><div class="l">Passed</div></div>
+      <div class="stat" style="border-left: 3px solid var(--sev-critical);"><div class="n">{{KPI_FAILED}}</div><div class="l">Failed</div></div>
+      <div class="stat" style="border-left: 3px solid var(--sev-medium);"><div class="n">{{KPI_WARNINGS}}</div><div class="l">Warnings</div></div>
+      <div class="stat"><div class="n">{{NULL_RATE_PCT}}%</div><div class="l">Null rate</div></div>
+      <div class="stat"><div class="n">{{DUPLICATE_RATE_PCT}}%</div><div class="l">Duplicate rate</div></div>
+      <div class="stat"><div class="n">{{FRESHNESS_HOURS}} h</div><div class="l">Freshness lag</div></div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <h2><span class="num">03</span>Rules</h2>
+    <p class="lead">Per-rule pass / warn / fail.</p>
+    <table class="component-table">
+      <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th>Details</th><th>Impact</th></tr></thead>
+      <tbody>
+        {{#RULES}}
+        <tr><td>{{ID}}</td><td>{{NAME}}</td><td>{{TYPE}}</td><td>{{STATUS}}</td><td>{{DETAILS}}</td><td>{{IMPACT}}</td></tr>
+        {{/RULES}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_RULES}}
+  </section>
+
+  <section id="dimensions">
+    <h2><span class="num">04</span>Quality Dimensions</h2>
+    <p class="lead">Score across the standard data quality dimensions.</p>
+    <table class="component-table">
+      <thead><tr><th>Dimension</th><th>Score</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#DIMENSION_SCORES}}
+        <tr><td>{{DIMENSION}}</td><td>{{SCORE}}</td><td>{{NOTES}}</td></tr>
+        {{/DIMENSION_SCORES}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_DIMENSION_SCORES}}
+  </section>
+
+  <section id="samples">
+    <h2><span class="num">05</span>Bad-Row Samples</h2>
+    <p class="lead">A small sample of failing rows to ground the conversation.</p>
+    <table class="component-table">
+      <thead><tr><th>Key</th><th>Column</th><th>Value</th><th>Reason</th></tr></thead>
+      <tbody>
+        {{#BAD_ROWS_SAMPLE}}
+        <tr><td>{{KEY}}</td><td><code>{{COLUMN}}</code></td><td><code>{{VALUE}}</code></td><td>{{REASON}}</td></tr>
+        {{/BAD_ROWS_SAMPLE}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_BAD_ROWS_SAMPLE}}
+  </section>
+
+  <section id="schema">
+    <h2><span class="num">06</span>Schema Notes</h2>
+    <p class="lead">Schema drift, type changes, or definition issues observed.</p>
+    {{SCHEMA_NOTES_HTML}}
+  </section>
+
+  <section id="remediation">
+    <h2><span class="num">07</span>Remediation</h2>
+    <p class="lead">What to fix and where to invest.</p>
+    {{REMEDIATION_HTML}}
+    <div class="callout" style="margin-top: 28px;"><p><strong>Next run:</strong> {{NEXT_RUN_DATE}}</p></div>
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

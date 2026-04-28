@@ -1,0 +1,114 @@
+<!--
+  Template: ux-user-journey.html
+  Used by:  prompts/agents/ux_designer/UXDesigner-Generate_User_Journey.md (GUJ)
+  Pairs with: .virtualboard/design/journeys/UJ-{name}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    PERSONA                – e.g. "First-time admin"
+    GOAL                   – e.g. "Onboard a new project"
+    SCENARIO_HTML
+    KPI_STEPS, KPI_PAIN_POINTS, KPI_OPPORTUNITIES, KPI_SUCCESS_RATE
+    PERSONA_DETAIL_HTML
+    PROBLEM_STATEMENT_HTML
+    SUCCESS_DEFINITION_HTML
+    NEXT_STEPS_HTML
+
+  Per-template list placeholders:
+    STEPS                  items: NUMBER, STAGE (Awareness|Consideration|Onboarding|Use|Retention|Advocacy),
+                                  ACTION, TOUCHPOINT, EMOTION, PAIN_POINT, OPPORTUNITY
+    INSIGHTS               items: TITLE, INSIGHT, IMPACT
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Persona &amp; Goal</h2>
+    <p class="lead">Who, and what they are trying to accomplish.</p>
+    <div class="callout"><p><strong>Persona:</strong> {{PERSONA}} &middot; <strong>Goal:</strong> {{GOAL}}</p></div>
+    {{SCENARIO_HTML}}
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_STEPS}}</div><div class="l">Steps</div></div>
+      <div class="stat"><div class="n">{{KPI_PAIN_POINTS}}</div><div class="l">Pain points</div></div>
+      <div class="stat"><div class="n">{{KPI_OPPORTUNITIES}}</div><div class="l">Opportunities</div></div>
+      <div class="stat"><div class="n">{{KPI_SUCCESS_RATE}}%</div><div class="l">Success rate</div></div>
+    </div>
+  </section>
+
+  <section id="persona">
+    <h2><span class="num">02</span>Persona Detail</h2>
+    <p class="lead">Background, motivations, and constraints.</p>
+    {{PERSONA_DETAIL_HTML}}
+  </section>
+
+  <section id="problem">
+    <h2><span class="num">03</span>Problem &amp; Success Definition</h2>
+    <p class="lead">What's the underlying problem and how do we know it's solved?</p>
+    <h3>Problem</h3>
+    {{PROBLEM_STATEMENT_HTML}}
+    <h3>Success</h3>
+    {{SUCCESS_DEFINITION_HTML}}
+  </section>
+
+  <section id="journey">
+    <h2><span class="num">04</span>Journey Steps</h2>
+    <p class="lead">In-order steps from first touch to outcome. Pain points and opportunities are flagged per step.</p>
+    <table class="component-table">
+      <thead><tr><th style="width: 50px;">#</th><th>Stage</th><th>Action</th><th>Touchpoint</th><th>Emotion</th><th>Pain point</th><th>Opportunity</th></tr></thead>
+      <tbody>
+        {{#STEPS}}
+        <tr><td>{{NUMBER}}</td><td>{{STAGE}}</td><td>{{ACTION}}</td><td>{{TOUCHPOINT}}</td><td>{{EMOTION}}</td><td>{{PAIN_POINT}}</td><td>{{OPPORTUNITY}}</td></tr>
+        {{/STEPS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_STEPS}}
+  </section>
+
+  <section id="insights">
+    <h2><span class="num">05</span>Insights</h2>
+    <p class="lead">Patterns from the journey worth designing against.</p>
+    <table class="component-table">
+      <thead><tr><th>Title</th><th>Insight</th><th>Impact</th></tr></thead>
+      <tbody>
+        {{#INSIGHTS}}
+        <tr><td>{{TITLE}}</td><td>{{INSIGHT}}</td><td>{{IMPACT}}</td></tr>
+        {{/INSIGHTS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_INSIGHTS}}
+  </section>
+
+  <section id="next">
+    <h2><span class="num">06</span>Next Steps</h2>
+    {{NEXT_STEPS_HTML}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

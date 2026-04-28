@@ -1,0 +1,136 @@
+<!--
+  Template: ux-design-system.html
+  Used by:  prompts/agents/ux_designer/UXDesigner-Generate_Design_System_Component.md (GDS)
+  Pairs with: .virtualboard/design/systems/DS-{project}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    COMPONENT_NAME, VERSION, STATUS  – component being documented
+    OVERVIEW_HTML
+    USAGE_HTML             – when to use / when not to use
+    ANATOMY_HTML           – structural anatomy of the component
+    ACCESSIBILITY_NOTES_HTML
+    BEHAVIOR_HTML
+
+  Per-template list placeholders:
+    TOKENS                 items: NAME, VALUE, USAGE
+    VARIANTS               items: NAME, DESC, EXAMPLE_HTML
+    PROPS                  items: NAME, TYPE, DEFAULT, DESC
+    DO_LIST                items: TEXT
+    DONT_LIST              items: TEXT
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="overview">
+    <h2><span class="num">01</span>Overview</h2>
+    <p class="lead">{{COMPONENT_NAME}} &middot; v{{VERSION}} &middot; <span class="risk-sev" data-sev="medium">{{STATUS}}</span></p>
+    {{OVERVIEW_HTML}}
+  </section>
+
+  <section id="tokens">
+    <h2><span class="num">02</span>Design Tokens</h2>
+    <p class="lead">Color, spacing, type, and motion tokens used by this component.</p>
+    <table class="component-table">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        {{#TOKENS}}
+        <tr><td><code>{{NAME}}</code></td><td><code>{{VALUE}}</code></td><td>{{USAGE}}</td></tr>
+        {{/TOKENS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_TOKENS}}
+  </section>
+
+  <section id="anatomy">
+    <h2><span class="num">03</span>Anatomy</h2>
+    <p class="lead">Structural pieces of the component.</p>
+    {{ANATOMY_HTML}}
+  </section>
+
+  <section id="variants">
+    <h2><span class="num">04</span>Variants</h2>
+    <p class="lead">Visual variants and when to use each.</p>
+    <div>
+      {{#VARIANTS}}
+      <div class="card" style="margin-bottom: 14px;">
+        <h3 style="margin-top: 0;">{{NAME}}</h3>
+        <p style="color: var(--text-dim);">{{DESC}}</p>
+        {{EXAMPLE_HTML}}
+      </div>
+      {{/VARIANTS}}
+    </div>
+    {{LIST_EMPTY_VARIANTS}}
+  </section>
+
+  <section id="props">
+    <h2><span class="num">05</span>Props / API</h2>
+    <p class="lead">Public surface of the component.</p>
+    <table class="component-table">
+      <thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        {{#PROPS}}
+        <tr><td><code>{{NAME}}</code></td><td><code>{{TYPE}}</code></td><td><code>{{DEFAULT}}</code></td><td>{{DESC}}</td></tr>
+        {{/PROPS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_PROPS}}
+  </section>
+
+  <section id="usage">
+    <h2><span class="num">06</span>Usage</h2>
+    <p class="lead">When to reach for this component, when not to.</p>
+    {{USAGE_HTML}}
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div class="card">
+        <h4 style="margin-top: 0; color: var(--accent);">Do</h4>
+        <ul class="tight">{{#DO_LIST}}<li>{{TEXT}}</li>{{/DO_LIST}}</ul>
+        {{LIST_EMPTY_DO_LIST}}
+      </div>
+      <div class="card" style="border-left: 3px solid var(--sev-high);">
+        <h4 style="margin-top: 0; color: var(--sev-high);">Don't</h4>
+        <ul class="tight">{{#DONT_LIST}}<li>{{TEXT}}</li>{{/DONT_LIST}}</ul>
+        {{LIST_EMPTY_DONT_LIST}}
+      </div>
+    </div>
+  </section>
+
+  <section id="behavior">
+    <h2><span class="num">07</span>Behavior &amp; Accessibility</h2>
+    <p class="lead">Interaction states, keyboard support, ARIA, and motion.</p>
+    <h3>Behavior</h3>
+    {{BEHAVIOR_HTML}}
+    <h3>Accessibility</h3>
+    {{ACCESSIBILITY_NOTES_HTML}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

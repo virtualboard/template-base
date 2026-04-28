@@ -1,0 +1,124 @@
+<!--
+  Template: devops-deployment-checklist.html (optional, S+R)
+  Used by:  prompts/agents/devops/DevOps-Generate_Deployment_Checklist.md (GDC)
+  Pairs with: .virtualboard/deployments/checklists/DC-{YYYY-MM-DD}-{env}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    ENVIRONMENT, TARGET_VERSION, DEPLOY_WINDOW
+    OWNER                  – deploy lead
+    KPI_TOTAL, KPI_REQUIRED, KPI_DONE, KPI_PENDING
+    NOTES_HTML
+
+  Per-template list placeholders:
+    PRE_DEPLOY             items: CATEGORY, ITEM, REQUIRED (Yes|No), STATUS (done|pending|skipped), OWNER, NOTES
+    DEPLOY                 items: STEP, COMMAND_HTML (e.g. <code>...</code>), NOTES
+    POST_DEPLOY            items: ITEM, STATUS, OWNER, NOTES
+    ROLLBACK_STEPS         items: STEP, COMMAND_HTML, NOTES
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Summary</h2>
+    <p class="lead">Environment, version, and the deploy lead.</p>
+    <div class="callout"><p><strong>Environment:</strong> {{ENVIRONMENT}} &middot; <strong>Target version:</strong> {{TARGET_VERSION}} &middot; <strong>Window:</strong> {{DEPLOY_WINDOW}} &middot; <strong>Owner:</strong> {{OWNER}}</p></div>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_TOTAL}}</div><div class="l">Total items</div></div>
+      <div class="stat"><div class="n">{{KPI_REQUIRED}}</div><div class="l">Required</div></div>
+      <div class="stat" style="border-left: 3px solid var(--accent);"><div class="n">{{KPI_DONE}}</div><div class="l">Done</div></div>
+      <div class="stat" style="border-left: 3px solid var(--sev-medium);"><div class="n">{{KPI_PENDING}}</div><div class="l">Pending</div></div>
+    </div>
+  </section>
+
+  <section id="pre-deploy">
+    <h2><span class="num">02</span>Pre-Deploy Checklist</h2>
+    <p class="lead">Items that must be complete before the deploy starts.</p>
+    <table class="component-table">
+      <thead><tr><th>Category</th><th>Item</th><th>Required</th><th>Status</th><th>Owner</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#PRE_DEPLOY}}
+        <tr><td>{{CATEGORY}}</td><td>{{ITEM}}</td><td>{{REQUIRED}}</td><td>{{STATUS}}</td><td>{{OWNER}}</td><td>{{NOTES}}</td></tr>
+        {{/PRE_DEPLOY}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_PRE_DEPLOY}}
+  </section>
+
+  <section id="deploy">
+    <h2><span class="num">03</span>Deployment Steps</h2>
+    <p class="lead">In-order steps for the deploy itself.</p>
+    <table class="component-table">
+      <thead><tr><th style="width: 50%;">Step</th><th>Command / artifact</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#DEPLOY}}
+        <tr><td>{{STEP}}</td><td>{{COMMAND_HTML}}</td><td>{{NOTES}}</td></tr>
+        {{/DEPLOY}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_DEPLOY}}
+  </section>
+
+  <section id="post-deploy">
+    <h2><span class="num">04</span>Post-Deploy</h2>
+    <p class="lead">Verification and clean-up.</p>
+    <table class="component-table">
+      <thead><tr><th>Item</th><th>Status</th><th>Owner</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#POST_DEPLOY}}
+        <tr><td>{{ITEM}}</td><td>{{STATUS}}</td><td>{{OWNER}}</td><td>{{NOTES}}</td></tr>
+        {{/POST_DEPLOY}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_POST_DEPLOY}}
+  </section>
+
+  <section id="rollback">
+    <h2><span class="num">05</span>Rollback</h2>
+    <p class="lead">Pre-cooked steps if the deploy needs to be undone.</p>
+    <table class="component-table">
+      <thead><tr><th>Step</th><th>Command / artifact</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#ROLLBACK_STEPS}}
+        <tr><td>{{STEP}}</td><td>{{COMMAND_HTML}}</td><td>{{NOTES}}</td></tr>
+        {{/ROLLBACK_STEPS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_ROLLBACK_STEPS}}
+  </section>
+
+  <section id="notes">
+    <h2><span class="num">06</span>Notes</h2>
+    <p class="lead">Anything specific about this deployment.</p>
+    {{NOTES_HTML}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

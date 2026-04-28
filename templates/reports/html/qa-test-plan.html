@@ -1,0 +1,162 @@
+<!--
+  Template: qa-test-plan.html
+  Used by:  prompts/agents/qa/QA-Generate_Test_Plan.md (GTP)
+  Pairs with: .virtualboard/testing/plans/TP-{FTR-####}-{name}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    FTR_ID                 – feature being tested
+    FEATURE_TITLE
+    PLAN_OBJECTIVE_HTML
+    SCOPE_IN_HTML, SCOPE_OUT_HTML
+    EXIT_CRITERIA_HTML
+    KPI_TOTAL_CASES, KPI_CRITICAL, KPI_HIGH, KPI_MEDIUM, KPI_LOW
+    KPI_AUTOMATED_PCT      – integer 0–100
+    ENVIRONMENT_HTML       – test envs, data, tooling
+    ROLES_HTML             – who runs / approves / signs off
+    SCHEDULE_HTML          – key dates
+    RISK_AREAS_HTML
+
+  Per-template list placeholders:
+    TEST_CASES             items: TC_ID, NAME, TYPE, PRIORITY, STEPS_HTML, EXPECTED_HTML, PASS_CRIT
+    ACCEPTANCE_CRITERIA    items: AC_ID, CRITERION
+    ASSUMPTIONS            items: TEXT
+    DEPENDENCIES           items: TEXT
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="objective">
+    <h2><span class="num">01</span>Objective</h2>
+    <p class="lead">What this test plan covers and what success looks like.</p>
+    <div class="callout"><p><strong>Feature:</strong> {{FTR_ID}} &middot; {{FEATURE_TITLE}}</p></div>
+    {{PLAN_OBJECTIVE_HTML}}
+  </section>
+
+  <section id="scope">
+    <h2><span class="num">02</span>Scope</h2>
+    <p class="lead">In scope vs. out of scope.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4 style="margin-top: 0; color: var(--accent);">In scope</h4>
+        {{SCOPE_IN_HTML}}
+      </div>
+      <div class="card" style="border-left: 3px solid var(--sev-medium);">
+        <h4 style="margin-top: 0; color: var(--sev-medium);">Out of scope</h4>
+        {{SCOPE_OUT_HTML}}
+      </div>
+    </div>
+  </section>
+
+  <section id="kpis">
+    <h2><span class="num">03</span>Coverage at a Glance</h2>
+    <p class="lead">Test count by priority and automation coverage.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_TOTAL_CASES}}</div><div class="l">Total cases</div></div>
+      <div class="stat"><div class="n">{{KPI_CRITICAL}}</div><div class="l">Critical</div></div>
+      <div class="stat"><div class="n">{{KPI_HIGH}}</div><div class="l">High</div></div>
+      <div class="stat"><div class="n">{{KPI_MEDIUM}}</div><div class="l">Medium</div></div>
+      <div class="stat"><div class="n">{{KPI_LOW}}</div><div class="l">Low</div></div>
+      <div class="stat"><div class="n">{{KPI_AUTOMATED_PCT}}%</div><div class="l">Automated</div></div>
+    </div>
+  </section>
+
+  <section id="cases">
+    <h2><span class="num">04</span>Test Cases</h2>
+    <p class="lead">Per-case detail. Each row links steps to expected outcome and pass criteria.</p>
+    <div>
+      {{#TEST_CASES}}
+      <div class="card" style="margin-bottom: 14px;">
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+          <span class="risk-id">{{TC_ID}}</span>
+          <span class="risk-sev" data-sev="{{PRIORITY}}">{{PRIORITY}}</span>
+          <strong>{{NAME}}</strong>
+          <span style="color: var(--text-mute); font-size: 12px;">&middot; {{TYPE}}</span>
+        </div>
+        <h4>Steps</h4>
+        {{STEPS_HTML}}
+        <h4>Expected</h4>
+        {{EXPECTED_HTML}}
+        <p style="margin: 0;"><strong>Pass criteria:</strong> {{PASS_CRIT}}</p>
+      </div>
+      {{/TEST_CASES}}
+    </div>
+    {{LIST_EMPTY_TEST_CASES}}
+  </section>
+
+  <section id="acceptance">
+    <h2><span class="num">05</span>Acceptance Criteria</h2>
+    <p class="lead">From the feature spec, restated for verification.</p>
+    <ul class="tight">
+      {{#ACCEPTANCE_CRITERIA}}
+      <li><strong>{{AC_ID}}</strong> &mdash; {{CRITERION}}</li>
+      {{/ACCEPTANCE_CRITERIA}}
+    </ul>
+    {{LIST_EMPTY_ACCEPTANCE_CRITERIA}}
+  </section>
+
+  <section id="risks">
+    <h2><span class="num">06</span>Risk Areas</h2>
+    <p class="lead">Where regressions are most likely; where to invest the most test effort.</p>
+    {{RISK_AREAS_HTML}}
+  </section>
+
+  <section id="environment">
+    <h2><span class="num">07</span>Environment, Schedule &amp; Roles</h2>
+    <p class="lead">Where, when, and by whom.</p>
+    <h3>Environment</h3>
+    {{ENVIRONMENT_HTML}}
+    <h3>Schedule</h3>
+    {{SCHEDULE_HTML}}
+    <h3>Roles</h3>
+    {{ROLES_HTML}}
+  </section>
+
+  <section id="exit">
+    <h2><span class="num">08</span>Exit Criteria, Assumptions &amp; Dependencies</h2>
+    <p class="lead">When this plan can be considered complete.</p>
+    <h3>Exit criteria</h3>
+    {{EXIT_CRITERIA_HTML}}
+
+    <h3>Assumptions</h3>
+    <ul class="tight">
+      {{#ASSUMPTIONS}}<li>{{TEXT}}</li>{{/ASSUMPTIONS}}
+    </ul>
+    {{LIST_EMPTY_ASSUMPTIONS}}
+
+    <h3>Dependencies</h3>
+    <ul class="tight">
+      {{#DEPENDENCIES}}<li>{{TEXT}}</li>{{/DEPENDENCIES}}
+    </ul>
+    {{LIST_EMPTY_DEPENDENCIES}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!--
+  Template: data-erd.html
+  Used by:  prompts/agents/data_engineer/DataEngineer-Generate_Entity_Relationship_Diagram.md (ERD)
+  Pairs with: .virtualboard/reports/{YYYY-MM-DD}_Entity_Relationship_Diagram.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    DOMAIN                 – e.g. "Billing" / "Identity"
+    EXECUTIVE_SUMMARY_HTML
+    DIAGRAM_HTML           – inline SVG, pre-rendered Mermaid, or img
+    KPI_ENTITIES, KPI_RELATIONSHIPS, KPI_PRIMARY_KEYS, KPI_FOREIGN_KEYS
+    NORMALIZATION_HTML     – paragraphs on normalization level
+    INDEXING_HTML          – paragraphs on indexes
+    NEXT_REVIEW_DATE
+
+  Per-template list placeholders:
+    ENTITIES               items: NAME, PURPOSE, COLUMNS_HTML, NOTES
+    RELATIONSHIPS          items: FROM_ENTITY, TO_ENTITY, CARDINALITY, ON_DELETE, NOTES
+    INDEXES                items: TABLE, NAME, COLUMNS, KIND, NOTES
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Summary</h2>
+    <p class="lead">Domain and high-level shape of the data model.</p>
+    <div class="callout"><p><strong>Domain:</strong> {{DOMAIN}}</p></div>
+    {{EXECUTIVE_SUMMARY_HTML}}
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_ENTITIES}}</div><div class="l">Entities</div></div>
+      <div class="stat"><div class="n">{{KPI_RELATIONSHIPS}}</div><div class="l">Relationships</div></div>
+      <div class="stat"><div class="n">{{KPI_PRIMARY_KEYS}}</div><div class="l">Primary keys</div></div>
+      <div class="stat"><div class="n">{{KPI_FOREIGN_KEYS}}</div><div class="l">Foreign keys</div></div>
+    </div>
+  </section>
+
+  <section id="diagram">
+    <h2><span class="num">02</span>Diagram</h2>
+    <p class="lead">Inline SVG / Mermaid render of the ER diagram.</p>
+    {{DIAGRAM_HTML}}
+  </section>
+
+  <section id="entities">
+    <h2><span class="num">03</span>Entities</h2>
+    <p class="lead">Each entity, its purpose, columns, and any notes.</p>
+    <div>
+      {{#ENTITIES}}
+      <div class="card" style="margin-bottom: 14px;">
+        <h3 style="margin-top: 0;">{{NAME}}</h3>
+        <p style="color: var(--text-dim);">{{PURPOSE}}</p>
+        {{COLUMNS_HTML}}
+        <p style="margin: 10px 0 0; color: var(--text-mute); font-size: 13px;">{{NOTES}}</p>
+      </div>
+      {{/ENTITIES}}
+    </div>
+    {{LIST_EMPTY_ENTITIES}}
+  </section>
+
+  <section id="relationships">
+    <h2><span class="num">04</span>Relationships</h2>
+    <p class="lead">Cardinality and on-delete semantics.</p>
+    <table class="component-table">
+      <thead><tr><th>From</th><th>To</th><th>Cardinality</th><th>On delete</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#RELATIONSHIPS}}
+        <tr><td>{{FROM_ENTITY}}</td><td>{{TO_ENTITY}}</td><td>{{CARDINALITY}}</td><td>{{ON_DELETE}}</td><td>{{NOTES}}</td></tr>
+        {{/RELATIONSHIPS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_RELATIONSHIPS}}
+  </section>
+
+  <section id="indexes">
+    <h2><span class="num">05</span>Indexes</h2>
+    <p class="lead">Indexes per table, with kind and notes.</p>
+    <table class="component-table">
+      <thead><tr><th>Table</th><th>Index</th><th>Columns</th><th>Kind</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#INDEXES}}
+        <tr><td>{{TABLE}}</td><td>{{NAME}}</td><td>{{COLUMNS}}</td><td>{{KIND}}</td><td>{{NOTES}}</td></tr>
+        {{/INDEXES}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_INDEXES}}
+  </section>
+
+  <section id="normalization">
+    <h2><span class="num">06</span>Normalization &amp; Indexing Notes</h2>
+    <p class="lead">Trade-offs and rationale.</p>
+    <h3>Normalization</h3>
+    {{NORMALIZATION_HTML}}
+    <h3>Indexing</h3>
+    {{INDEXING_HTML}}
+    <div class="callout" style="margin-top: 28px;"><p><strong>Next review:</strong> {{NEXT_REVIEW_DATE}}</p></div>
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

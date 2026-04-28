@@ -1,0 +1,336 @@
+<!--
+  Template: pm-backlog-grooming.html
+  Used by:  prompts/agents/pm/PM-Generate_Backlog_Grooming.md (GBG)
+  Pairs with: reports/{YYYY-MM-DD}_Backlog_Grooming_Report.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    SESSION_DURATION       – e.g. "47 minutes"
+    FEATURES_REVIEWED, FEATURES_TOTAL  – integers
+    HEALTH_SCORE           – integer 0–10 (overall backlog health)
+    SCORE_SPEC, SCORE_DEPS, SCORE_PRIORITY, SCORE_READINESS  – integers 0–10
+    EXECUTIVE_SUMMARY_HTML
+    KPI_FULLY_IMPLEMENTED, KPI_PARTIALLY, KPI_SPEC_UPDATED,
+    KPI_ARCHIVED, KPI_VALIDATED  – integers
+    P0_COUNT, P1_COUNT, P2_COUNT, P3_COUNT  – integers
+    P0_PCT, P1_PCT, P2_PCT, P3_PCT  – integers
+    READY_COUNT, BLOCKED_COUNT, NEEDS_REFINEMENT_COUNT, STALE_COUNT
+    HAS_DEPENDENCIES_COUNT, AVG_DEPENDENCY_DEPTH, CIRCULAR_DEP_COUNT, INVALID_DEP_COUNT
+    NEXT_GROOMING_DATE, OPEN_QUESTIONS_HTML
+
+  Per-template list placeholders:
+    HERO_META_CELLS         items: LABEL, VALUE
+    FULLY_IMPLEMENTED       items: FTR_ID, TITLE, RECOMMENDATION, DECISION
+    PARTIAL                 items: FTR_ID, TITLE, COMPLETED_PCT, RECOMMENDATION, DECISION
+    VALIDATED_READY         items: FTR_ID, TITLE, PRIORITY, COMPLEXITY, NOTES
+    SPEC_UPDATED            items: FTR_ID, TITLE, CHANGES, REASON
+    ARCHIVED                items: FTR_ID, TITLE, REASON
+    DEFERRED                items: FTR_ID, TITLE, OLD_PRIORITY, NEW_PRIORITY, REASON
+    NEEDS_REFINEMENT        items: FTR_ID, ISSUE
+    STALE                   items: FTR_ID, TITLE, AGE_DAYS, LAST_UPDATED, RECOMMENDATION
+    QUICK_WINS              items: FTR_ID, TITLE, PRIORITY, COMPLEXITY, IMPACT, EFFORT
+    UNBLOCKERS              items: FTR_ID, TITLE, CURRENT_PRIORITY, UNBLOCKS, RECOMMENDATION
+    PROMOTIONS              items: FTR_ID, TITLE, CURRENT, RECOMMENDED, REASON
+    DEMOTIONS               items: FTR_ID, TITLE, CURRENT, RECOMMENDED, REASON
+    READY_TO_START          items: FTR_ID, TITLE, PRIORITY, COMPLEXITY, LABELS, EPIC
+    EPICS                   items: EPIC_ID, EPIC_NAME, FEATURE_COUNT, COMPLETED_COUNT, COMPLETED_PCT
+    IMMEDIATE_ACTIONS       items: TITLE, DESC
+    SHORT_TERM_ACTIONS      items: TITLE, DESC
+    LONG_TERM_ACTIONS       items: TITLE, DESC
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">Backlog health, what changed in the session, and the action items that need a stakeholder decision.</p>
+    {{EXECUTIVE_SUMMARY_HTML}}
+    <div class="callout"><p><strong>Health score:</strong> {{HEALTH_SCORE}} / 10 &middot; <strong>Spec quality</strong> {{SCORE_SPEC}}/10 &middot; <strong>Dependency hygiene</strong> {{SCORE_DEPS}}/10 &middot; <strong>Priority clarity</strong> {{SCORE_PRIORITY}}/10 &middot; <strong>Readiness</strong> {{SCORE_READINESS}}/10</p></div>
+  </section>
+
+  <section id="results">
+    <h2><span class="num">02</span>Session Results</h2>
+    <p class="lead">{{FEATURES_REVIEWED}} of {{FEATURES_TOTAL}} backlog items reviewed in {{SESSION_DURATION}}.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_FULLY_IMPLEMENTED}}</div><div class="l">Fully implemented</div></div>
+      <div class="stat"><div class="n">{{KPI_PARTIALLY}}</div><div class="l">Partially implemented</div></div>
+      <div class="stat"><div class="n">{{KPI_SPEC_UPDATED}}</div><div class="l">Spec updated</div></div>
+      <div class="stat"><div class="n">{{KPI_ARCHIVED}}</div><div class="l">Archived</div></div>
+      <div class="stat"><div class="n">{{KPI_VALIDATED}}</div><div class="l">Validated as-is</div></div>
+    </div>
+  </section>
+
+  <section id="implementation-status">
+    <h2><span class="num">03</span>Implementation Status</h2>
+    <p class="lead">Features that should leave the backlog and those that need a split.</p>
+
+    <h3>Fully implemented (move out of backlog)</h3>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Recommendation</th><th>Decision</th></tr></thead>
+      <tbody>
+        {{#FULLY_IMPLEMENTED}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{RECOMMENDATION}}</td><td>{{DECISION}}</td></tr>
+        {{/FULLY_IMPLEMENTED}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_FULLY_IMPLEMENTED}}
+
+    <h3 style="margin-top: 32px;">Partially implemented</h3>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Completed</th><th>Recommendation</th><th>Decision</th></tr></thead>
+      <tbody>
+        {{#PARTIAL}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{COMPLETED_PCT}}%</td><td>{{RECOMMENDATION}}</td><td>{{DECISION}}</td></tr>
+        {{/PARTIAL}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_PARTIAL}}
+  </section>
+
+  <section id="relevance">
+    <h2><span class="num">04</span>Relevance Analysis</h2>
+    <p class="lead">For features not yet implemented: validated, updated, archived, or deferred.</p>
+
+    <h3>Validated &amp; ready</h3>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Priority</th><th>Complexity</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#VALIDATED_READY}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{PRIORITY}}</td><td>{{COMPLEXITY}}</td><td>{{NOTES}}</td></tr>
+        {{/VALIDATED_READY}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_VALIDATED_READY}}
+
+    <h3 style="margin-top: 32px;">Spec updated</h3>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Changes</th><th>Reason</th></tr></thead>
+      <tbody>
+        {{#SPEC_UPDATED}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{CHANGES}}</td><td>{{REASON}}</td></tr>
+        {{/SPEC_UPDATED}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_SPEC_UPDATED}}
+
+    <h3 style="margin-top: 32px;">Archived</h3>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Reason</th></tr></thead>
+      <tbody>
+        {{#ARCHIVED}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{REASON}}</td></tr>
+        {{/ARCHIVED}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_ARCHIVED}}
+
+    <h3 style="margin-top: 32px;">Deferred / deprioritized</h3>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Old priority</th><th>New priority</th><th>Reason</th></tr></thead>
+      <tbody>
+        {{#DEFERRED}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{OLD_PRIORITY}}</td><td>{{NEW_PRIORITY}}</td><td>{{REASON}}</td></tr>
+        {{/DEFERRED}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_DEFERRED}}
+  </section>
+
+  <section id="issues">
+    <h2><span class="num">05</span>Issues &amp; Red Flags</h2>
+    <p class="lead">Specs that need refinement, and stale features past their freshness window.</p>
+
+    <h3>Spec refinement needed</h3>
+    <ul class="tight">
+      {{#NEEDS_REFINEMENT}}
+      <li><strong>{{FTR_ID}}</strong> &mdash; {{ISSUE}}</li>
+      {{/NEEDS_REFINEMENT}}
+    </ul>
+    {{LIST_EMPTY_NEEDS_REFINEMENT}}
+
+    <h3 style="margin-top: 32px;">Stale (&gt; 90 days)</h3>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Age</th><th>Last updated</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        {{#STALE}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{AGE_DAYS}} d</td><td>{{LAST_UPDATED}}</td><td>{{RECOMMENDATION}}</td></tr>
+        {{/STALE}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_STALE}}
+  </section>
+
+  <section id="composition">
+    <h2><span class="num">06</span>Backlog Composition</h2>
+    <p class="lead">Priority distribution and dependency-graph health.</p>
+
+    <h3>Priority distribution</h3>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{P0_COUNT}}</div><div class="l">P0 &middot; {{P0_PCT}}%</div></div>
+      <div class="stat"><div class="n">{{P1_COUNT}}</div><div class="l">P1 &middot; {{P1_PCT}}%</div></div>
+      <div class="stat"><div class="n">{{P2_COUNT}}</div><div class="l">P2 &middot; {{P2_PCT}}%</div></div>
+      <div class="stat"><div class="n">{{P3_COUNT}}</div><div class="l">P3 &middot; {{P3_PCT}}%</div></div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Readiness</h3>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{READY_COUNT}}</div><div class="l">Ready to start</div></div>
+      <div class="stat"><div class="n">{{BLOCKED_COUNT}}</div><div class="l">Blocked by deps</div></div>
+      <div class="stat"><div class="n">{{NEEDS_REFINEMENT_COUNT}}</div><div class="l">Needs refinement</div></div>
+      <div class="stat"><div class="n">{{STALE_COUNT}}</div><div class="l">Stale</div></div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Dependency graph</h3>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{HAS_DEPENDENCIES_COUNT}}</div><div class="l">With deps</div></div>
+      <div class="stat"><div class="n">{{AVG_DEPENDENCY_DEPTH}}</div><div class="l">Avg depth</div></div>
+      <div class="stat"><div class="n">{{CIRCULAR_DEP_COUNT}}</div><div class="l">Circular</div></div>
+      <div class="stat"><div class="n">{{INVALID_DEP_COUNT}}</div><div class="l">Invalid refs</div></div>
+    </div>
+  </section>
+
+  <section id="prioritization">
+    <h2><span class="num">07</span>Prioritization Recommendations</h2>
+    <p class="lead">Quick wins, unblockers, and suggested promotions / demotions.</p>
+
+    <div class="top5">
+      <div class="top5-col opps">
+        <h3>Quick wins</h3>
+        <ol>
+          {{#QUICK_WINS}}
+          <li><strong>{{FTR_ID}}</strong> &mdash; {{TITLE}} <em style="color: var(--text-mute);">&middot; {{PRIORITY}} / {{COMPLEXITY}} &middot; impact {{IMPACT}} / effort {{EFFORT}}</em></li>
+          {{/QUICK_WINS}}
+        </ol>
+        {{LIST_EMPTY_QUICK_WINS}}
+      </div>
+      <div class="top5-col">
+        <h3 style="color: var(--accent);">Unblockers</h3>
+        <ol>
+          {{#UNBLOCKERS}}
+          <li><strong>{{FTR_ID}}</strong> &mdash; {{TITLE}} <em style="color: var(--text-mute);">&middot; {{CURRENT_PRIORITY}} &middot; unblocks {{UNBLOCKS}} &middot; {{RECOMMENDATION}}</em></li>
+          {{/UNBLOCKERS}}
+        </ol>
+        {{LIST_EMPTY_UNBLOCKERS}}
+      </div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Promotions</h3>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Current</th><th>Recommended</th><th>Reason</th></tr></thead>
+      <tbody>
+        {{#PROMOTIONS}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{CURRENT}}</td><td>{{RECOMMENDED}}</td><td>{{REASON}}</td></tr>
+        {{/PROMOTIONS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_PROMOTIONS}}
+
+    <h3 style="margin-top: 32px;">Demotions</h3>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Current</th><th>Recommended</th><th>Reason</th></tr></thead>
+      <tbody>
+        {{#DEMOTIONS}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{CURRENT}}</td><td>{{RECOMMENDED}}</td><td>{{REASON}}</td></tr>
+        {{/DEMOTIONS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_DEMOTIONS}}
+  </section>
+
+  <section id="ready">
+    <h2><span class="num">08</span>Ready to Start</h2>
+    <p class="lead">Features with all prerequisites met. These can be assigned immediately.</p>
+    <table class="component-table">
+      <thead><tr><th>Feature</th><th>Title</th><th>Priority</th><th>Complexity</th><th>Labels</th><th>Epic</th></tr></thead>
+      <tbody>
+        {{#READY_TO_START}}
+        <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{PRIORITY}}</td><td>{{COMPLEXITY}}</td><td>{{LABELS}}</td><td>{{EPIC}}</td></tr>
+        {{/READY_TO_START}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_READY_TO_START}}
+
+    <h3 style="margin-top: 32px;">Epics</h3>
+    <table class="component-table">
+      <thead><tr><th>Epic</th><th>Name</th><th>Features</th><th>Completed</th><th>Progress</th></tr></thead>
+      <tbody>
+        {{#EPICS}}
+        <tr><td>{{EPIC_ID}}</td><td>{{EPIC_NAME}}</td><td>{{FEATURE_COUNT}}</td><td>{{COMPLETED_COUNT}}</td><td>{{COMPLETED_PCT}}%</td></tr>
+        {{/EPICS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_EPICS}}
+  </section>
+
+  <section id="actions">
+    <h2><span class="num">09</span>Recommended Actions</h2>
+    <p class="lead">Three horizons.</p>
+
+    <div class="reco-track">
+      <div class="reco-horizon">
+        <h3>Immediate <span class="tag">THIS WEEK</span></h3>
+        <p class="horizon-lead">Items to move on before the next grooming session.</p>
+        <div class="reco-items">
+          {{#IMMEDIATE_ACTIONS}}
+          <div class="reco-item"><div class="n">→</div><div class="body"><div class="title">{{TITLE}}</div><div class="desc">{{DESC}}</div></div></div>
+          {{/IMMEDIATE_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_IMMEDIATE_ACTIONS}}
+      </div>
+      <div class="reco-horizon">
+        <h3>Short-term <span class="tag">2 WEEKS</span></h3>
+        <div class="reco-items">
+          {{#SHORT_TERM_ACTIONS}}
+          <div class="reco-item"><div class="n">→</div><div class="body"><div class="title">{{TITLE}}</div><div class="desc">{{DESC}}</div></div></div>
+          {{/SHORT_TERM_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_SHORT_TERM_ACTIONS}}
+      </div>
+      <div class="reco-horizon">
+        <h3>Long-term <span class="tag">THIS MONTH</span></h3>
+        <div class="reco-items">
+          {{#LONG_TERM_ACTIONS}}
+          <div class="reco-item"><div class="n">→</div><div class="body"><div class="title">{{TITLE}}</div><div class="desc">{{DESC}}</div></div></div>
+          {{/LONG_TERM_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_LONG_TERM_ACTIONS}}
+      </div>
+    </div>
+  </section>
+
+  <section id="followup">
+    <h2><span class="num">10</span>Follow-up</h2>
+    <p class="lead">Open questions and the next grooming date.</p>
+    {{OPEN_QUESTIONS_HTML}}
+    <div class="callout" style="margin-top: 28px;"><p><strong>Next grooming session:</strong> {{NEXT_GROOMING_DATE}}</p></div>
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

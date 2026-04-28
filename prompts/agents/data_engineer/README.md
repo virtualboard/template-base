@@ -96,6 +96,7 @@ When executing Data Engineer commands:
 - **Be accurate** - Verify actual data flows and transformations
 - **Be actionable** - Provide specific pipeline improvements
 - **Follow standards** - Maintain data governance and quality standards
+- **Branded HTML output (opt-in)** - Append `--html` (or say "as HTML" / "branded HTML") to any report-generating command to additionally produce an Astucia AI™ branded HTML companion file alongside the Markdown report. Templates live in `templates/reports/html/`; per-command render steps and placeholders are documented in each command file.
 
 ---
 

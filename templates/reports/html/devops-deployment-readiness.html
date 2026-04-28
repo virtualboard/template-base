@@ -1,0 +1,147 @@
+<!--
+  Template: devops-deployment-readiness.html
+  Used by:  prompts/agents/devops/DevOps-Generate_Deployment_Readiness_Report.md (GDRR)
+  Pairs with: .virtualboard/deployments/readiness/DRR-{YYYY-MM-DD}-{env}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    ENVIRONMENT, TARGET_VERSION
+    GO_NOGO                – "GO" | "NO-GO" | "GO with conditions"
+    GO_NOGO_CLASS          – "ok" | "danger" | ""
+    EXECUTIVE_SUMMARY_HTML
+    KPI_CHECKS_TOTAL, KPI_CHECKS_PASSED, KPI_CHECKS_FAILED, KPI_CHECKS_BLOCKING
+    ROLLBACK_PLAN_HTML
+    KNOWN_RISKS_HTML
+    POST_DEPLOY_VERIFY_HTML
+    NEXT_DEPLOY_DATE
+
+  Per-template list placeholders:
+    READINESS_CHECKS       items: CATEGORY (Code|Tests|Infra|Monitoring|Security|Comms|Other),
+                                  NAME, STATUS (pass|warn|fail), BLOCKING (Yes|No), NOTES
+    SIGNOFFS               items: ROLE, NAME, STATUS, DATE
+    APPROVED_DEPLOYERS     items: NAME, ROLE, NOTES
+    COMMUNICATION_PLAN     items: AUDIENCE, CHANNEL, OWNER, TIMING
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">Verdict and the items that drove it.</p>
+    <div class="callout"><p><strong>Environment:</strong> {{ENVIRONMENT}} &middot; <strong>Target version:</strong> {{TARGET_VERSION}} &middot; <strong>Verdict:</strong> <span class="risk-sev" data-sev="medium" style="margin-left: 6px;">{{GO_NOGO}}</span></p></div>
+    {{EXECUTIVE_SUMMARY_HTML}}
+  </section>
+
+  <section id="kpis">
+    <h2><span class="num">02</span>Readiness at a Glance</h2>
+    <p class="lead">Aggregate check results.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_CHECKS_TOTAL}}</div><div class="l">Total checks</div></div>
+      <div class="stat" style="border-left: 3px solid var(--accent);"><div class="n">{{KPI_CHECKS_PASSED}}</div><div class="l">Passed</div></div>
+      <div class="stat" style="border-left: 3px solid var(--sev-critical);"><div class="n">{{KPI_CHECKS_FAILED}}</div><div class="l">Failed</div></div>
+      <div class="stat" style="border-left: 3px solid var(--sev-high);"><div class="n">{{KPI_CHECKS_BLOCKING}}</div><div class="l">Blocking</div></div>
+    </div>
+  </section>
+
+  <section id="checks">
+    <h2><span class="num">03</span>Readiness Checks</h2>
+    <p class="lead">Pre-flight check results across categories.</p>
+    <table class="component-table">
+      <thead><tr><th>Category</th><th>Check</th><th>Status</th><th>Blocking?</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#READINESS_CHECKS}}
+        <tr><td>{{CATEGORY}}</td><td>{{NAME}}</td><td>{{STATUS}}</td><td>{{BLOCKING}}</td><td>{{NOTES}}</td></tr>
+        {{/READINESS_CHECKS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_READINESS_CHECKS}}
+  </section>
+
+  <section id="rollback">
+    <h2><span class="num">04</span>Rollback Plan</h2>
+    <p class="lead">How to undo this deployment if something goes wrong.</p>
+    {{ROLLBACK_PLAN_HTML}}
+  </section>
+
+  <section id="known-risks">
+    <h2><span class="num">05</span>Known Risks</h2>
+    <p class="lead">Risks accepted into this deployment with mitigations.</p>
+    {{KNOWN_RISKS_HTML}}
+  </section>
+
+  <section id="post-deploy">
+    <h2><span class="num">06</span>Post-Deploy Verification</h2>
+    <p class="lead">What to check after the deploy lands.</p>
+    {{POST_DEPLOY_VERIFY_HTML}}
+  </section>
+
+  <section id="signoffs">
+    <h2><span class="num">07</span>Sign-offs</h2>
+    <p class="lead">Who approved, what role, and when.</p>
+    <table class="component-table">
+      <thead><tr><th>Role</th><th>Name</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>
+        {{#SIGNOFFS}}
+        <tr><td>{{ROLE}}</td><td>{{NAME}}</td><td>{{STATUS}}</td><td>{{DATE}}</td></tr>
+        {{/SIGNOFFS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_SIGNOFFS}}
+
+    <h3 style="margin-top: 32px;">Approved deployers</h3>
+    <table class="component-table">
+      <thead><tr><th>Name</th><th>Role</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#APPROVED_DEPLOYERS}}
+        <tr><td>{{NAME}}</td><td>{{ROLE}}</td><td>{{NOTES}}</td></tr>
+        {{/APPROVED_DEPLOYERS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_APPROVED_DEPLOYERS}}
+  </section>
+
+  <section id="comms">
+    <h2><span class="num">08</span>Communication Plan</h2>
+    <p class="lead">Who needs to know, on which channel, by whom, when.</p>
+    <table class="component-table">
+      <thead><tr><th>Audience</th><th>Channel</th><th>Owner</th><th>Timing</th></tr></thead>
+      <tbody>
+        {{#COMMUNICATION_PLAN}}
+        <tr><td>{{AUDIENCE}}</td><td>{{CHANNEL}}</td><td>{{OWNER}}</td><td>{{TIMING}}</td></tr>
+        {{/COMMUNICATION_PLAN}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_COMMUNICATION_PLAN}}
+
+    <div class="callout" style="margin-top: 28px;"><p><strong>Next deployment window:</strong> {{NEXT_DEPLOY_DATE}}</p></div>
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

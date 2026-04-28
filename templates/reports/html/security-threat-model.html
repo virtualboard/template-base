@@ -1,0 +1,180 @@
+<!--
+  Template: security-threat-model.html
+  Used by:  prompts/agents/security/Security-Generate_Threat_Model.md (GTM)
+  Pairs with: .virtualboard/security/threat-models/TM-{YYYY-MM-DD}-{component}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    COMPONENT
+    EXECUTIVE_SUMMARY_HTML
+    SCOPE_HTML
+    ARCHITECTURE_DIAGRAM_HTML  – inline SVG, pre-rendered Mermaid, or note
+    DATA_FLOW_HTML             – paragraph(s) describing data flow
+    KPI_TOTAL_THREATS, KPI_CRITICAL, KPI_HIGH, KPI_MEDIUM, KPI_LOW
+    OVERALL_POSTURE            – e.g. "Acceptable with caveats"
+    OVERALL_POSTURE_CLASS      – "ok" | "" | "danger"
+    NEXT_REVIEW_DATE
+    OPEN_QUESTIONS_HTML
+
+  Per-template list placeholders:
+    TRUST_BOUNDARIES       items: NAME, NOTES
+    ASSETS                 items: NAME, CLASSIFICATION, NOTES
+    THREAT_ACTORS          items: NAME, MOTIVATION, CAPABILITY
+    STRIDE_ROWS            items: CATEGORY (Spoofing|Tampering|Repudiation|Information Disclosure|Denial of Service|Elevation of Privilege),
+                                  THREAT, TARGET, MITIGATION, SEVERITY (critical|high|medium|low)
+    MITIGATIONS_PLANNED    items: TITLE, OWNER, DUE, DESC
+    RESIDUAL_RISKS         items: TITLE, SEVERITY, ACCEPTANCE_RATIONALE
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">Threat-model posture for {{COMPONENT}} and the items that should drive mitigation work.</p>
+    {{EXECUTIVE_SUMMARY_HTML}}
+    <div class="callout"><p><strong>Component:</strong> {{COMPONENT}} &middot; <strong>Posture:</strong> <span class="risk-sev" data-sev="medium" style="margin-left: 6px;">{{OVERALL_POSTURE}}</span></p></div>
+  </section>
+
+  <section id="kpis">
+    <h2><span class="num">02</span>Threat Counts</h2>
+    <p class="lead">Threats identified, by severity.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_TOTAL_THREATS}}</div><div class="l">Total threats</div></div>
+      <div class="stat"><div class="n">{{KPI_CRITICAL}}</div><div class="l">Critical</div></div>
+      <div class="stat"><div class="n">{{KPI_HIGH}}</div><div class="l">High</div></div>
+      <div class="stat"><div class="n">{{KPI_MEDIUM}}</div><div class="l">Medium</div></div>
+      <div class="stat"><div class="n">{{KPI_LOW}}</div><div class="l">Low</div></div>
+    </div>
+  </section>
+
+  <section id="scope">
+    <h2><span class="num">03</span>Scope</h2>
+    <p class="lead">What's in and out of this model.</p>
+    {{SCOPE_HTML}}
+  </section>
+
+  <section id="architecture">
+    <h2><span class="num">04</span>Architecture &amp; Data Flow</h2>
+    <p class="lead">Trust boundaries, assets, and the flow of data across them.</p>
+    <h3>Architecture diagram</h3>
+    {{ARCHITECTURE_DIAGRAM_HTML}}
+    <h3>Data flow</h3>
+    {{DATA_FLOW_HTML}}
+
+    <h3 style="margin-top: 32px;">Trust boundaries</h3>
+    <table class="component-table">
+      <thead><tr><th>Boundary</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#TRUST_BOUNDARIES}}
+        <tr><td>{{NAME}}</td><td>{{NOTES}}</td></tr>
+        {{/TRUST_BOUNDARIES}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_TRUST_BOUNDARIES}}
+
+    <h3 style="margin-top: 32px;">Assets</h3>
+    <table class="component-table">
+      <thead><tr><th>Asset</th><th>Classification</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#ASSETS}}
+        <tr><td>{{NAME}}</td><td>{{CLASSIFICATION}}</td><td>{{NOTES}}</td></tr>
+        {{/ASSETS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_ASSETS}}
+  </section>
+
+  <section id="actors">
+    <h2><span class="num">05</span>Threat Actors</h2>
+    <p class="lead">Who might attack the system, why, and with what capability.</p>
+    <table class="component-table">
+      <thead><tr><th>Actor</th><th>Motivation</th><th>Capability</th></tr></thead>
+      <tbody>
+        {{#THREAT_ACTORS}}
+        <tr><td>{{NAME}}</td><td>{{MOTIVATION}}</td><td>{{CAPABILITY}}</td></tr>
+        {{/THREAT_ACTORS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_THREAT_ACTORS}}
+  </section>
+
+  <section id="stride">
+    <h2><span class="num">06</span>STRIDE Analysis</h2>
+    <p class="lead">Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege.</p>
+    <table class="component-table">
+      <thead><tr><th>Category</th><th>Threat</th><th>Target</th><th>Mitigation</th><th>Severity</th></tr></thead>
+      <tbody>
+        {{#STRIDE_ROWS}}
+        <tr><td>{{CATEGORY}}</td><td>{{THREAT}}</td><td>{{TARGET}}</td><td>{{MITIGATION}}</td><td><span class="risk-sev" data-sev="{{SEVERITY}}">{{SEVERITY}}</span></td></tr>
+        {{/STRIDE_ROWS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_STRIDE_ROWS}}
+  </section>
+
+  <section id="mitigations">
+    <h2><span class="num">07</span>Planned Mitigations</h2>
+    <p class="lead">Owner-stamped, due-dated mitigations.</p>
+    <div class="reco-items">
+      {{#MITIGATIONS_PLANNED}}
+      <div class="reco-item">
+        <div class="n">→</div>
+        <div class="body">
+          <div class="title">{{TITLE}}</div>
+          <div class="desc"><strong>Owner:</strong> {{OWNER}} &middot; <strong>Due:</strong> {{DUE}} &middot; {{DESC}}</div>
+        </div>
+      </div>
+      {{/MITIGATIONS_PLANNED}}
+    </div>
+    {{LIST_EMPTY_MITIGATIONS_PLANNED}}
+  </section>
+
+  <section id="residual">
+    <h2><span class="num">08</span>Residual Risks</h2>
+    <p class="lead">Risks accepted as-is, with the rationale.</p>
+    <table class="component-table">
+      <thead><tr><th>Risk</th><th>Severity</th><th>Acceptance rationale</th></tr></thead>
+      <tbody>
+        {{#RESIDUAL_RISKS}}
+        <tr><td>{{TITLE}}</td><td><span class="risk-sev" data-sev="{{SEVERITY}}">{{SEVERITY}}</span></td><td>{{ACCEPTANCE_RATIONALE}}</td></tr>
+        {{/RESIDUAL_RISKS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_RESIDUAL_RISKS}}
+  </section>
+
+  <section id="next">
+    <h2><span class="num">09</span>Next Review &amp; Open Questions</h2>
+    {{OPEN_QUESTIONS_HTML}}
+    <div class="callout" style="margin-top: 28px;"><p><strong>Next review:</strong> {{NEXT_REVIEW_DATE}}</p></div>
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!--
+  Template: data-pipeline-doc.html (optional, S+R)
+  Used by:  prompts/agents/data_engineer/DataEngineer-Generate_Data_Pipeline.md (GDP)
+  Pairs with: .virtualboard/data/pipelines/{name}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    PIPELINE_NAME, OWNER
+    SOURCE, SINK, SCHEDULE
+    OVERVIEW_HTML
+    SLA_HTML               – freshness / latency / completeness SLAs
+    OBSERVABILITY_HTML     – dashboards, alerts, runbook links
+    KPI_STAGES, KPI_INPUTS, KPI_OUTPUTS, KPI_TESTS
+
+  Per-template list placeholders:
+    STAGES                 items: NAME, KIND (extract|transform|load), TRANSFORM_HTML, NOTES
+    INPUTS                 items: NAME, KIND, NOTES
+    OUTPUTS                items: NAME, KIND, NOTES
+    TESTS                  items: ID, NAME, KIND, STATUS
+    OPEN_ITEMS             items: ID, TITLE, OWNER, DUE
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Pipeline Summary</h2>
+    <p class="lead">Source, sink, schedule, and ownership.</p>
+    <div class="callout"><p><strong>Pipeline:</strong> {{PIPELINE_NAME}} &middot; <strong>Owner:</strong> {{OWNER}} &middot; <strong>Source:</strong> {{SOURCE}} &middot; <strong>Sink:</strong> {{SINK}} &middot; <strong>Schedule:</strong> {{SCHEDULE}}</p></div>
+    {{OVERVIEW_HTML}}
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_STAGES}}</div><div class="l">Stages</div></div>
+      <div class="stat"><div class="n">{{KPI_INPUTS}}</div><div class="l">Inputs</div></div>
+      <div class="stat"><div class="n">{{KPI_OUTPUTS}}</div><div class="l">Outputs</div></div>
+      <div class="stat"><div class="n">{{KPI_TESTS}}</div><div class="l">Tests</div></div>
+    </div>
+  </section>
+
+  <section id="stages">
+    <h2><span class="num">02</span>Stages</h2>
+    <p class="lead">In-order pipeline stages.</p>
+    <div>
+      {{#STAGES}}
+      <div class="card" style="margin-bottom: 14px;">
+        <h3 style="margin-top: 0;">{{NAME}} <span style="color: var(--text-mute); font-size: 13px;">&middot; {{KIND}}</span></h3>
+        {{TRANSFORM_HTML}}
+        <p style="margin: 8px 0 0; color: var(--text-mute); font-size: 13px;">{{NOTES}}</p>
+      </div>
+      {{/STAGES}}
+    </div>
+    {{LIST_EMPTY_STAGES}}
+  </section>
+
+  <section id="ports">
+    <h2><span class="num">03</span>Inputs &amp; Outputs</h2>
+    <p class="lead">Datasets in and datasets out.</p>
+    <h3>Inputs</h3>
+    <table class="component-table">
+      <thead><tr><th>Name</th><th>Kind</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#INPUTS}}
+        <tr><td>{{NAME}}</td><td>{{KIND}}</td><td>{{NOTES}}</td></tr>
+        {{/INPUTS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_INPUTS}}
+
+    <h3 style="margin-top: 32px;">Outputs</h3>
+    <table class="component-table">
+      <thead><tr><th>Name</th><th>Kind</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#OUTPUTS}}
+        <tr><td>{{NAME}}</td><td>{{KIND}}</td><td>{{NOTES}}</td></tr>
+        {{/OUTPUTS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_OUTPUTS}}
+  </section>
+
+  <section id="sla">
+    <h2><span class="num">04</span>SLA &amp; Observability</h2>
+    <p class="lead">Freshness / latency targets and where to watch them.</p>
+    <h3>SLA</h3>
+    {{SLA_HTML}}
+    <h3>Observability</h3>
+    {{OBSERVABILITY_HTML}}
+  </section>
+
+  <section id="tests">
+    <h2><span class="num">05</span>Tests</h2>
+    <p class="lead">Data quality tests applied to the pipeline.</p>
+    <table class="component-table">
+      <thead><tr><th>ID</th><th>Name</th><th>Kind</th><th>Status</th></tr></thead>
+      <tbody>
+        {{#TESTS}}
+        <tr><td>{{ID}}</td><td>{{NAME}}</td><td>{{KIND}}</td><td>{{STATUS}}</td></tr>
+        {{/TESTS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_TESTS}}
+  </section>
+
+  <section id="open">
+    <h2><span class="num">06</span>Open Items</h2>
+    <p class="lead">Outstanding work tracked against this pipeline.</p>
+    <table class="component-table">
+      <thead><tr><th>ID</th><th>Title</th><th>Owner</th><th>Due</th></tr></thead>
+      <tbody>
+        {{#OPEN_ITEMS}}
+        <tr><td>{{ID}}</td><td>{{TITLE}}</td><td>{{OWNER}}</td><td>{{DUE}}</td></tr>
+        {{/OPEN_ITEMS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_OPEN_ITEMS}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

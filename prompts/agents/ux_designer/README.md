@@ -77,6 +77,7 @@ When executing UX Designer commands:
 - **Be accurate** - Base designs on actual user research and data
 - **Be actionable** - Provide specific design recommendations with rationale
 - **Follow design system** - Maintain consistency with established patterns
+- **Branded HTML output (opt-in)** - Append `--html` (or say "as HTML" / "branded HTML") to any report-generating command to additionally produce an Astucia AI™ branded HTML companion file alongside the Markdown report. Templates live in `templates/reports/html/`; per-command render steps and placeholders are documented in each command file.
 
 ---
 

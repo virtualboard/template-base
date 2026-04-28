@@ -447,3 +447,45 @@ Generate supplementary diagram files:
 - Summarize mitigation roadmap
 - Request stakeholder review and approval
 - Offer to create mitigation tasks in `.virtualboard/backlog/`
+
+---
+
+## Optional: Generate Branded HTML Report
+
+If the user appends `--html`, says "as HTML"/"branded HTML", or sets
+`format: html`, also produce an HTML rendering. **Additive** — the Markdown
+report is always written first.
+
+1. Load `templates/reports/html/security-threat-model.html`. The comment block at the top of
+   that file lists every placeholder this command must compute, with the same
+   names used in the Markdown report.
+2. Inline `{INCLUDE: _partials/<name>.html}` directives by reading and
+   pasting the referenced files; iterate until no `{INCLUDE:` markers remain.
+3. Substitute `{BRAND_LOGO_DATAURI}` with the contents of
+   `templates/reports/html/_partials/astucia-logo.b64.txt`, **stripping leading
+   and trailing whitespace** (the file may end in a newline that must not
+   appear inside `src="…"`).
+4. Substitute `{BRAND_NAME}` (default `Astucia`) and `{BRAND_TAGLINE}`
+   (default `AI Development Studio`) unless the user provided overrides.
+5. Substitute the cross-cutting placeholders (`REPORT_TITLE`,
+   `REPORT_TITLE_HTML`, `REPORT_SUBTITLE`, `EYEBROW`, `GENERATED_DATE`,
+   `GENERATED_DATETIME`, `AUTHOR_AGENT`, `CLASSIFICATION`, `PROJECT_NAME`,
+   `NAV_LINKS`, `FOOTER_PRIMARY_LINE`, `FOOTER_SECONDARY_LINE`,
+   `FOOTER_NOTE_BLOCK`, `EXTRA_SCRIPTS`).
+6. Substitute the per-template scalar placeholders:
+   `COMPONENT`, `EXECUTIVE_SUMMARY_HTML`, `SCOPE_HTML`, `ARCHITECTURE_DIAGRAM_HTML`, `DATA_FLOW_HTML`, `KPI_TOTAL_THREATS`, `KPI_CRITICAL`, `KPI_HIGH`, `KPI_MEDIUM`, `KPI_LOW`, `OVERALL_POSTURE`, `OVERALL_POSTURE_CLASS`, `NEXT_REVIEW_DATE`, `OPEN_QUESTIONS_HTML`.
+7. Expand each `{#NAME}…{/NAME}` list block once per item using the
+   per-template list placeholders: `HERO_META_CELLS`, `TRUST_BOUNDARIES`, `ASSETS`, `THREAT_ACTORS`, `STRIDE_ROWS`, `MITIGATIONS_PLANNED`, `RESIDUAL_RISKS`. The per-item field names are
+   documented in the template's top comment.
+8. For each list, set the matching `LIST_EMPTY_<NAME>` scalar to `""` if the
+   list has items, or to a small italic note (e.g.
+   `<p class="empty-note">No items.</p>`) if the list is empty.
+9. Write the rendered HTML next to the Markdown:
+   `.virtualboard/security/threat-models/TM-{YYYY-MM-DD}-{component}.html`.
+10. **Verify before reporting completion.** Search the rendered output for any
+    literal `{` — there must be none. Resolve leftovers (or substitute the
+    empty string for known-optional slots) before continuing.
+11. In your final reply, list **both** file paths.
+
+A filled-in reference example lives at
+`templates/reports/examples/security-threat-model.example.html`.

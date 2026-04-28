@@ -1,0 +1,127 @@
+<!--
+  Template: architect-adr.html (optional, S+R)
+  Used by:  prompts/agents/architect/Architect-Generate_Architecture_Decision.md (GAD)
+  Pairs with: .virtualboard/architecture/decisions/ADR-{NNNN}-{slug}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    ADR_NUMBER             – e.g. "ADR-0042"
+    ADR_TITLE
+    ADR_STATUS             – "Proposed" | "Accepted" | "Deprecated" | "Superseded"
+    ADR_STATUS_CLASS       – "" | "ok" | "danger"
+    DECISION_DATE
+    DECIDERS               – e.g. "Architecture Council, Backend Lead, SRE Lead"
+    SUPERSEDES, SUPERSEDED_BY  – ADR ids or "—"
+    CONTEXT_HTML           – the situation that requires a decision
+    DECISION_HTML          – the chosen approach
+    CONSEQUENCES_HTML      – positive + negative consequences
+    REFERENCES_HTML        – links / further reading
+
+  Per-template list placeholders:
+    ALTERNATIVES           items: TITLE, PROS_HTML, CONS_HTML, REJECTED_REASON
+    RELATED_ADRS           items: ID, TITLE, RELATIONSHIP
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="meta">
+    <h2><span class="num">01</span>{{ADR_NUMBER}} &middot; {{ADR_TITLE}}</h2>
+    <p class="lead">Status, decision date, and the people who signed off.</p>
+    <div class="callout">
+      <p>
+        <strong>Status:</strong> <span class="risk-sev" data-sev="medium" style="margin-left: 6px;">{{ADR_STATUS}}</span> &middot;
+        <strong>Decided:</strong> {{DECISION_DATE}} &middot;
+        <strong>Deciders:</strong> {{DECIDERS}}
+      </p>
+      <p style="margin-top: 8px;"><strong>Supersedes:</strong> {{SUPERSEDES}} &middot; <strong>Superseded by:</strong> {{SUPERSEDED_BY}}</p>
+    </div>
+  </section>
+
+  <section id="context">
+    <h2><span class="num">02</span>Context</h2>
+    <p class="lead">The situation that forced this decision.</p>
+    {{CONTEXT_HTML}}
+  </section>
+
+  <section id="decision">
+    <h2><span class="num">03</span>Decision</h2>
+    <p class="lead">The path chosen.</p>
+    {{DECISION_HTML}}
+  </section>
+
+  <section id="consequences">
+    <h2><span class="num">04</span>Consequences</h2>
+    <p class="lead">What this decision makes easier and harder.</p>
+    {{CONSEQUENCES_HTML}}
+  </section>
+
+  <section id="alternatives">
+    <h2><span class="num">05</span>Alternatives Considered</h2>
+    <p class="lead">Other paths and why they were not chosen.</p>
+    <div>
+      {{#ALTERNATIVES}}
+      <div class="card" style="margin-bottom: 14px;">
+        <h3 style="margin-top: 0;">{{TITLE}}</h3>
+        <div class="grid-2" style="gap: 16px;">
+          <div>
+            <h4 style="margin-top: 0; color: var(--accent);">Pros</h4>
+            {{PROS_HTML}}
+          </div>
+          <div>
+            <h4 style="margin-top: 0; color: var(--sev-high);">Cons</h4>
+            {{CONS_HTML}}
+          </div>
+        </div>
+        <p style="margin: 12px 0 0;"><strong>Rejected because:</strong> {{REJECTED_REASON}}</p>
+      </div>
+      {{/ALTERNATIVES}}
+    </div>
+    {{LIST_EMPTY_ALTERNATIVES}}
+  </section>
+
+  <section id="related">
+    <h2><span class="num">06</span>Related ADRs &amp; References</h2>
+    <p class="lead">Adjacent decisions and further reading.</p>
+    <table class="component-table">
+      <thead><tr><th>ADR</th><th>Title</th><th>Relationship</th></tr></thead>
+      <tbody>
+        {{#RELATED_ADRS}}
+        <tr><td>{{ID}}</td><td>{{TITLE}}</td><td>{{RELATIONSHIP}}</td></tr>
+        {{/RELATED_ADRS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_RELATED_ADRS}}
+
+    <h3 style="margin-top: 32px;">References</h3>
+    {{REFERENCES_HTML}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

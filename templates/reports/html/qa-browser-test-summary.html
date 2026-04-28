@@ -1,0 +1,126 @@
+<!--
+  Template: qa-browser-test-summary.html (optional, S+R wrapper)
+  Used by:  prompts/agents/qa/QA-Generate_Browser_Automation_Tests.md (GBAT)
+  Pairs with: Playwright HTML reporter output + .virtualboard/docs/browser-test-cases/TC-{FTR-####}-{name}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    FTR_ID, FEATURE_TITLE
+    KPI_TOTAL, KPI_PASSED, KPI_FAILED, KPI_FLAKY, KPI_SKIPPED
+    TOTAL_DURATION
+    PLAYWRIGHT_REPORT_URL  – relative path to playwright-report/index.html
+    SUMMARY_HTML
+    TRACE_NOTES_HTML
+
+  Per-template list placeholders:
+    FAILURES               items: TEST_NAME, FILE_REF, ERROR_HTML, TRACE_LINK
+    FLAKY                  items: TEST_NAME, FILE_REF, NOTES
+    BROWSERS               items: NAME, VERSION, STATUS
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Summary</h2>
+    <p class="lead">Branded wrapper around the Playwright HTML report.</p>
+    <div class="callout"><p><strong>Feature:</strong> {{FTR_ID}} &middot; {{FEATURE_TITLE}} &middot; <strong>Total duration:</strong> {{TOTAL_DURATION}}</p></div>
+    {{SUMMARY_HTML}}
+  </section>
+
+  <section id="kpis">
+    <h2><span class="num">02</span>Run at a Glance</h2>
+    <p class="lead">Pass/fail/flaky/skipped counts for the run.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_TOTAL}}</div><div class="l">Total</div></div>
+      <div class="stat" style="border-left: 3px solid var(--accent);"><div class="n">{{KPI_PASSED}}</div><div class="l">Passed</div></div>
+      <div class="stat" style="border-left: 3px solid var(--sev-critical);"><div class="n">{{KPI_FAILED}}</div><div class="l">Failed</div></div>
+      <div class="stat" style="border-left: 3px solid var(--sev-medium);"><div class="n">{{KPI_FLAKY}}</div><div class="l">Flaky</div></div>
+      <div class="stat"><div class="n">{{KPI_SKIPPED}}</div><div class="l">Skipped</div></div>
+    </div>
+  </section>
+
+  <section id="failures">
+    <h2><span class="num">03</span>Failures</h2>
+    <p class="lead">Tests that did not pass on this run.</p>
+    <div>
+      {{#FAILURES}}
+      <div class="card" style="margin-bottom: 14px; border-left: 3px solid var(--sev-critical);">
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+          <span class="risk-sev" data-sev="critical">failed</span>
+          <strong>{{TEST_NAME}}</strong>
+          <span style="color: var(--text-mute); font-size: 12px;">&middot; <code>{{FILE_REF}}</code></span>
+        </div>
+        {{ERROR_HTML}}
+        <p style="margin: 8px 0 0;"><strong>Trace:</strong> {{TRACE_LINK}}</p>
+      </div>
+      {{/FAILURES}}
+    </div>
+    {{LIST_EMPTY_FAILURES}}
+  </section>
+
+  <section id="flaky">
+    <h2><span class="num">04</span>Flaky Tests</h2>
+    <p class="lead">Tests that retried successfully. These erode signal — fix or quarantine.</p>
+    <table class="component-table">
+      <thead><tr><th>Test</th><th>File</th><th>Notes</th></tr></thead>
+      <tbody>
+        {{#FLAKY}}
+        <tr><td>{{TEST_NAME}}</td><td><code>{{FILE_REF}}</code></td><td>{{NOTES}}</td></tr>
+        {{/FLAKY}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_FLAKY}}
+  </section>
+
+  <section id="browsers">
+    <h2><span class="num">05</span>Browser Coverage</h2>
+    <p class="lead">Browsers executed in this run.</p>
+    <table class="component-table">
+      <thead><tr><th>Browser</th><th>Version</th><th>Status</th></tr></thead>
+      <tbody>
+        {{#BROWSERS}}
+        <tr><td>{{NAME}}</td><td>{{VERSION}}</td><td>{{STATUS}}</td></tr>
+        {{/BROWSERS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_BROWSERS}}
+  </section>
+
+  <section id="full-report">
+    <h2><span class="num">06</span>Full Playwright Report</h2>
+    <p class="lead">The complete Playwright HTML reporter output, with traces and screenshots.</p>
+    <div class="callout">
+      <p><strong>Open the full report:</strong> <a href="{{PLAYWRIGHT_REPORT_URL}}">{{PLAYWRIGHT_REPORT_URL}}</a></p>
+    </div>
+    {{TRACE_NOTES_HTML}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>
