@@ -1,0 +1,15 @@
+<button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+<script>
+  // ─── Back to top ────────────────────────────────────────────
+  (function () {
+    var backTop = document.getElementById('backToTop');
+    if (!backTop) return;
+    window.addEventListener('scroll', function () {
+      backTop.classList.toggle('visible', window.scrollY > 600);
+    });
+    backTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+</script>

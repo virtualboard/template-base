@@ -1,0 +1,36 @@
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+{{MATURITY_BAND}}
+
+<main class="container">
+{{MAIN_CONTENT}}
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+{{EXTRA_SCRIPTS}}
+
+</body>
+</html>
