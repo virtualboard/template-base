@@ -1,0 +1,274 @@
+<!--
+  Template: qa-test-coverage.html
+  Used by:  prompts/agents/qa/QA-Generate_Test_Coverage_Report.md (GTCR)
+  Pairs with: .virtualboard/testing/coverage/TCR-{YYYY-MM-DD}-{module}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    SCOPE                  – e.g. "Full codebase" / "Module: payments"
+    EXECUTIVE_SUMMARY_HTML
+    OVERALL_STATUS         – "Healthy" | "Needs Improvement" | "Critical"
+    OVERALL_STATUS_CLASS   – "ok" | "" | "danger"
+    COVERAGE_OVERALL, COVERAGE_LINES, COVERAGE_BRANCHES,
+    COVERAGE_FUNCTIONS, COVERAGE_STATEMENTS  – integers (no % sign)
+    COVERAGE_TREND         – "Increasing" | "Decreasing" | "Stable"
+    UNIT_COVERAGE, UNIT_TESTS_TOTAL, UNIT_TESTS_PASSING, UNIT_TESTS_FAILING
+    INTEGRATION_COVERAGE, INTEGRATION_TESTS_TOTAL, INTEGRATION_TESTS_PASSING, INTEGRATION_TESTS_FAILING
+    E2E_COVERAGE, E2E_TESTS_TOTAL, E2E_TESTS_PASSING, E2E_TESTS_FAILING
+    FLAKY_COUNT, SKIPPED_COUNT, SLOW_COUNT
+    PRODUCTION_LOC, TEST_LOC
+    TOOLS_HTML             – paragraph(s) describing test runners, frameworks
+    EXCLUSIONS_HTML
+    NEXT_REVIEW_DATE
+
+  Per-template list placeholders:
+    PER_FILE               items: FILE, LINES, BRANCHES, FUNCTIONS, STATEMENTS, STATUS
+    ZERO_COVERAGE          items: FILE, LINES, REASON
+    LOW_COVERAGE           items: FILE, LINES, COVERAGE, PRIORITY
+    GAPS                   items: TITLE, MODULE, SEVERITY, IMPACT, RECO
+    IMMEDIATE_ACTIONS      items: TITLE, DESC
+    SHORT_TERM_ACTIONS     items: TITLE, DESC
+    LONG_TERM_ACTIONS      items: TITLE, DESC
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">Overall coverage and the gaps most likely to bite on the next release.</p>
+    {{EXECUTIVE_SUMMARY_HTML}}
+    <div class="callout"><p><strong>Status:</strong> <span class="risk-sev" data-sev="medium" style="margin-left: 6px;">{{OVERALL_STATUS}}</span> &middot; <strong>Trend:</strong> {{COVERAGE_TREND}} &middot; <strong>Scope:</strong> {{SCOPE}}</p></div>
+  </section>
+
+  <section id="kpis">
+    <h2><span class="num">02</span>Coverage at a Glance</h2>
+    <p class="lead">Headline numbers. Per-file breakdown follows below.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{COVERAGE_OVERALL}}%</div><div class="l">Overall</div></div>
+      <div class="stat"><div class="n">{{COVERAGE_LINES}}%</div><div class="l">Lines</div></div>
+      <div class="stat"><div class="n">{{COVERAGE_BRANCHES}}%</div><div class="l">Branches</div></div>
+      <div class="stat"><div class="n">{{COVERAGE_FUNCTIONS}}%</div><div class="l">Functions</div></div>
+      <div class="stat"><div class="n">{{COVERAGE_STATEMENTS}}%</div><div class="l">Statements</div></div>
+    </div>
+  </section>
+
+  <section id="by-type">
+    <h2><span class="num">03</span>Coverage by Test Type</h2>
+    <p class="lead">Unit, integration, end-to-end. Disparities here often explain headline coverage drift.</p>
+
+    <h3>Unit tests</h3>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{UNIT_COVERAGE}}%</div><div class="l">Coverage</div></div>
+      <div class="stat"><div class="n">{{UNIT_TESTS_TOTAL}}</div><div class="l">Total tests</div></div>
+      <div class="stat"><div class="n">{{UNIT_TESTS_PASSING}}</div><div class="l">Passing</div></div>
+      <div class="stat"><div class="n">{{UNIT_TESTS_FAILING}}</div><div class="l">Failing</div></div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Integration tests</h3>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{INTEGRATION_COVERAGE}}%</div><div class="l">Coverage</div></div>
+      <div class="stat"><div class="n">{{INTEGRATION_TESTS_TOTAL}}</div><div class="l">Total</div></div>
+      <div class="stat"><div class="n">{{INTEGRATION_TESTS_PASSING}}</div><div class="l">Passing</div></div>
+      <div class="stat"><div class="n">{{INTEGRATION_TESTS_FAILING}}</div><div class="l">Failing</div></div>
+    </div>
+
+    <h3 style="margin-top: 32px;">End-to-end tests</h3>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{E2E_COVERAGE}}%</div><div class="l">Coverage</div></div>
+      <div class="stat"><div class="n">{{E2E_TESTS_TOTAL}}</div><div class="l">Total</div></div>
+      <div class="stat"><div class="n">{{E2E_TESTS_PASSING}}</div><div class="l">Passing</div></div>
+      <div class="stat"><div class="n">{{E2E_TESTS_FAILING}}</div><div class="l">Failing</div></div>
+    </div>
+  </section>
+
+  <section id="per-file">
+    <h2><span class="num">04</span>Per-File Coverage</h2>
+    <p class="lead">Files in scope with their coverage breakdown. Sorted by priority.</p>
+    <table class="component-table">
+      <thead>
+        <tr><th>File</th><th>Lines</th><th>Branches</th><th>Functions</th><th>Statements</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {{#PER_FILE}}
+        <tr>
+          <td><code>{{FILE}}</code></td>
+          <td>{{LINES}}%</td>
+          <td>{{BRANCHES}}%</td>
+          <td>{{FUNCTIONS}}%</td>
+          <td>{{STATEMENTS}}%</td>
+          <td>{{STATUS}}</td>
+        </tr>
+        {{/PER_FILE}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_PER_FILE}}
+  </section>
+
+  <section id="gaps">
+    <h2><span class="num">05</span>Critical Gaps</h2>
+    <p class="lead">Untested critical paths and the recommended shape of the missing tests.</p>
+    <div>
+      {{#GAPS}}
+      <div class="card" style="margin-bottom: 14px;">
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+          <span class="risk-sev" data-sev="{{SEVERITY}}">{{SEVERITY}}</span>
+          <strong>{{TITLE}}</strong>
+          <span style="color: var(--text-mute); font-size: 12px;">&middot; {{MODULE}}</span>
+        </div>
+        <p style="margin: 0 0 8px;"><strong>Impact:</strong> {{IMPACT}}</p>
+        <p style="margin: 0;"><strong>Recommendation:</strong> {{RECO}}</p>
+      </div>
+      {{/GAPS}}
+    </div>
+    {{LIST_EMPTY_GAPS}}
+  </section>
+
+  <section id="zero-low">
+    <h2><span class="num">06</span>Zero / Low Coverage</h2>
+    <p class="lead">Files with no coverage or under 50%. Untested files often signal dead code or hidden complexity.</p>
+
+    <h3>Zero coverage</h3>
+    <table class="component-table">
+      <thead>
+        <tr><th>File</th><th>Lines</th><th>Reason</th></tr>
+      </thead>
+      <tbody>
+        {{#ZERO_COVERAGE}}
+        <tr>
+          <td><code>{{FILE}}</code></td>
+          <td>{{LINES}}</td>
+          <td>{{REASON}}</td>
+        </tr>
+        {{/ZERO_COVERAGE}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_ZERO_COVERAGE}}
+
+    <h3 style="margin-top: 32px;">Low coverage (&lt; 50%)</h3>
+    <table class="component-table">
+      <thead>
+        <tr><th>File</th><th>Lines</th><th>Coverage</th><th>Priority</th></tr>
+      </thead>
+      <tbody>
+        {{#LOW_COVERAGE}}
+        <tr>
+          <td><code>{{FILE}}</code></td>
+          <td>{{LINES}}</td>
+          <td>{{COVERAGE}}%</td>
+          <td>{{PRIORITY}}</td>
+        </tr>
+        {{/LOW_COVERAGE}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_LOW_COVERAGE}}
+  </section>
+
+  <section id="quality">
+    <h2><span class="num">07</span>Test Quality</h2>
+    <p class="lead">Maintainability metrics for the test suite itself.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{FLAKY_COUNT}}</div><div class="l">Flaky tests</div></div>
+      <div class="stat"><div class="n">{{SKIPPED_COUNT}}</div><div class="l">Skipped tests</div></div>
+      <div class="stat"><div class="n">{{SLOW_COUNT}}</div><div class="l">Slow (&gt;5s)</div></div>
+      <div class="stat"><div class="n">{{PRODUCTION_LOC}}</div><div class="l">Prod LOC</div></div>
+      <div class="stat"><div class="n">{{TEST_LOC}}</div><div class="l">Test LOC</div></div>
+    </div>
+  </section>
+
+  <section id="recommendations">
+    <h2><span class="num">08</span>Recommendations</h2>
+    <p class="lead">Three horizons: tests to add now, suite improvements over the sprint, structural changes for the quarter.</p>
+
+    <div class="reco-track">
+      <div class="reco-horizon">
+        <h3>Immediate <span class="tag">THIS SPRINT</span></h3>
+        <p class="horizon-lead">Highest-leverage tests to write next.</p>
+        <div class="reco-items">
+          {{#IMMEDIATE_ACTIONS}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/IMMEDIATE_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_IMMEDIATE_ACTIONS}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Short-term <span class="tag">1–2 SPRINTS</span></h3>
+        <p class="horizon-lead">Suite-level improvements: integration coverage, flake reduction.</p>
+        <div class="reco-items">
+          {{#SHORT_TERM_ACTIONS}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/SHORT_TERM_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_SHORT_TERM_ACTIONS}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Long-term <span class="tag">QUARTER</span></h3>
+        <p class="horizon-lead">Coverage gates, contract tests, performance/security suites.</p>
+        <div class="reco-items">
+          {{#LONG_TERM_ACTIONS}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/LONG_TERM_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_LONG_TERM_ACTIONS}}
+      </div>
+    </div>
+  </section>
+
+  <section id="infra">
+    <h2><span class="num">09</span>Tools, Exclusions &amp; Next Review</h2>
+    <p class="lead">Testing infrastructure context and what's intentionally out of scope.</p>
+    <h3>Tools &amp; frameworks</h3>
+    {{TOOLS_HTML}}
+    <h3>Exclusions</h3>
+    {{EXCLUSIONS_HTML}}
+    <div class="callout" style="margin-top: 28px;"><p><strong>Next review:</strong> {{NEXT_REVIEW_DATE}}</p></div>
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

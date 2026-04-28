@@ -168,3 +168,30 @@ When the QA agent receives this command, it should:
 - Provide the file path
 - Highlight severity, priority, and any escalation needs
 - Suggest next steps (assign to developer, add to sprint, etc.)
+
+### 9. Optional — Generate Branded HTML Report
+
+If the user appends `--html`, says "as HTML"/"branded HTML", or sets
+`format: html`, also produce an HTML rendering. **Additive** — Markdown is
+always written first.
+
+1. Load `templates/reports/html/qa-bug-report.html`. Per-template
+   placeholders are listed in its top comment block.
+2. Inline partials; substitute `{{BRAND_LOGO_DATAURI}}` (stripped),
+   `{{BRAND_NAME}}`, `{{BRAND_TAGLINE}}`.
+3. Substitute scalars: `BUG_ID`, `SEVERITY` (`critical`/`high`/`medium`/`low`),
+   `SEVERITY_LABEL`, `PRIORITY`, `PRIORITY_LABEL`, `STATUS`,
+   `REPRODUCIBILITY`, `USERS_AFFECTED`, `BUSINESS_IMPACT`, `WORKAROUND`,
+   `SUMMARY_HTML`, `DESCRIPTION_HTML`, `ENVIRONMENT_HTML`, `EXPECTED_HTML`,
+   `ACTUAL_HTML`, `ERROR_LOGS_HTML`, `ROOT_CAUSE_HTML`,
+   `PROPOSED_SOLUTION_HTML`, `TESTING_NOTES_HTML`, `ASSIGNED_TO`,
+   `FIXED_IN`.
+4. Expand list blocks: `HERO_META_CELLS`, `STEPS_TO_REPRODUCE` (`STEP`),
+   `AFFECTED_COMPONENTS` (`NAME`, `NOTES`), `RELATED_ITEMS` (`TYPE`,
+   `REF`, `NOTE`), `ATTACHMENTS` (`TITLE`, `DESC`).
+5. Set each `LIST_EMPTY_<NAME>` accordingly.
+6. Write next to the Markdown:
+   `.virtualboard/testing/bugs/BUG-{####}-{slug}.html`.
+7. Verify no literal `{{` remains. Report both file paths.
+
+Reference example: `templates/reports/examples/qa-bug-report.example.html`.

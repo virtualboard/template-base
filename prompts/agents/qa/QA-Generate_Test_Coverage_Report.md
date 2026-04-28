@@ -271,3 +271,32 @@ When the QA agent receives this command, it should:
 - Highlight overall coverage percentage and trend
 - Summarize critical gaps and top recommendations
 - Suggest next steps for improving coverage
+
+### 10. Optional — Generate Branded HTML Report
+
+If the user appends `--html`, says "as HTML"/"branded HTML", or sets
+`format: html`, also produce an HTML rendering. **Additive** — Markdown is
+always written first.
+
+1. Load `templates/reports/html/qa-test-coverage.html`. Per-template
+   placeholders are listed in its top comment block.
+2. Inline partials; substitute `{{BRAND_LOGO_DATAURI}}` (stripped),
+   `{{BRAND_NAME}}`, `{{BRAND_TAGLINE}}`.
+3. Substitute scalars: `SCOPE`, `EXECUTIVE_SUMMARY_HTML`, `OVERALL_STATUS`,
+   `OVERALL_STATUS_CLASS`, `COVERAGE_OVERALL`, `COVERAGE_LINES`,
+   `COVERAGE_BRANCHES`, `COVERAGE_FUNCTIONS`, `COVERAGE_STATEMENTS`,
+   `COVERAGE_TREND`, the per-test-type KPIs (`UNIT_*`, `INTEGRATION_*`,
+   `E2E_*`), `FLAKY_COUNT`, `SKIPPED_COUNT`, `SLOW_COUNT`,
+   `PRODUCTION_LOC`, `TEST_LOC`, `TOOLS_HTML`, `EXCLUSIONS_HTML`,
+   `NEXT_REVIEW_DATE`.
+4. Expand list blocks: `HERO_META_CELLS`, `PER_FILE` (`FILE`, `LINES`,
+   `BRANCHES`, `FUNCTIONS`, `STATEMENTS`, `STATUS`), `ZERO_COVERAGE`
+   (`FILE`, `LINES`, `REASON`), `LOW_COVERAGE` (`FILE`, `LINES`, `COVERAGE`,
+   `PRIORITY`), `GAPS` (`TITLE`, `MODULE`, `SEVERITY`, `IMPACT`, `RECO`),
+   and the three action lists.
+5. Set each `LIST_EMPTY_<NAME>` accordingly.
+6. Write next to the Markdown:
+   `.virtualboard/testing/coverage/TCR-{YYYY-MM-DD}-{module}.html`.
+7. Verify no literal `{{` remains. Report both file paths.
+
+Reference example: `templates/reports/examples/qa-test-coverage.example.html`.

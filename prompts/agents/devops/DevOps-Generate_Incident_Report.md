@@ -481,3 +481,38 @@ alerts:
 - Provide the file path
 - Highlight the root cause and key action items
 - Note any critical prevention measures identified
+
+### 7. Optional — Generate Branded HTML Report
+
+If the user appends `--html`, says "as HTML"/"branded HTML", or sets
+`format: html`, also produce an HTML rendering. **Additive** — Markdown is
+always written first.
+
+1. Load `templates/reports/html/devops-incident-report.html`. Per-template
+   placeholders are listed in its top comment block.
+2. Inline partials; substitute `{{BRAND_LOGO_DATAURI}}` (stripped),
+   `{{BRAND_NAME}}`, `{{BRAND_TAGLINE}}`.
+3. Substitute scalars: `INCIDENT_ID`, `SEVERITY`
+   (`critical`/`high`/`medium`/`low`), `SEVERITY_LABEL`, `STATUS`,
+   `DETECTED_AT`, `RESOLVED_AT`, `DURATION`, `USERS_AFFECTED`,
+   `SERVICES_IMPACTED`, `BUSINESS_IMPACT`, `ROOT_CAUSE_ONE_LINE`,
+   `RESOLUTION_ONE_LINE`, `DETECTION_HTML`, `CLASSIFICATION_HTML`,
+   `IMPACT_SCOPE_HTML`, `ROOT_CAUSE_HTML`, `FIVE_WHYS_HTML`,
+   `WHAT_WENT_WELL_HTML`, `WHAT_WENT_WRONG_HTML`, `SYSTEM_STATE_HTML`,
+   `LOGS_HTML`, `METRICS_HTML`, `RESOLUTION_DETAILS_HTML`,
+   `VERIFICATION_HTML`, `SLA_BREACH`, `REVENUE_IMPACT`,
+   `SUPPORT_TICKETS`, `PREVENTION_TECHNICAL_HTML`,
+   `PREVENTION_PROCESS_HTML`, `PREVENTION_MONITORING_HTML`,
+   `LESSONS_HTML`, `REVIEW_MEETING_HTML`.
+4. Expand list blocks: `HERO_META_CELLS`, `TIMELINE` (`TIME`,
+   `EVENT_HTML`), the three action-item lists (each item: `TITLE`,
+   `OWNER`, `DUE`, `DESC`), `INTERNAL_COMMS` (`TIME`, `CHANNEL`,
+   `AUDIENCE`, `MESSAGE`), `EXTERNAL_COMMS` (`TIME`, `CHANNEL`,
+   `MESSAGE`), `SIMILAR_INCIDENTS` (`DATE`, `DESC`, `LINK_HTML`).
+5. Set each `LIST_EMPTY_<NAME>` accordingly.
+6. Write next to the Markdown:
+   `.virtualboard/incidents/reports/IR-{YYYY-MM-DD}-{incident-id}.html`.
+7. Verify no literal `{{` remains. Report both file paths.
+
+Reference example:
+`templates/reports/examples/devops-incident-report.example.html`.

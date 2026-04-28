@@ -1,0 +1,178 @@
+<!--
+  Template: security-review.html
+  Used by:  prompts/agents/security/Security-Generate_Security_Review.md (GSR)
+  Pairs with: .virtualboard/security/reviews/SR-{YYYY-MM-DD}-{component}.md
+
+  Cross-cutting placeholders: as in security-audit.html.
+
+  Per-template scalar placeholders:
+    REVIEW_SCOPE_HTML
+    EXECUTIVE_SUMMARY_HTML
+    OVERALL_RATING         – "Critical" | "Needs Improvement" | "Good"
+    OVERALL_RATING_CLASS   – "danger" | "" | "ok"
+    KPI_FILES_REVIEWED, KPI_LOC_REVIEWED, KPI_FINDINGS_TOTAL, KPI_FINDINGS_CRITICAL, KPI_FINDINGS_HIGH
+    OWASP_HTML             – HTML for the OWASP Top 10 checklist
+    DEPENDENCY_VULN_HTML   – HTML for the dependency vulnerabilities table
+    POSITIVE_FINDINGS_HTML
+    NEXT_REVIEW_DATE
+
+  Per-template list placeholders:
+    FINDINGS               items: ID, SEV (critical|high|medium|low), TITLE,
+                                  FILE_REF, DESCRIPTION_HTML, REMEDIATION_HTML,
+                                  PRIORITY_LABEL (e.g. "Within 24 hours")
+    IMMEDIATE_ACTIONS      items: TITLE, DESC
+    SHORT_TERM_ACTIONS     items: TITLE, DESC
+    LONG_TERM_ACTIONS      items: TITLE, DESC
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">Security posture for the component under review, paired with the must-fix list.</p>
+    {{EXECUTIVE_SUMMARY_HTML}}
+    <div class="callout"><p><strong>Overall security rating:</strong> <span class="risk-sev" data-sev="{{OVERALL_RATING_CLASS}}" style="margin-left: 6px;">{{OVERALL_RATING}}</span></p></div>
+  </section>
+
+  <section id="scope">
+    <h2><span class="num">02</span>Scope</h2>
+    <p class="lead">What was reviewed and how.</p>
+    {{REVIEW_SCOPE_HTML}}
+    <div class="kpi" style="margin-top: 20px;">
+      <div class="stat"><div class="n">{{KPI_FILES_REVIEWED}}</div><div class="l">Files reviewed</div></div>
+      <div class="stat"><div class="n">{{KPI_LOC_REVIEWED}}</div><div class="l">Lines reviewed</div></div>
+      <div class="stat"><div class="n">{{KPI_FINDINGS_TOTAL}}</div><div class="l">Total findings</div></div>
+      <div class="stat"><div class="n">{{KPI_FINDINGS_CRITICAL}}</div><div class="l">Critical</div></div>
+      <div class="stat"><div class="n">{{KPI_FINDINGS_HIGH}}</div><div class="l">High</div></div>
+    </div>
+  </section>
+
+  <section id="findings">
+    <h2><span class="num">03</span>Findings</h2>
+    <p class="lead">Each finding includes location, description, and a code-level remediation.</p>
+    <div>
+      {{#FINDINGS}}
+      <div class="card" style="margin-bottom: 16px;">
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+          <span class="risk-id">{{ID}}</span>
+          <span class="risk-sev" data-sev="{{SEV}}">{{SEV}}</span>
+          <span style="color: var(--text-mute); font-size: 12px;">{{PRIORITY_LABEL}}</span>
+        </div>
+        <h3 style="margin: 0 0 6px;">{{TITLE}}</h3>
+        <p style="margin: 0 0 12px;"><span class="risk-file">{{FILE_REF}}</span></p>
+        <h4>Description</h4>
+        {{DESCRIPTION_HTML}}
+        <h4>Remediation</h4>
+        {{REMEDIATION_HTML}}
+      </div>
+      {{/FINDINGS}}
+    </div>
+    {{LIST_EMPTY_FINDINGS}}
+  </section>
+
+  <section id="owasp">
+    <h2><span class="num">04</span>OWASP Top 10 Compliance</h2>
+    <p class="lead">Coverage against the OWASP Top 10 (2021).</p>
+    {{OWASP_HTML}}
+  </section>
+
+  <section id="dependencies">
+    <h2><span class="num">05</span>Dependency Vulnerabilities</h2>
+    <p class="lead">Vulnerable packages observed in the dependency graph and their remediation paths.</p>
+    {{DEPENDENCY_VULN_HTML}}
+  </section>
+
+  <section id="positives">
+    <h2><span class="num">06</span>Positive Findings</h2>
+    <p class="lead">Practices worth keeping.</p>
+    {{POSITIVE_FINDINGS_HTML}}
+  </section>
+
+  <section id="next-steps">
+    <h2><span class="num">07</span>Next Steps</h2>
+    <p class="lead">Three horizons: ship now, plan now, schedule.</p>
+
+    <div class="reco-track">
+      <div class="reco-horizon">
+        <h3>Immediate <span class="tag">THIS WEEK</span></h3>
+        <p class="horizon-lead">Critical/high findings to ship before the next review.</p>
+        <div class="reco-items">
+          {{#IMMEDIATE_ACTIONS}}
+          <div class="reco-item">
+            <div class="n">!</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/IMMEDIATE_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_IMMEDIATE_ACTIONS}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Short-term <span class="tag">1–2 WEEKS</span></h3>
+        <p class="horizon-lead">High-severity issues with a clear remediation path.</p>
+        <div class="reco-items">
+          {{#SHORT_TERM_ACTIONS}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/SHORT_TERM_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_SHORT_TERM_ACTIONS}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Long-term <span class="tag">QUARTER</span></h3>
+        <p class="horizon-lead">Defense-in-depth and architectural improvements.</p>
+        <div class="reco-items">
+          {{#LONG_TERM_ACTIONS}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/LONG_TERM_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_LONG_TERM_ACTIONS}}
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 28px;"><p><strong>Next review:</strong> {{NEXT_REVIEW_DATE}}</p></div>
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

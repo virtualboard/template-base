@@ -102,6 +102,7 @@ When executing QA commands:
 - **Be accurate** - Report actual test results, not assumptions
 - **Be actionable** - Identify specific gaps and fixes needed
 - **Follow quality gates** - Ensure acceptance criteria are met
+- **Branded HTML output (opt-in)** - Append `--html` (or say "as HTML" / "branded HTML") to any report-generating command to additionally produce an Astucia AI™ branded HTML companion file alongside the Markdown report. Templates live in `templates/reports/html/`; per-command render steps and placeholders are documented in each command file.
 
 ---
 

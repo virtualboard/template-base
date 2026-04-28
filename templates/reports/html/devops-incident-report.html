@@ -1,0 +1,311 @@
+<!--
+  Template: devops-incident-report.html
+  Used by:  prompts/agents/devops/DevOps-Generate_Incident_Report.md (GIR)
+  Pairs with: .virtualboard/incidents/reports/IR-{YYYY-MM-DD}-{incident-id}.md
+
+  Cross-cutting placeholders: standard set.
+
+  Per-template scalar placeholders:
+    INCIDENT_ID            – e.g. "INC-2026-04-28-01"
+    SEVERITY, SEVERITY_LABEL  – critical|high|medium|low / "Critical" etc.
+    STATUS                 – Resolved | Investigating | Monitoring
+    DETECTED_AT            – ISO datetime
+    RESOLVED_AT            – ISO datetime or "—"
+    DURATION               – e.g. "1h 42m"
+    USERS_AFFECTED, SERVICES_IMPACTED, BUSINESS_IMPACT
+    ROOT_CAUSE_ONE_LINE
+    RESOLUTION_ONE_LINE
+    DETECTION_HTML, CLASSIFICATION_HTML, IMPACT_SCOPE_HTML
+    ROOT_CAUSE_HTML, FIVE_WHYS_HTML
+    WHAT_WENT_WELL_HTML, WHAT_WENT_WRONG_HTML
+    SYSTEM_STATE_HTML, LOGS_HTML, METRICS_HTML
+    RESOLUTION_DETAILS_HTML, VERIFICATION_HTML
+    SLA_BREACH             – "Yes" | "No" + optional explanation
+    REVENUE_IMPACT         – e.g. "$12,000" or "—"
+    SUPPORT_TICKETS        – integer or "—"
+    PREVENTION_TECHNICAL_HTML, PREVENTION_PROCESS_HTML, PREVENTION_MONITORING_HTML
+    LESSONS_HTML
+    REVIEW_MEETING_HTML
+
+  Per-template list placeholders:
+    TIMELINE               items: TIME, EVENT_HTML
+    ACTION_IMMEDIATE       items: TITLE, OWNER, DUE, DESC
+    ACTION_SHORT           items: TITLE, OWNER, DUE, DESC
+    ACTION_LONG            items: TITLE, OWNER, DUE, DESC
+    INTERNAL_COMMS         items: TIME, CHANNEL, AUDIENCE, MESSAGE
+    EXTERNAL_COMMS         items: TIME, CHANNEL, MESSAGE
+    SIMILAR_INCIDENTS      items: DATE, DESC, LINK_HTML
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">What happened, the impact, the root cause, and how it was resolved.</p>
+    <div class="callout">
+      <p>
+        <strong>{{INCIDENT_ID}}</strong> &middot;
+        <span class="risk-sev" data-sev="{{SEVERITY}}">{{SEVERITY_LABEL}}</span> &middot;
+        Status <strong>{{STATUS}}</strong> &middot;
+        Duration <strong>{{DURATION}}</strong>
+      </p>
+    </div>
+
+    <div class="kpi">
+      <div class="stat"><div class="n" style="font-size: 16px;">{{DETECTED_AT}}</div><div class="l">Detected</div></div>
+      <div class="stat"><div class="n" style="font-size: 16px;">{{RESOLVED_AT}}</div><div class="l">Resolved</div></div>
+      <div class="stat"><div class="n" style="font-size: 16px;">{{USERS_AFFECTED}}</div><div class="l">Users affected</div></div>
+      <div class="stat"><div class="n" style="font-size: 16px;">{{SERVICES_IMPACTED}}</div><div class="l">Services impacted</div></div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Root cause (one line)</h3>
+    <p>{{ROOT_CAUSE_ONE_LINE}}</p>
+
+    <h3>Resolution (one line)</h3>
+    <p>{{RESOLUTION_ONE_LINE}}</p>
+  </section>
+
+  <section id="details">
+    <h2><span class="num">02</span>Incident Details</h2>
+    <p class="lead">Detection, classification, and the scope of impact.</p>
+    <h3>Detection</h3>
+    {{DETECTION_HTML}}
+    <h3>Classification</h3>
+    {{CLASSIFICATION_HTML}}
+    <h3>Scope of impact</h3>
+    {{IMPACT_SCOPE_HTML}}
+  </section>
+
+  <section id="timeline">
+    <h2><span class="num">03</span>Timeline</h2>
+    <p class="lead">All times in UTC. Click any event to expand its details if available.</p>
+    <table class="component-table">
+      <thead>
+        <tr><th style="width: 140px;">Time</th><th>Event</th></tr>
+      </thead>
+      <tbody>
+        {{#TIMELINE}}
+        <tr>
+          <td><code>{{TIME}}</code></td>
+          <td>{{EVENT_HTML}}</td>
+        </tr>
+        {{/TIMELINE}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_TIMELINE}}
+  </section>
+
+  <section id="root-cause">
+    <h2><span class="num">04</span>Root Cause Analysis</h2>
+    <p class="lead">Five-whys walk-through and the underlying cause.</p>
+    <h3>Five whys</h3>
+    {{FIVE_WHYS_HTML}}
+    <h3>Root cause</h3>
+    {{ROOT_CAUSE_HTML}}
+
+    <div class="grid-2" style="margin-top: 28px;">
+      <div class="card">
+        <h4 style="margin-top: 0; color: var(--accent);">What went well</h4>
+        {{WHAT_WENT_WELL_HTML}}
+      </div>
+      <div class="card" style="border-left: 3px solid var(--sev-high);">
+        <h4 style="margin-top: 0; color: var(--sev-high);">What went wrong</h4>
+        {{WHAT_WENT_WRONG_HTML}}
+      </div>
+    </div>
+  </section>
+
+  <section id="technical">
+    <h2><span class="num">05</span>Technical Details</h2>
+    <p class="lead">System state at the time of the incident, relevant logs, and metrics.</p>
+    <h3>System state</h3>
+    {{SYSTEM_STATE_HTML}}
+    <h3>Logs &amp; evidence</h3>
+    {{LOGS_HTML}}
+    <h3>Metrics</h3>
+    {{METRICS_HTML}}
+  </section>
+
+  <section id="resolution">
+    <h2><span class="num">06</span>Resolution</h2>
+    <p class="lead">What was done to recover, and how the recovery was verified.</p>
+    {{RESOLUTION_DETAILS_HTML}}
+    <h3>Verification</h3>
+    {{VERIFICATION_HTML}}
+  </section>
+
+  <section id="impact-assessment">
+    <h2><span class="num">07</span>Impact Assessment</h2>
+    <p class="lead">Quantitative and business impact.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n" style="font-size: 16px;">{{SLA_BREACH}}</div><div class="l">SLA breach</div></div>
+      <div class="stat"><div class="n" style="font-size: 16px;">{{REVENUE_IMPACT}}</div><div class="l">Revenue impact</div></div>
+      <div class="stat"><div class="n" style="font-size: 16px;">{{SUPPORT_TICKETS}}</div><div class="l">Support tickets</div></div>
+      <div class="stat"><div class="n" style="font-size: 16px;">{{BUSINESS_IMPACT}}</div><div class="l">Business impact</div></div>
+    </div>
+  </section>
+
+  <section id="actions">
+    <h2><span class="num">08</span>Action Items</h2>
+    <p class="lead">Owner-stamped, due-dated. Three horizons.</p>
+
+    <div class="reco-track">
+      <div class="reco-horizon">
+        <h3>Immediate <span class="tag">THIS WEEK</span></h3>
+        <p class="horizon-lead">Items that must move before next week.</p>
+        <div class="reco-items">
+          {{#ACTION_IMMEDIATE}}
+          <div class="reco-item">
+            <div class="n">!</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc"><strong>Owner:</strong> {{OWNER}} &middot; <strong>Due:</strong> {{DUE}} &middot; {{DESC}}</div>
+            </div>
+          </div>
+          {{/ACTION_IMMEDIATE}}
+        </div>
+        {{LIST_EMPTY_ACTION_IMMEDIATE}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Short-term <span class="tag">THIS MONTH</span></h3>
+        <div class="reco-items">
+          {{#ACTION_SHORT}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc"><strong>Owner:</strong> {{OWNER}} &middot; <strong>Due:</strong> {{DUE}} &middot; {{DESC}}</div>
+            </div>
+          </div>
+          {{/ACTION_SHORT}}
+        </div>
+        {{LIST_EMPTY_ACTION_SHORT}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Long-term <span class="tag">THIS QUARTER</span></h3>
+        <div class="reco-items">
+          {{#ACTION_LONG}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc"><strong>Owner:</strong> {{OWNER}} &middot; <strong>Due:</strong> {{DUE}} &middot; {{DESC}}</div>
+            </div>
+          </div>
+          {{/ACTION_LONG}}
+        </div>
+        {{LIST_EMPTY_ACTION_LONG}}
+      </div>
+    </div>
+  </section>
+
+  <section id="prevention">
+    <h2><span class="num">09</span>Prevention</h2>
+    <p class="lead">Technical, process, and monitoring improvements that close the gap.</p>
+    <h3>Technical</h3>
+    {{PREVENTION_TECHNICAL_HTML}}
+    <h3>Process</h3>
+    {{PREVENTION_PROCESS_HTML}}
+    <h3>Monitoring</h3>
+    {{PREVENTION_MONITORING_HTML}}
+  </section>
+
+  <section id="lessons">
+    <h2><span class="num">10</span>Lessons &amp; Similar Incidents</h2>
+    <p class="lead">Knowledge captured and links back to prior occurrences.</p>
+    {{LESSONS_HTML}}
+
+    <h3 style="margin-top: 28px;">Similar past incidents</h3>
+    <table class="component-table">
+      <thead>
+        <tr><th style="width: 140px;">Date</th><th>Description</th><th>Link</th></tr>
+      </thead>
+      <tbody>
+        {{#SIMILAR_INCIDENTS}}
+        <tr>
+          <td><code>{{DATE}}</code></td>
+          <td>{{DESC}}</td>
+          <td>{{LINK_HTML}}</td>
+        </tr>
+        {{/SIMILAR_INCIDENTS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_SIMILAR_INCIDENTS}}
+  </section>
+
+  <section id="comms">
+    <h2><span class="num">11</span>Communication Log</h2>
+    <p class="lead">What was said, to whom, and when.</p>
+
+    <h3>Internal</h3>
+    <table class="component-table">
+      <thead>
+        <tr><th style="width: 100px;">Time</th><th>Channel</th><th>Audience</th><th>Message</th></tr>
+      </thead>
+      <tbody>
+        {{#INTERNAL_COMMS}}
+        <tr>
+          <td><code>{{TIME}}</code></td>
+          <td>{{CHANNEL}}</td>
+          <td>{{AUDIENCE}}</td>
+          <td>{{MESSAGE}}</td>
+        </tr>
+        {{/INTERNAL_COMMS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_INTERNAL_COMMS}}
+
+    <h3 style="margin-top: 28px;">External</h3>
+    <table class="component-table">
+      <thead>
+        <tr><th style="width: 100px;">Time</th><th>Channel</th><th>Message</th></tr>
+      </thead>
+      <tbody>
+        {{#EXTERNAL_COMMS}}
+        <tr>
+          <td><code>{{TIME}}</code></td>
+          <td>{{CHANNEL}}</td>
+          <td>{{MESSAGE}}</td>
+        </tr>
+        {{/EXTERNAL_COMMS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_EXTERNAL_COMMS}}
+  </section>
+
+  <section id="review">
+    <h2><span class="num">12</span>Post-Incident Review</h2>
+    <p class="lead">When the team got together, what was decided, and what's tracked next.</p>
+    {{REVIEW_MEETING_HTML}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+</body>
+</html>

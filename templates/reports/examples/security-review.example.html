@@ -1,0 +1,1227 @@
+<!--
+  Template: security-review.html
+  Used by:  prompts/agents/security/Security-Generate_Security_Review.md (GSR)
+  Pairs with: .virtualboard/security/reviews/SR-{YYYY-MM-DD}-{component}.md
+
+  Cross-cutting placeholders: as in security-audit.html.
+
+  Per-template scalar placeholders:
+    REVIEW_SCOPE_HTML
+    EXECUTIVE_SUMMARY_HTML
+    OVERALL_RATING         – "Critical" | "Needs Improvement" | "Good"
+    OVERALL_RATING_CLASS   – "danger" | "" | "ok"
+    KPI_FILES_REVIEWED, KPI_LOC_REVIEWED, KPI_FINDINGS_TOTAL, KPI_FINDINGS_CRITICAL, KPI_FINDINGS_HIGH
+    OWASP_HTML             – HTML for the OWASP Top 10 checklist
+    DEPENDENCY_VULN_HTML   – HTML for the dependency vulnerabilities table
+    POSITIVE_FINDINGS_HTML
+    NEXT_REVIEW_DATE
+
+  Per-template list placeholders:
+    FINDINGS               items: ID, SEV (critical|high|medium|low), TITLE,
+                                  FILE_REF, DESCRIPTION_HTML, REMEDIATION_HTML,
+                                  PRIORITY_LABEL (e.g. "Within 24 hours")
+    IMMEDIATE_ACTIONS      items: TITLE, DESC
+    SHORT_TERM_ACTIONS     items: TITLE, DESC
+    LONG_TERM_ACTIONS      items: TITLE, DESC
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Review | Astucia</title>
+<style>
+  :root {
+    --bg-0: #0A0A0A;
+    --bg-1: #111111;
+    --bg-2: #181818;
+    --bg-3: #222222;
+    --bg-4: #2a2a2a;
+    --border: #2e2e2e;
+    --border-strong: #3a3a3a;
+    --text: #f4f4f5;
+    --text-dim: #a1a1aa;
+    --text-mute: #71717a;
+    --accent: #22C55E;
+    --accent-dark: #16A34A;
+    --accent-glow: rgba(34, 197, 94, 0.15);
+    --accent-border: rgba(34, 197, 94, 0.35);
+
+    --sev-critical: #ef4444;
+    --sev-critical-bg: rgba(239, 68, 68, 0.12);
+    --sev-critical-border: rgba(239, 68, 68, 0.35);
+    --sev-high: #f97316;
+    --sev-high-bg: rgba(249, 115, 22, 0.12);
+    --sev-high-border: rgba(249, 115, 22, 0.35);
+    --sev-medium: #eab308;
+    --sev-medium-bg: rgba(234, 179, 8, 0.12);
+    --sev-medium-border: rgba(234, 179, 8, 0.35);
+    --sev-low: #38bdf8;
+    --sev-low-bg: rgba(56, 189, 248, 0.12);
+    --sev-low-border: rgba(56, 189, 248, 0.35);
+
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'SF Mono', 'Menlo', 'Consolas', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+  body {
+    margin: 0;
+    background: var(--bg-0);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 5px;
+    color: #e4e4e7;
+  }
+
+  pre {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.55;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+    color: #d4d4d8;
+  }
+
+  pre code {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  /* ─── TOP NAV ─────────────────────────────────────────────────── */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topnav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 24px rgba(34, 197, 94, 0.25);
+    overflow: hidden;
+  }
+  .brand-mark img { width: 100%; height: 100%; display: block; }
+  .brand-text {
+    line-height: 1.1;
+  }
+  .brand-text .name {
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+  .brand-text .sub {
+    font-size: 9.5px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 2px;
+  }
+  .navlinks {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .navlinks a {
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .navlinks a:hover {
+    background: var(--bg-3);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  /* ─── HERO ────────────────────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 60%, #0f1d13 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 32px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent-border);
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .hero h1 {
+    margin: 24px 0 16px;
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    max-width: 900px;
+  }
+  .hero h1 .green { color: var(--accent); }
+  .hero .subtitle {
+    font-size: 19px;
+    color: var(--text-dim);
+    max-width: 720px;
+    line-height: 1.6;
+    margin: 0 0 40px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+  .hero-meta .cell {
+    min-width: 120px;
+  }
+  .hero-meta .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-mute);
+    margin-bottom: 6px;
+  }
+  .hero-meta .value {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ─── MATURITY BAND ──────────────────────────────────────────── */
+  .maturity-band {
+    background: var(--bg-1);
+    border-bottom: 1px solid var(--border);
+    padding: 32px;
+  }
+  .maturity-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 32px;
+  }
+  .maturity-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-mute);
+  }
+  .maturity-track {
+    position: relative;
+    height: 6px;
+    background: var(--bg-3);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .maturity-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 24%;
+    background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+    border-radius: 100px;
+  }
+  .maturity-stages {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--text-mute);
+  }
+  .maturity-stages .active {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .maturity-verdict {
+    padding: 8px 16px;
+    background: var(--sev-high-bg);
+    border: 1px solid var(--sev-high-border);
+    color: var(--sev-high);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .maturity-verdict.ok {
+    background: var(--accent-glow);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+  .maturity-verdict.danger {
+    background: var(--sev-critical-bg);
+    border-color: var(--sev-critical-border);
+    color: var(--sev-critical);
+  }
+
+  /* ─── LAYOUT ──────────────────────────────────────────────────── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 72px 32px;
+  }
+
+  section {
+    margin-bottom: 80px;
+    scroll-margin-top: 80px;
+  }
+
+  section > h2 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  section > h2 .num {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0;
+    padding: 4px 10px;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent-border);
+    border-radius: 6px;
+  }
+  section > .lead {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 780px;
+    margin: 0 0 36px;
+  }
+
+  h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 40px 0 12px;
+    letter-spacing: -0.01em;
+  }
+  h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 28px 0 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  p { margin: 0 0 16px; }
+
+  /* ─── CARDS ───────────────────────────────────────────────────── */
+  .card {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--border-strong); }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-5 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 36px; }
+    .container { padding: 48px 20px; }
+    .maturity-inner { grid-template-columns: 1fr; }
+    .topnav-inner { padding: 14px 20px; flex-wrap: wrap; }
+    .hero { padding: 56px 20px; }
+  }
+
+  /* ─── TOP RISKS + OPPS CARDS ─────────────────────────────────── */
+  .top5 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 900px) { .top5 { grid-template-columns: 1fr; } }
+  .top5-col {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .top5-col h3 {
+    margin: 0 0 20px;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .top5-col.risks h3 { color: var(--sev-critical); }
+  .top5-col.opps h3 { color: var(--accent); }
+  .top5-col ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: rank;
+  }
+  .top5-col li {
+    counter-increment: rank;
+    padding: 14px 0 14px 40px;
+    border-top: 1px solid var(--border);
+    position: relative;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .top5-col li:first-child { border-top: 0; padding-top: 4px; }
+  .top5-col li::before {
+    content: counter(rank);
+    position: absolute;
+    left: 0; top: 14px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--bg-3);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+  }
+  .top5-col.risks li:first-child::before { background: var(--sev-critical-bg); border-color: var(--sev-critical-border); color: var(--sev-critical); }
+  .top5-col.opps li:first-child::before { background: var(--accent-glow); border-color: var(--accent-border); color: var(--accent); }
+  .top5-col li strong { color: var(--text); font-weight: 600; }
+
+  /* ─── COMPONENT TABLE ────────────────────────────────────────── */
+  .component-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .component-table th,
+  .component-table td {
+    text-align: left;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    vertical-align: top;
+  }
+  .component-table thead th {
+    background: var(--bg-2);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-mute);
+    font-weight: 600;
+  }
+  .component-table tr:last-child td { border-bottom: 0; }
+  .component-table td strong { color: var(--text); }
+  .component-table td:first-child { font-weight: 600; color: var(--accent); }
+
+  /* ─── ANALYSIS TABS ───────────────────────────────────────────── */
+  .tabs {
+    margin: 32px 0;
+  }
+  .tab-list {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .tab-btn {
+    background: transparent;
+    border: 0;
+    color: var(--text-mute);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 18px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ─── RISKS / FINDINGS TABLE ─────────────────────────────────── */
+  .risks-controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .sev-chip {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .sev-chip:hover { border-color: var(--border-strong); color: var(--text); }
+  .sev-chip.active {
+    background: var(--accent-glow);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+  .sev-chip[data-sev="critical"].active { background: var(--sev-critical-bg); border-color: var(--sev-critical-border); color: var(--sev-critical); }
+  .sev-chip[data-sev="high"].active { background: var(--sev-high-bg); border-color: var(--sev-high-border); color: var(--sev-high); }
+  .sev-chip[data-sev="medium"].active { background: var(--sev-medium-bg); border-color: var(--sev-medium-border); color: var(--sev-medium); }
+  .sev-chip[data-sev="low"].active { background: var(--sev-low-bg); border-color: var(--sev-low-border); color: var(--sev-low); }
+  .risk-search {
+    flex: 1;
+    min-width: 200px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    padding: 9px 14px;
+    border-radius: 100px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .risk-search:focus { border-color: var(--accent); }
+  .risk-search::placeholder { color: var(--text-mute); }
+
+  .risks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .risk-row {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 64px 80px 1fr auto auto;
+    gap: 20px;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .risk-row:hover { background: var(--bg-2); border-color: var(--border-strong); }
+  .risk-row.open { background: var(--bg-2); }
+  .risk-row[data-sev="critical"] { border-left-color: var(--sev-critical); }
+  .risk-row[data-sev="high"] { border-left-color: var(--sev-high); }
+  .risk-row[data-sev="medium"] { border-left-color: var(--sev-medium); }
+  .risk-row[data-sev="low"] { border-left-color: var(--sev-low); }
+
+  .risk-id {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-mute);
+    font-weight: 700;
+  }
+  .risk-sev {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+  .risk-sev[data-sev="critical"] { background: var(--sev-critical-bg); color: var(--sev-critical); border: 1px solid var(--sev-critical-border); }
+  .risk-sev[data-sev="high"] { background: var(--sev-high-bg); color: var(--sev-high); border: 1px solid var(--sev-high-border); }
+  .risk-sev[data-sev="medium"] { background: var(--sev-medium-bg); color: var(--sev-medium); border: 1px solid var(--sev-medium-border); }
+  .risk-sev[data-sev="low"] { background: var(--sev-low-bg); color: var(--sev-low); border: 1px solid var(--sev-low-border); }
+  .risk-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .risk-file {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-mute);
+    background: var(--bg-3);
+    padding: 3px 8px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .risk-chevron {
+    color: var(--text-mute);
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  .risk-row.open .risk-chevron { transform: rotate(90deg); color: var(--accent); }
+
+  .risk-details {
+    display: none;
+    padding: 0 20px 20px;
+    margin-top: -10px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-top: 0;
+    border-left: 3px solid var(--border-strong);
+    border-radius: 0 0 10px 10px;
+    animation: slideDown 0.15s ease-out;
+  }
+  .risk-details.open { display: block; }
+  .risk-details[data-sev="critical"] { border-left-color: var(--sev-critical); }
+  .risk-details[data-sev="high"] { border-left-color: var(--sev-high); }
+  .risk-details[data-sev="medium"] { border-left-color: var(--sev-medium); }
+  .risk-details[data-sev="low"] { border-left-color: var(--sev-low); }
+  .risk-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 780px) {
+    .risk-row { grid-template-columns: 1fr; gap: 6px; }
+    .risk-detail-grid { grid-template-columns: 1fr; }
+  }
+  .risk-detail-grid .k {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-mute);
+    margin-bottom: 6px;
+  }
+  .risk-detail-grid .v {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .risk-detail-grid .v strong { color: var(--text); }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RECOMMENDATIONS ─────────────────────────────────────────── */
+  .reco-track {
+    position: relative;
+  }
+  .reco-horizon {
+    margin-bottom: 36px;
+    padding: 26px 28px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .reco-horizon::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+    background: var(--accent);
+  }
+  .reco-horizon h3 {
+    margin: 0 0 4px;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .reco-horizon h3 .tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--accent-glow);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid var(--accent-border);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .reco-horizon .horizon-lead {
+    color: var(--text-mute);
+    font-size: 13px;
+    margin: 0 0 20px;
+  }
+  .reco-items {
+    display: grid;
+    gap: 12px;
+  }
+  .reco-item {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    padding: 14px 16px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.15s;
+  }
+  .reco-item:hover { border-color: var(--accent-border); }
+  .reco-item .n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-glow);
+    border: 1px solid var(--accent-border);
+    border-radius: 6px;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .reco-item .body .title {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+  .reco-item .body .desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ─── TRADEOFFS ────────────────────────────────────────────── */
+  .tradeoff {
+    padding: 20px 24px;
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .tradeoff strong { color: var(--accent); }
+
+  /* ─── DIAGRAM ─────────────────────────────────────────────────── */
+  .diagram-toggle {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px;
+    width: fit-content;
+  }
+  .diagram-toggle button {
+    background: transparent;
+    border: 0;
+    color: var(--text-mute);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+  }
+  .diagram-toggle button.active {
+    background: var(--accent-glow);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+  }
+  .diagram-panel { display: none; }
+  .diagram-panel.active { display: block; }
+
+  /* ─── FOOTER ──────────────────────────────────────────────────── */
+  footer {
+    background: var(--bg-1);
+    border-top: 1px solid var(--border);
+    padding: 48px 32px;
+    text-align: center;
+    color: var(--text-mute);
+    font-size: 13px;
+  }
+  footer .brand-footer {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  footer .brand-footer .name { color: var(--accent); font-weight: 700; }
+
+  /* ─── BACK TO TOP ────────────────────────────────────────────── */
+  .back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 44px; height: 44px;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.2s;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+    z-index: 90;
+  }
+  .back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .back-to-top:hover { background: var(--accent); color: var(--bg-0); }
+
+  ul.tight { margin: 0 0 16px; padding-left: 22px; }
+  ul.tight li { margin-bottom: 6px; color: var(--text-dim); }
+  ul.tight li strong { color: var(--text); }
+
+  .kpi {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .kpi .stat {
+    flex: 1;
+    min-width: 160px;
+    padding: 18px 20px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .kpi .stat .n {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.1;
+  }
+  .kpi .stat .l {
+    font-size: 11px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 6px;
+  }
+
+  .callout {
+    background: linear-gradient(135deg, var(--accent-glow) 0%, transparent 100%);
+    border: 1px solid var(--accent-border);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .callout p { margin: 0; color: var(--text); }
+  .callout strong { color: var(--accent); }
+</style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════ TOP NAV ═══════════════════════ -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <div class="brand">
+      <div class="brand-mark">
+        <img alt="Astucia" src="data:image/jpeg;base64,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">
+      </div>
+      <div class="brand-text">
+        <div class="name">Astucia</div>
+        <div class="sub">AI Development Studio</div>
+      </div>
+    </div>
+    <div class="navlinks">
+      <a href="#summary">Summary</a><a href="#scope">Scope</a><a href="#findings">Findings</a><a href="#owasp">OWASP</a><a href="#dependencies">Dependencies</a><a href="#positives">Positives</a><a href="#next-steps">Next steps</a>
+    </div>
+  </div>
+</nav>
+
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">&#9679; Security Review &middot; Code-level</span>
+    <h1>Security <span class="green">Review</span>: vb-cli upgrade module</h1>
+    <p class="subtitle">Code-level security review of the upgrade and installer surface. Companion to <code>.virtualboard/security/reviews/SR-2026-04-28-vb-cli-upgrade.md</code>.</p>
+    <div class="hero-meta">
+      
+      <div class="cell">
+        <div class="label">Reviewer</div>
+        <div class="value">Security Engineer Agent</div>
+      </div>
+      
+      <div class="cell">
+        <div class="label">Component</div>
+        <div class="value">vb-cli upgrade module</div>
+      </div>
+      
+      <div class="cell">
+        <div class="label">Files</div>
+        <div class="value">12</div>
+      </div>
+      
+      <div class="cell">
+        <div class="label">Lines</div>
+        <div class="value">1,840</div>
+      </div>
+      
+      <div class="cell">
+        <div class="label">Classification</div>
+        <div class="value">Internal &middot; Advisory</div>
+      </div>
+      
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">Security posture for the component under review, paired with the must-fix list.</p>
+    <p>The upgrade surface has <strong>two critical issues</strong> (no checksum verification, silent sudo escalation) and a <strong>medium</strong> string-vs-semver bug. All three are small, isolated fixes with no expected ripple effects. After these fixes, the surface is in good shape.</p>
+    <div class="callout"><p><strong>Overall security rating:</strong> <span class="risk-sev" data-sev="high" style="margin-left: 6px;">Needs Improvement</span></p></div>
+  </section>
+
+  <section id="scope">
+    <h2><span class="num">02</span>Scope</h2>
+    <p class="lead">What was reviewed and how.</p>
+    <p>This review covers <code>vb-cli/internal/upgrade/</code>, the bash installer at <code>scripts/install-vb-cli.sh</code>, and the GitHub Actions release workflow at <code>.github/workflows/release.yml</code>. Scope: input handling, network calls, binary integrity, and process invocation.</p>
+    <div class="kpi" style="margin-top: 20px;">
+      <div class="stat"><div class="n">12</div><div class="l">Files reviewed</div></div>
+      <div class="stat"><div class="n">1,840</div><div class="l">Lines reviewed</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">Total findings</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">Critical</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">High</div></div>
+    </div>
+  </section>
+
+  <section id="findings">
+    <h2><span class="num">03</span>Findings</h2>
+    <p class="lead">Each finding includes location, description, and a code-level remediation.</p>
+    <div>
+      
+      <div class="card" style="margin-bottom: 16px;">
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+          <span class="risk-id">CVE-001</span>
+          <span class="risk-sev" data-sev="critical">critical</span>
+          <span style="color: var(--text-mute); font-size: 12px;">Within 24 hours</span>
+        </div>
+        <h3 style="margin: 0 0 6px;">Missing integrity check on downloaded binary</h3>
+        <p style="margin: 0 0 12px;"><span class="risk-file">vb-cli upgrade.go:116</span></p>
+        <h4>Description</h4>
+        <p>The release workflow publishes <code>checksums.txt</code> alongside every binary, but the upgrade path never fetches or compares it. This is the textbook case of "produce them but never check them." An attacker positioned to swap the GitHub-Releases asset (or a CDN cache) can ship arbitrary code into the next <code>--ensure-latest</code> run.</p>
+        <h4>Remediation</h4>
+        <pre><code>// Before (vulnerable):
+resp, err := http.Get(asset.GetBrowserDownloadURL())
+body, _ := io.ReadAll(resp.Body)
+os.WriteFile(target, body, 0755)
+
+// After (verified):
+resp, _ := http.Get(asset.GetBrowserDownloadURL())
+body, _ := io.ReadAll(resp.Body)
+got := sha256.Sum256(body)
+want, _ := fetchExpectedSum(release, asset.GetName())
+if subtle.ConstantTimeCompare(got[:], want) != 1 {
+    return fmt.Errorf("checksum mismatch")
+}
+os.WriteFile(target, body, 0755)</code></pre>
+      </div>
+      
+      <div class="card" style="margin-bottom: 16px;">
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+          <span class="risk-id">HSV-001</span>
+          <span class="risk-sev" data-sev="high">high</span>
+          <span style="color: var(--text-mute); font-size: 12px;">Within 7 days</span>
+        </div>
+        <h3 style="margin: 0 0 6px;">Silent sudo escalation on upgrade retry</h3>
+        <p style="margin: 0 0 12px;"><span class="risk-file">scripts/install-vb-cli.sh:204-218</span></p>
+        <h4>Description</h4>
+        <p>When <code>vb upgrade</code> fails, the script auto-retries with <code>sudo vb upgrade</code> without prompting. Since the binary is not checksum-verified (CVE-001), this compounds two issues: silent escalation and unverified code execution.</p>
+        <h4>Remediation</h4>
+        <pre><code># Before:
+if ! vb upgrade; then
+    sudo vb upgrade
+fi
+
+# After:
+if ! vb upgrade; then
+    if [ "${ALLOW_SUDO:-0}" = "1" ]; then
+        sudo vb upgrade
+    else
+        echo "vb upgrade failed; re-run with --allow-sudo to retry as root"
+        exit 1
+    fi
+fi</code></pre>
+      </div>
+      
+      <div class="card" style="margin-bottom: 16px;">
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+          <span class="risk-id">HSV-002</span>
+          <span class="risk-sev" data-sev="high">high</span>
+          <span style="color: var(--text-mute); font-size: 12px;">Within 7 days</span>
+        </div>
+        <h3 style="margin: 0 0 6px;">GitHub API client unauthenticated</h3>
+        <p style="margin: 0 0 12px;"><span class="risk-file">vb-cli upgrade.go:32</span></p>
+        <h4>Description</h4>
+        <p><code>github.NewClient(nil)</code> is rate-limited to 60 requests/hr per IP. CI under busy conditions or rate-limited shared NATs will fail intermittently. This isn't a confidentiality issue but availability impact is real for agent workflows that call <code>--ensure-latest</code> on every turn.</p>
+        <h4>Remediation</h4>
+        <pre><code>// Honor GITHUB_TOKEN if set
+var httpClient *http.Client
+if tok := os.Getenv("GITHUB_TOKEN"); tok != "" {
+    httpClient = oauth2.NewClient(ctx, oauth2.StaticTokenSource(
+        &amp;oauth2.Token{AccessToken: tok}))
+}
+client := github.NewClient(httpClient)</code></pre>
+      </div>
+      
+      <div class="card" style="margin-bottom: 16px;">
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+          <span class="risk-id">MSV-001</span>
+          <span class="risk-sev" data-sev="medium">medium</span>
+          <span style="color: var(--text-mute); font-size: 12px;">Within 30 days</span>
+        </div>
+        <h3 style="margin: 0 0 6px;">String version comparison</h3>
+        <p style="margin: 0 0 12px;"><span class="risk-file">vb-cli upgrade.go:52-55</span></p>
+        <h4>Description</h4>
+        <p>Comment in code says: <em>"Simple string comparison — in a real implementation, you'd want semantic version comparison."</em> <code>v1.10.0 &lt; v1.9.0</code> by string compare.</p>
+        <h4>Remediation</h4>
+        <pre><code>// Replace strings.Compare with:
+import "golang.org/x/mod/semver"
+
+if semver.Compare(latest, current) &gt; 0 {
+    return doUpgrade()
+}</code></pre>
+      </div>
+      
+      <div class="card" style="margin-bottom: 16px;">
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+          <span class="risk-id">LSV-001</span>
+          <span class="risk-sev" data-sev="low">low</span>
+          <span style="color: var(--text-mute); font-size: 12px;">When time permits</span>
+        </div>
+        <h3 style="margin: 0 0 6px;">Installer operator-precedence bug</h3>
+        <p style="margin: 0 0 12px;"><span class="risk-file">scripts/install-vb-cli.sh:~211</span></p>
+        <h4>Description</h4>
+        <p>Cosmetic defect in the help-text branch detecting whether the install is sudo-shadowed. No security impact; simply prints the wrong hint when triggered.</p>
+        <h4>Remediation</h4>
+        <pre><code># Parenthesize the compound condition
+if ([ -w "$installdir" ] || [ "$EUID" -eq 0 ]) &amp;&amp; ! [ -e "$installdir/vb" ]; then
+  ...
+fi</code></pre>
+      </div>
+      
+    </div>
+    
+  </section>
+
+  <section id="owasp">
+    <h2><span class="num">04</span>OWASP Top 10 Compliance</h2>
+    <p class="lead">Coverage against the OWASP Top 10 (2021).</p>
+    <ul class="tight"><li><strong>A01 Broken Access Control</strong> — N/A (no auth surface).</li><li><strong>A02 Cryptographic Failures</strong> — <span style="color: var(--sev-high);">2 issues found</span> (CVE-001 missing integrity check; M1 weak version comparison).</li><li><strong>A03 Injection</strong> — Pass.</li><li><strong>A04 Insecure Design</strong> — <span style="color: var(--sev-high);">1 issue</span> (silent sudo escalation).</li><li><strong>A05–A10</strong> — Pass or N/A.</li></ul>
+  </section>
+
+  <section id="dependencies">
+    <h2><span class="num">05</span>Dependency Vulnerabilities</h2>
+    <p class="lead">Vulnerable packages observed in the dependency graph and their remediation paths.</p>
+    <table class="component-table"><thead><tr><th>Package</th><th>Current</th><th>Fixed in</th><th>Severity</th><th>CVE</th></tr></thead><tbody><tr><td><code>github.com/google/go-github/v55</code></td><td>v55.0.0</td><td>v55.0.0</td><td>—</td><td>—</td></tr><tr><td><code>github.com/spf13/cobra</code></td><td>v1.8.0</td><td>v1.8.0</td><td>—</td><td>—</td></tr></tbody></table><p style="margin-top: 10px; color: var(--text-mute); font-size: 13px;">No known CVEs in the dependency graph at review time.</p>
+  </section>
+
+  <section id="positives">
+    <h2><span class="num">06</span>Positive Findings</h2>
+    <p class="lead">Practices worth keeping.</p>
+    <ul class="tight"><li>All file writes use temp-file + atomic rename — crash-safe.</li><li>No use of <code>eval</code>, <code>exec</code>, or shell injection patterns.</li><li>gosec scan is clean.</li><li>Test coverage is 100% on the upgrade package.</li></ul>
+  </section>
+
+  <section id="next-steps">
+    <h2><span class="num">07</span>Next Steps</h2>
+    <p class="lead">Three horizons: ship now, plan now, schedule.</p>
+
+    <div class="reco-track">
+      <div class="reco-horizon">
+        <h3>Immediate <span class="tag">THIS WEEK</span></h3>
+        <p class="horizon-lead">Critical/high findings to ship before the next review.</p>
+        <div class="reco-items">
+          
+          <div class="reco-item">
+            <div class="n">!</div>
+            <div class="body">
+              <div class="title">Ship CVE-001 checksum verification</div>
+              <div class="desc">Highest-leverage fix in the entire codebase. ~30 LOC.</div>
+            </div>
+          </div>
+          
+          <div class="reco-item">
+            <div class="n">!</div>
+            <div class="body">
+              <div class="title">Require --allow-sudo for installer escalation</div>
+              <div class="desc">Fail-closed default.</div>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Short-term <span class="tag">1–2 WEEKS</span></h3>
+        <p class="horizon-lead">High-severity issues with a clear remediation path.</p>
+        <div class="reco-items">
+          
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">Honor GITHUB_TOKEN in upgrade client</div>
+              <div class="desc">Removes the 60-req/hr rate limit footgun in CI.</div>
+            </div>
+          </div>
+          
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">Migrate to semver.Compare</div>
+              <div class="desc">Eliminates the silent failure when minor passes 9.</div>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Long-term <span class="tag">QUARTER</span></h3>
+        <p class="horizon-lead">Defense-in-depth and architectural improvements.</p>
+        <div class="reco-items">
+          
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">Cosign-signed releases</div>
+              <div class="desc">Defense in depth beyond checksums.</div>
+            </div>
+          </div>
+          
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">Reproducible builds</div>
+              <div class="desc">Allows external auditors to verify the published binary matches the source tag.</div>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 28px;"><p><strong>Next review:</strong> 2026-05-28</p></div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer>
+  <div class="brand-footer">
+    <div class="brand-mark" style="width:24px;height:24px;border-radius:6px;">
+      <img alt="Astucia" style="width:100%;height:100%;display:block;" src="data:image/jpeg;base64,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">
+    </div>
+    <span class="name">Astucia</span>
+    <span>·</span>
+    <span>AI Development Studio</span>
+  </div>
+  <p style="margin: 0;">Security Review &middot; <strong style="color: var(--accent);">vb-cli upgrade module</strong> &middot; 2026-04-28</p>
+  <p style="margin: 8px 0 0; font-size: 12px;">Conducted by the Security Engineer agent &middot; Internal advisory &middot; Not for external distribution.</p>
+  <p style="margin: 14px 0 0; font-size: 11px; color: var(--text-mute);">Markdown companion: <code>.virtualboard/security/reviews/SR-2026-04-28-vb-cli-upgrade.md</code> &middot; Next review: 2026-05-28.</p>
+</footer>
+
+
+<button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+<script>
+  // ─── Back to top ────────────────────────────────────────────
+  (function () {
+    var backTop = document.getElementById('backToTop');
+    if (!backTop) return;
+    window.addEventListener('scroll', function () {
+      backTop.classList.toggle('visible', window.scrollY > 600);
+    });
+    backTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+</script>
+
+
+</body>
+</html>

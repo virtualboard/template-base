@@ -238,3 +238,31 @@ For each vulnerability found, provide:
 - Highlight critical and high-severity issues
 - Provide immediate action items
 - Offer to create remediation tasks in `.virtualboard/backlog/`
+
+### 7. Optional — Generate Branded HTML Report
+
+If the user appends `--html`, says "as HTML"/"branded HTML", or sets
+`format: html`, also produce an HTML rendering. **Additive** — Markdown is
+always written first.
+
+1. Load `templates/reports/html/security-review.html`. The comment block at
+   the top of that file lists every placeholder this command must compute.
+2. Inline partials, then substitute `{{BRAND_LOGO_DATAURI}}` (stripped),
+   `{{BRAND_NAME}}` (`Astucia`), `{{BRAND_TAGLINE}}` (`AI Development Studio`).
+3. Substitute the cross-cutting placeholders and per-template scalars
+   (`REVIEW_SCOPE_HTML`, `EXECUTIVE_SUMMARY_HTML`, `OVERALL_RATING`,
+   `OVERALL_RATING_CLASS`, `KPI_FILES_REVIEWED`, `KPI_LOC_REVIEWED`,
+   `KPI_FINDINGS_TOTAL`, `KPI_FINDINGS_CRITICAL`, `KPI_FINDINGS_HIGH`,
+   `OWASP_HTML`, `DEPENDENCY_VULN_HTML`, `POSITIVE_FINDINGS_HTML`,
+   `NEXT_REVIEW_DATE`).
+4. Expand the list blocks: `HERO_META_CELLS`, `FINDINGS` (`ID`, `SEV`,
+   `TITLE`, `FILE_REF`, `DESCRIPTION_HTML`, `REMEDIATION_HTML`,
+   `PRIORITY_LABEL`), `IMMEDIATE_ACTIONS`, `SHORT_TERM_ACTIONS`,
+   `LONG_TERM_ACTIONS`.
+5. Set each `LIST_EMPTY_<NAME>` to `""` if items exist or a small italic note
+   if empty.
+6. Write the HTML next to the Markdown:
+   `.virtualboard/security/reviews/SR-{YYYY-MM-DD}-{component}.html`.
+7. Verify no literal `{{` remains. Report both file paths.
+
+Reference example: `templates/reports/examples/security-review.example.html`.

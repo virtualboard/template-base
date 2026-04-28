@@ -77,6 +77,7 @@ When executing Architect commands:
 - **Be accurate** - Verify facts from actual code and documentation
 - **Be actionable** - Provide specific technical recommendations
 - **Follow standards** - Align with project architectural patterns
+- **Branded HTML output (opt-in)** - Append `--html` (or say "as HTML" / "branded HTML") to any report-generating command to additionally produce an Astucia AI™ branded HTML companion file alongside the Markdown report. Templates live in `templates/reports/html/`; per-command render steps and placeholders are documented in each command file.
 
 ---
 

@@ -1,0 +1,246 @@
+<!--
+  Template: security-audit.html
+  Used by:  prompts/agents/security/Security-Generate_Security_Audit.md (GSA)
+  Pairs with: .virtualboard/security/audits/SA-{YYYY-MM-DD}.md
+
+  Cross-cutting placeholders: REPORT_TITLE, REPORT_TITLE_HTML, REPORT_SUBTITLE,
+  EYEBROW, GENERATED_DATE, GENERATED_DATETIME, AUTHOR_AGENT, CLASSIFICATION,
+  PROJECT_NAME, BRAND_NAME, BRAND_TAGLINE, BRAND_LOGO_DATAURI, NAV_LINKS,
+  HERO_META_CELLS, FOOTER_PRIMARY_LINE, FOOTER_SECONDARY_LINE, FOOTER_NOTE_BLOCK.
+
+  Per-template scalar placeholders:
+    AUDIT_SCOPE_HTML       – paragraph(s) describing scope
+    EXECUTIVE_SUMMARY_HTML
+    KPI_FINDINGS, KPI_CRITICAL, KPI_HIGH, KPI_MEDIUM, KPI_LOW
+    OVERALL_RATING         – e.g. "Acceptable with caveats"
+    OVERALL_RATING_CLASS   – "ok" | "danger" | ""
+    COMPLIANCE_HTML        – HTML with checkmarks/warnings per standard
+    TIMELINE_HTML          – paragraph(s) with critical/high/medium deadlines
+    NEXT_AUDIT_DATE
+    FINDINGS_JSON          – JSON array of {id, sev, title, file, impact,
+                             likelihood, reco}; same convention as the
+                             architect template's RISKS_JSON.
+
+  Per-template list placeholders:
+    STANDARDS_CHECKED       items: NAME, STATUS_HTML
+    REMEDIATION_IMMEDIATE   items: TITLE, DESC
+    REMEDIATION_SHORT       items: TITLE, DESC
+    REMEDIATION_LONG        items: TITLE, DESC
+
+  Empty-state convention: same as other templates.
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">Overall posture, finding counts by severity, and the one or two issues that should drive the next 7-day plan.</p>
+    {{EXECUTIVE_SUMMARY_HTML}}
+    <div class="callout"><p><strong>Overall rating:</strong> <span class="risk-sev" data-sev="medium" style="margin-left: 6px;">{{OVERALL_RATING}}</span></p></div>
+  </section>
+
+  <section id="kpis">
+    <h2><span class="num">02</span>Findings at a Glance</h2>
+    <p class="lead">Counts by severity. Click "Findings" below to see the full list.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_FINDINGS}}</div><div class="l">Total findings</div></div>
+      <div class="stat"><div class="n">{{KPI_CRITICAL}}</div><div class="l">Critical</div></div>
+      <div class="stat"><div class="n">{{KPI_HIGH}}</div><div class="l">High</div></div>
+      <div class="stat"><div class="n">{{KPI_MEDIUM}}</div><div class="l">Medium</div></div>
+      <div class="stat"><div class="n">{{KPI_LOW}}</div><div class="l">Low</div></div>
+    </div>
+  </section>
+
+  <section id="scope">
+    <h2><span class="num">03</span>Scope</h2>
+    <p class="lead">Domains and surfaces covered by this audit.</p>
+    {{AUDIT_SCOPE_HTML}}
+  </section>
+
+  <section id="findings">
+    <h2><span class="num">04</span>Findings</h2>
+    <p class="lead">Filter by severity or search by keyword. Click any row to expand impact, likelihood, and remediation.</p>
+    <div class="risks-controls">
+      <button class="sev-chip active" data-filter="all">All</button>
+      <button class="sev-chip" data-sev="critical" data-filter="critical">Critical</button>
+      <button class="sev-chip" data-sev="high" data-filter="high">High</button>
+      <button class="sev-chip" data-sev="medium" data-filter="medium">Medium</button>
+      <button class="sev-chip" data-sev="low" data-filter="low">Low</button>
+      <input class="risk-search" type="text" placeholder="Search findings…" />
+    </div>
+    <div class="risks-list" id="risksList"></div>
+  </section>
+
+  <section id="compliance">
+    <h2><span class="num">05</span>Compliance Posture</h2>
+    <p class="lead">Status against the standards in scope.</p>
+    {{COMPLIANCE_HTML}}
+
+    <h3 style="margin-top: 32px;">Standards Checked</h3>
+    <table class="component-table">
+      <thead>
+        <tr><th>Standard</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {{#STANDARDS_CHECKED}}
+        <tr>
+          <td>{{NAME}}</td>
+          <td>{{STATUS_HTML}}</td>
+        </tr>
+        {{/STANDARDS_CHECKED}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_STANDARDS_CHECKED}}
+  </section>
+
+  <section id="remediation">
+    <h2><span class="num">06</span>Remediation Plan</h2>
+    <p class="lead">Phased plan: critical fixes within 7 days, high within 30, medium within 90.</p>
+
+    <div class="reco-track">
+      <div class="reco-horizon">
+        <h3>Within 7 days <span class="tag">CRITICAL</span></h3>
+        <p class="horizon-lead">{{TIMELINE_HTML}}</p>
+        <div class="reco-items">
+          {{#REMEDIATION_IMMEDIATE}}
+          <div class="reco-item">
+            <div class="n">!</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/REMEDIATION_IMMEDIATE}}
+        </div>
+        {{LIST_EMPTY_REMEDIATION_IMMEDIATE}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Within 30 days <span class="tag">HIGH</span></h3>
+        <p class="horizon-lead">Plan and resource now.</p>
+        <div class="reco-items">
+          {{#REMEDIATION_SHORT}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/REMEDIATION_SHORT}}
+        </div>
+        {{LIST_EMPTY_REMEDIATION_SHORT}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Within 90 days <span class="tag">MEDIUM</span></h3>
+        <p class="horizon-lead">Schedule into the quarterly plan.</p>
+        <div class="reco-items">
+          {{#REMEDIATION_LONG}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/REMEDIATION_LONG}}
+        </div>
+        {{LIST_EMPTY_REMEDIATION_LONG}}
+      </div>
+    </div>
+  </section>
+
+  <section id="next-audit">
+    <h2><span class="num">07</span>Next Audit</h2>
+    <p class="lead">Recommended cadence and scope-shifts for the next pass.</p>
+    <div class="callout"><p><strong>Next audit:</strong> {{NEXT_AUDIT_DATE}}</p></div>
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+<script>
+  const RISKS = {{FINDINGS_JSON}};
+  const list = document.getElementById('risksList');
+  function renderRisks(filter, query) {
+    filter = filter || 'all';
+    query = (query || '').trim().toLowerCase();
+    list.innerHTML = '';
+    const filtered = RISKS.filter(function (r) {
+      if (filter !== 'all' && r.sev !== filter) return false;
+      if (!query) return true;
+      return ((r.title || '') + ' ' + (r.file || '') + ' ' + (r.reco || '') + ' ' + (r.impact || '')).toLowerCase().indexOf(query) !== -1;
+    });
+    if (!filtered.length) {
+      list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-mute);border:1px dashed var(--border);border-radius:12px;">No findings match your filters.</div>';
+      return;
+    }
+    filtered.forEach(function (r) {
+      const row = document.createElement('div');
+      row.className = 'risk-row';
+      row.dataset.sev = r.sev;
+      row.innerHTML =
+        '<div class="risk-id">' + r.id + '</div>' +
+        '<div><span class="risk-sev" data-sev="' + r.sev + '">' + r.sev + '</span></div>' +
+        '<div class="risk-title">' + r.title + '</div>' +
+        '<div class="risk-file">' + (r.file || '') + '</div>' +
+        '<div class="risk-chevron">&#9654;</div>';
+      const details = document.createElement('div');
+      details.className = 'risk-details';
+      details.dataset.sev = r.sev;
+      details.innerHTML =
+        '<div class="risk-detail-grid">' +
+          '<div><div class="k">Impact</div><div class="v">' + (r.impact || '') + '</div></div>' +
+          '<div><div class="k">Likelihood</div><div class="v">' + (r.likelihood || '') + '</div></div>' +
+          '<div><div class="k">Remediation</div><div class="v">' + (r.reco || '') + '</div></div>' +
+        '</div>';
+      row.addEventListener('click', function () {
+        const isOpen = row.classList.toggle('open');
+        details.classList.toggle('open', isOpen);
+      });
+      list.appendChild(row);
+      list.appendChild(details);
+    });
+  }
+  renderRisks();
+
+  let currentFilter = 'all';
+  document.querySelectorAll('.sev-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      document.querySelectorAll('.sev-chip').forEach(function (c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      currentFilter = chip.dataset.filter;
+      renderRisks(currentFilter, document.querySelector('.risk-search').value);
+    });
+  });
+  document.querySelector('.risk-search').addEventListener('input', function (e) {
+    renderRisks(currentFilter, e.target.value);
+  });
+</script>
+
+</body>
+</html>

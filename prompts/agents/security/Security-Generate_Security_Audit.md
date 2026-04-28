@@ -108,3 +108,36 @@ Create report at `.virtualboard/security/audits/SA-{YYYY-MM-DD}.md`:
 - Provide audit report path
 - Highlight critical/high-priority issues
 - Suggest immediate remediation steps
+
+### 5. Optional — Generate Branded HTML Report
+
+If the user appends `--html`, says "as HTML"/"branded HTML", or sets
+`format: html`, also produce an HTML rendering. **Additive** — Markdown is
+always written first.
+
+1. Load `templates/reports/html/security-audit.html`. The comment block at
+   the top of that file lists every placeholder this command must compute.
+2. Inline `{{INCLUDE: _partials/<name>.html}}` directives until none remain.
+3. Substitute `{{BRAND_LOGO_DATAURI}}` from
+   `templates/reports/html/_partials/astucia-logo.b64.txt` (strip leading and
+   trailing whitespace).
+4. Substitute `{{BRAND_NAME}}` (`Astucia`) and `{{BRAND_TAGLINE}}`
+   (`AI Development Studio`) unless overridden.
+5. Substitute the cross-cutting placeholders and per-template scalars
+   (`AUDIT_SCOPE_HTML`, `EXECUTIVE_SUMMARY_HTML`, `KPI_FINDINGS`,
+   `KPI_CRITICAL`, `KPI_HIGH`, `KPI_MEDIUM`, `KPI_LOW`, `OVERALL_RATING`,
+   `OVERALL_RATING_CLASS`, `COMPLIANCE_HTML`, `TIMELINE_HTML`,
+   `NEXT_AUDIT_DATE`).
+6. Build `FINDINGS_JSON` as a `JSON.stringify`-formatted array of objects
+   with keys `id`, `sev` (`critical`/`high`/`medium`/`low`), `title`, `file`,
+   `impact`, `likelihood`, `reco`. Escape any literal `</` inside values as
+   `<\/` to keep the inline `<script>` tag intact.
+7. Expand the list blocks (`HERO_META_CELLS`, `STANDARDS_CHECKED`,
+   `REMEDIATION_IMMEDIATE`, `REMEDIATION_SHORT`, `REMEDIATION_LONG`).
+8. Set each `LIST_EMPTY_<NAME>` scalar to `""` if the list has items, or to
+   a small italic note if empty.
+9. Write the HTML next to the Markdown:
+   `.virtualboard/security/audits/SA-{YYYY-MM-DD}.html`.
+10. Verify no literal `{{` remains. Report both file paths.
+
+Reference example: `templates/reports/examples/security-audit.example.html`.

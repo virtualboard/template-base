@@ -1,0 +1,389 @@
+<!--
+  Template: architect-architecture-report.html
+  Used by:  prompts/agents/architect/Architect-Generate_Architecture_Report.md (GAR)
+  Pairs with the Markdown report at:
+            .virtualboard/architecture/reports/AR-{YYYY-MM-DD}.md
+
+  Cross-cutting placeholders:
+    REPORT_TITLE, REPORT_TITLE_HTML, REPORT_SUBTITLE, EYEBROW
+    GENERATED_DATE, GENERATED_DATETIME, AUTHOR_AGENT, CLASSIFICATION
+    PROJECT_NAME, BRAND_NAME, BRAND_TAGLINE, BRAND_LOGO_DATAURI
+    NAV_LINKS, FOOTER_PRIMARY_LINE, FOOTER_SECONDARY_LINE, FOOTER_NOTE_BLOCK
+    HERO_META_CELLS  – list of {LABEL, VALUE}
+
+  Per-template scalar placeholders:
+    MATURITY_PERCENT       – integer 0–100, drives the maturity bar width
+    MATURITY_VERDICT       – e.g. "Production-ready" / "Stabilizing" / "At risk"
+    MATURITY_VERDICT_CLASS – "ok" | "danger" | "" (high/yellow default)
+    MATURITY_STAGE_ACTIVE  – integer 0–4 indicating which of the 5 stage
+                             labels (MATURITY_STAGE_0..4) is the active one
+
+    EXECUTIVE_SUMMARY_HTML – 1–3 paragraphs, HTML allowed
+    OVERVIEW_HTML          – tech stack + architecture pattern paragraphs
+    QUALITY_TABLE_HTML     – HTML for the 6-attribute quality table
+    PATTERNS_HTML          – patterns + SOLID adherence paragraphs
+    INTEGRATION_HTML       – external integrations + API contracts
+    EVOLUTION_HTML         – recent + planned architecture changes
+    METRICS_HTML           – system + code metrics narrative (KPI grid below)
+    CLOSING_ASSESSMENT_HTML
+
+    KPI_RESPONSE_P95, KPI_THROUGHPUT, KPI_ERROR_RATE, KPI_UPTIME
+    KPI_LOC, KPI_COMPLEXITY, KPI_TEST_COVERAGE, KPI_DUPLICATION
+
+    RISKS_JSON             – JSON array of {id, sev, title, file, impact,
+                             likelihood, reco}. sev ∈ critical|high|medium|low.
+                             The agent must JSON.stringify these so the inline
+                             <script> parses them correctly. Escape any "</"
+                             inside string values as "<\\/".
+
+  Per-template list placeholders:
+    TOP_RISKS              items: TITLE, BODY (sentence with optional <strong>)
+    TOP_OPPORTUNITIES               items: TITLE, BODY
+    COMPONENT_TABLE        items: NAME, PURPOSE, TECH, HEALTH (HTML chip)
+    TECH_DEBT_HIGH         items: TITLE, IMPACT, EFFORT, RECO
+    TECH_DEBT_MEDIUM       items: TITLE, IMPACT, EFFORT, RECO
+    TECH_DEBT_LOW          items: TITLE, IMPACT, EFFORT, RECO
+    IMMEDIATE_RECOS        items: TITLE, DESC
+    SHORT_TERM_RECOS       items: TITLE, DESC
+    LONG_TERM_RECOS        items: TITLE, DESC
+    TRADEOFFS              items: BODY_HTML (each item is a full sentence/paragraph)
+
+  Empty-state convention: same as pm-progress-report — set
+  LIST_EMPTY_<NAME> to "" if list has items, or to a small italic note if empty.
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<section class="maturity-band">
+  <div class="maturity-inner">
+    <div class="maturity-label">Architecture Maturity</div>
+    <div>
+      <div class="maturity-track"><div class="maturity-fill" style="width: {{MATURITY_PERCENT}}%"></div></div>
+      <div class="maturity-stages">
+        <span>Prototype</span>
+        <span>Stabilizing</span>
+        <span>Production-ready</span>
+        <span>Hardened</span>
+        <span>Enterprise-grade</span>
+      </div>
+    </div>
+    <div class="maturity-verdict {{MATURITY_VERDICT_CLASS}}">{{MATURITY_VERDICT}}</div>
+  </div>
+</section>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">A principal-level read on architecture health, key risks, and the items most likely to need attention this quarter.</p>
+    {{EXECUTIVE_SUMMARY_HTML}}
+  </section>
+
+  <section id="signals">
+    <h2><span class="num">02</span>Top Signals</h2>
+    <p class="lead">Five risks worth tracking, paired with five opportunities worth taking.</p>
+    <div class="top5">
+      <div class="top5-col risks">
+        <h3>Top Risks</h3>
+        <ol>
+          {{#TOP_RISKS}}
+          <li><strong>{{TITLE}}</strong> — {{BODY}}</li>
+          {{/TOP_RISKS}}
+        </ol>
+        {{LIST_EMPTY_TOP_RISKS}}
+      </div>
+      <div class="top5-col opps">
+        <h3>Top Opportunities</h3>
+        <ol>
+          {{#TOP_OPPORTUNITIES}}
+          <li><strong>{{TITLE}}</strong> — {{BODY}}</li>
+          {{/TOP_OPPORTUNITIES}}
+        </ol>
+        {{LIST_EMPTY_TOP_OPPORTUNITIES}}
+      </div>
+    </div>
+  </section>
+
+  <section id="overview">
+    <h2><span class="num">03</span>System Overview</h2>
+    <p class="lead">Tech stack, architectural pattern, and how the layers fit together.</p>
+    {{OVERVIEW_HTML}}
+
+    <h3 style="margin-top: 36px;">Component Layers</h3>
+    <table class="component-table">
+      <thead>
+        <tr><th>Layer / Component</th><th>Purpose</th><th>Technologies</th><th>Health</th></tr>
+      </thead>
+      <tbody>
+        {{#COMPONENT_TABLE}}
+        <tr>
+          <td>{{NAME}}</td>
+          <td>{{PURPOSE}}</td>
+          <td>{{TECH}}</td>
+          <td>{{HEALTH}}</td>
+        </tr>
+        {{/COMPONENT_TABLE}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_COMPONENT_TABLE}}
+  </section>
+
+  <section id="quality">
+    <h2><span class="num">04</span>Quality Attributes</h2>
+    <p class="lead">Scalability, performance, security, maintainability, testability, reliability — strengths and weaknesses per dimension.</p>
+    {{QUALITY_TABLE_HTML}}
+  </section>
+
+  <section id="risks">
+    <h2><span class="num">05</span>Risks &amp; Findings</h2>
+    <p class="lead">Filter by severity or search for a keyword. Click a row to expand impact, likelihood, and remediation.</p>
+    <div class="risks-controls">
+      <button class="sev-chip active" data-filter="all">All</button>
+      <button class="sev-chip" data-sev="critical" data-filter="critical">Critical</button>
+      <button class="sev-chip" data-sev="high" data-filter="high">High</button>
+      <button class="sev-chip" data-sev="medium" data-filter="medium">Medium</button>
+      <button class="sev-chip" data-sev="low" data-filter="low">Low</button>
+      <input class="risk-search" type="text" placeholder="Search risks…" />
+    </div>
+    <div class="risks-list" id="risksList"></div>
+  </section>
+
+  <section id="tech-debt">
+    <h2><span class="num">06</span>Technical Debt</h2>
+    <p class="lead">Grouped by priority. Effort estimates inform sequencing alongside the recommendations below.</p>
+
+    <h4>High priority</h4>
+    <div class="reco-items">
+      {{#TECH_DEBT_HIGH}}
+      <div class="reco-item">
+        <div class="n">!</div>
+        <div class="body">
+          <div class="title">{{TITLE}}</div>
+          <div class="desc"><strong>Impact:</strong> {{IMPACT}} &middot; <strong>Effort:</strong> {{EFFORT}} &middot; <strong>Recommendation:</strong> {{RECO}}</div>
+        </div>
+      </div>
+      {{/TECH_DEBT_HIGH}}
+    </div>
+    {{LIST_EMPTY_TECH_DEBT_HIGH}}
+
+    <h4>Medium priority</h4>
+    <div class="reco-items">
+      {{#TECH_DEBT_MEDIUM}}
+      <div class="reco-item">
+        <div class="n">·</div>
+        <div class="body">
+          <div class="title">{{TITLE}}</div>
+          <div class="desc"><strong>Impact:</strong> {{IMPACT}} &middot; <strong>Effort:</strong> {{EFFORT}} &middot; <strong>Recommendation:</strong> {{RECO}}</div>
+        </div>
+      </div>
+      {{/TECH_DEBT_MEDIUM}}
+    </div>
+    {{LIST_EMPTY_TECH_DEBT_MEDIUM}}
+
+    <h4>Low priority</h4>
+    <div class="reco-items">
+      {{#TECH_DEBT_LOW}}
+      <div class="reco-item">
+        <div class="n">·</div>
+        <div class="body">
+          <div class="title">{{TITLE}}</div>
+          <div class="desc"><strong>Impact:</strong> {{IMPACT}} &middot; <strong>Effort:</strong> {{EFFORT}} &middot; <strong>Recommendation:</strong> {{RECO}}</div>
+        </div>
+      </div>
+      {{/TECH_DEBT_LOW}}
+    </div>
+    {{LIST_EMPTY_TECH_DEBT_LOW}}
+  </section>
+
+  <section id="patterns">
+    <h2><span class="num">07</span>Patterns, Integrations &amp; Evolution</h2>
+    <p class="lead">Patterns in use, SOLID adherence, integration points, and how the architecture has changed and is changing.</p>
+    <h3>Patterns &amp; Principles</h3>
+    {{PATTERNS_HTML}}
+    <h3>Integration Points</h3>
+    {{INTEGRATION_HTML}}
+    <h3>Evolution</h3>
+    {{EVOLUTION_HTML}}
+  </section>
+
+  <section id="recommendations">
+    <h2><span class="num">08</span>Recommendations</h2>
+    <p class="lead">Three horizons: ship in 0–30 days, plan for 1–3 months, schedule for 3–12 months.</p>
+
+    <div class="reco-track">
+      <div class="reco-horizon">
+        <h3>Immediate <span class="tag">0–30 DAYS</span></h3>
+        <p class="horizon-lead">Items to start this sprint.</p>
+        <div class="reco-items">
+          {{#IMMEDIATE_RECOS}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/IMMEDIATE_RECOS}}
+        </div>
+        {{LIST_EMPTY_IMMEDIATE_RECOS}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Short-term <span class="tag">1–3 MONTHS</span></h3>
+        <p class="horizon-lead">Plan and resource now; deliver this quarter.</p>
+        <div class="reco-items">
+          {{#SHORT_TERM_RECOS}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/SHORT_TERM_RECOS}}
+        </div>
+        {{LIST_EMPTY_SHORT_TERM_RECOS}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Long-term <span class="tag">3–12 MONTHS</span></h3>
+        <p class="horizon-lead">Strategic shifts and architectural pivots.</p>
+        <div class="reco-items">
+          {{#LONG_TERM_RECOS}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/LONG_TERM_RECOS}}
+        </div>
+        {{LIST_EMPTY_LONG_TERM_RECOS}}
+      </div>
+    </div>
+  </section>
+
+  <section id="metrics">
+    <h2><span class="num">09</span>Metrics</h2>
+    <p class="lead">System health and code metrics. Substitute "—" for unavailable values.</p>
+
+    <h3>System metrics</h3>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_RESPONSE_P95}}</div><div class="l">Response p95 (ms)</div></div>
+      <div class="stat"><div class="n">{{KPI_THROUGHPUT}}</div><div class="l">Throughput (req/s)</div></div>
+      <div class="stat"><div class="n">{{KPI_ERROR_RATE}}</div><div class="l">Error rate (%)</div></div>
+      <div class="stat"><div class="n">{{KPI_UPTIME}}</div><div class="l">Uptime (%)</div></div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Code metrics</h3>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_LOC}}</div><div class="l">Lines of code</div></div>
+      <div class="stat"><div class="n">{{KPI_COMPLEXITY}}</div><div class="l">Cyclomatic complexity (avg)</div></div>
+      <div class="stat"><div class="n">{{KPI_TEST_COVERAGE}}</div><div class="l">Test coverage (%)</div></div>
+      <div class="stat"><div class="n">{{KPI_DUPLICATION}}</div><div class="l">Code duplication (%)</div></div>
+    </div>
+
+    {{METRICS_HTML}}
+  </section>
+
+  <section id="closing">
+    <h2><span class="num">10</span>Closing Assessment</h2>
+    {{CLOSING_ASSESSMENT_HTML}}
+
+    <h3 style="margin-top: 32px;">Tradeoffs</h3>
+    <div>
+      {{#TRADEOFFS}}
+      <div class="tradeoff"><p>{{BODY_HTML}}</p></div>
+      {{/TRADEOFFS}}
+    </div>
+    {{LIST_EMPTY_TRADEOFFS}}
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+<script>
+  // ─── Filterable risks table (modeled on reports/virtualboard-architecture-review-rev3.html) ───
+  const RISKS = {{RISKS_JSON}};
+
+  const list = document.getElementById('risksList');
+  function renderRisks(filter, query) {
+    filter = filter || 'all';
+    query = (query || '').trim().toLowerCase();
+    list.innerHTML = '';
+    const filtered = RISKS.filter(function (r) {
+      if (filter !== 'all' && r.sev !== filter) return false;
+      if (!query) return true;
+      return ((r.title || '') + ' ' + (r.file || '') + ' ' + (r.reco || '') + ' ' + (r.impact || '')).toLowerCase().indexOf(query) !== -1;
+    });
+    if (!filtered.length) {
+      list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-mute);border:1px dashed var(--border);border-radius:12px;">No findings match your filters.</div>';
+      return;
+    }
+    filtered.forEach(function (r) {
+      const row = document.createElement('div');
+      row.className = 'risk-row';
+      row.dataset.sev = r.sev;
+      row.innerHTML =
+        '<div class="risk-id">' + r.id + '</div>' +
+        '<div><span class="risk-sev" data-sev="' + r.sev + '">' + r.sev + '</span></div>' +
+        '<div class="risk-title">' + r.title + '</div>' +
+        '<div class="risk-file">' + (r.file || '') + '</div>' +
+        '<div class="risk-chevron">&#9654;</div>';
+      const details = document.createElement('div');
+      details.className = 'risk-details';
+      details.dataset.sev = r.sev;
+      details.innerHTML =
+        '<div class="risk-detail-grid">' +
+          '<div><div class="k">Impact</div><div class="v">' + (r.impact || '') + '</div></div>' +
+          '<div><div class="k">Likelihood</div><div class="v">' + (r.likelihood || '') + '</div></div>' +
+          '<div><div class="k">Recommendation</div><div class="v">' + (r.reco || '') + '</div></div>' +
+        '</div>';
+      row.addEventListener('click', function () {
+        const isOpen = row.classList.toggle('open');
+        details.classList.toggle('open', isOpen);
+      });
+      list.appendChild(row);
+      list.appendChild(details);
+    });
+  }
+  renderRisks();
+
+  let currentFilter = 'all';
+  document.querySelectorAll('.sev-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      document.querySelectorAll('.sev-chip').forEach(function (c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      currentFilter = chip.dataset.filter;
+      renderRisks(currentFilter, document.querySelector('.risk-search').value);
+    });
+  });
+  document.querySelector('.risk-search').addEventListener('input', function (e) {
+    renderRisks(currentFilter, e.target.value);
+  });
+</script>
+
+</body>
+</html>
