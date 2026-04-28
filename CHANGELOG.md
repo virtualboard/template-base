@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-04-28
+
+### Added
+- **Branded HTML report templates** — every report-generating agent command can now optionally produce an Astucia AI™ branded HTML companion file alongside the Markdown report. Opt-in via `--html` (or "as HTML" / "branded HTML" / `format: html`); Markdown remains the default and is always written first.
+- **`templates/reports/`** directory with 21 templates covering 17 required (`R`) report commands plus 4 optional (`S+R`) commands. Includes a foundation of partials (`_partials/head.html`, `topnav.html`, `footer.html`, `back-to-top.html`, `astucia-logo.b64.txt`), a base skeleton (`_base/report.html`), an author guide (`templates/reports/README.md`), and a filled-in reference example for every template under `templates/reports/examples/`.
+- **Per-template HTML files** (`templates/reports/html/`):
+  - PM: `pm-progress-report.html` (GPP), `pm-backlog-grooming.html` (GBG)
+  - Architect: `architect-architecture-report.html` (GAR), `architect-tech-debt.html` (GTD), `architect-adr.html` (GAD, optional)
+  - QA: `qa-test-plan.html` (GTP), `qa-test-coverage.html` (GTCR), `qa-bug-report.html` (GBR), `qa-browser-test-summary.html` (GBAT, optional, wraps Playwright reporter)
+  - Security: `security-audit.html` (GSA), `security-review.html` (GSR), `security-threat-model.html` (GTM)
+  - DevOps: `devops-deployment-readiness.html` (GDRR), `devops-incident-report.html` (GIR), `devops-deployment-checklist.html` (GDC, optional)
+  - Data Engineer: `data-quality-report.html` (GDQ), `data-erd.html` (ERD), `data-pipeline-doc.html` (GDP, optional)
+  - UX Designer: `ux-user-journey.html` (GUJ), `ux-wireframe.html` (GWF), `ux-design-system.html` (GDS)
+- **Mustache-style placeholder syntax** for template substitution — `{{NAME}}` for scalars, `{{#LIST}}…{{/LIST}}` for repeated blocks, `{{INCLUDE: _partials/<name>.html}}` for partial inlining. No runtime, no build step, no new dependency — agents do plain text substitution.
+- **Brand parameterization** via `{{BRAND_NAME}}`, `{{BRAND_TAGLINE}}`, `{{BRAND_LOGO_DATAURI}}` placeholders (defaulted to Astucia values) so downstream forks can re-skin without forking the templates.
+
+### Changed
+- **All 21 report-generating agent command files** updated with an "Optional: Generate Branded HTML Report" section enumerating per-template scalar and list placeholders, the render workflow, and the verification step (grep for `{{` in output).
+- **All 8 role README files** (`pm`, `architect`, `qa`, `security`, `devops`, `data_engineer`, `ux_designer`) updated with a one-line note on the `--html` opt-in.
+- Bumped version from 0.6.0 to 0.7.0 across `version.txt`, `.claude-plugin/plugin.json`, and `.claude-plugin/marketplace.json`.
+
 ## [0.6.0] - 2026-04-11
 
 ### Added

@@ -1,7 +1,7 @@
 {
   "name": "virtualboard",
   "description": "Feature Spec Workflow system with multi-agent collaboration, feature lifecycle management, and specialized agent commands",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": {
     "name": "Ernesto Ruy Sanchez"
   },
