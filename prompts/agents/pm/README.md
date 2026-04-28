@@ -70,6 +70,7 @@ When executing PM commands:
 - **Be actionable** - Provide specific next steps with FTR numbers
 - **Follow templates** - Use the exact report structure provided
 - **Update dates** - Always use current date in YYYY-MM-DD format
+- **Branded HTML output (opt-in)** - Append `--html` (or say "as HTML" / "branded HTML") to any report-generating command to additionally produce an Astucia AI™ branded HTML companion file alongside the Markdown report. Templates live in `templates/reports/html/`; the per-command render steps and placeholders are documented in each command file.
 
 ---
 

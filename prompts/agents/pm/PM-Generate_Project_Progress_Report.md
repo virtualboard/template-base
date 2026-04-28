@@ -216,3 +216,67 @@ When the PM agent receives this command, it should:
 ### 6. Create Reports Directory if Needed
 - Ensure `.virtualboard/reports/` directory exists before writing the report
 - Use `mkdir -p` to create if necessary
+
+### 7. Optional — Generate Branded HTML Report
+
+If the user appends `--html`, says "as HTML"/"branded HTML", or sets
+`format: html`, also produce an HTML rendering. This is **additive** — the
+Markdown report from steps 4–6 is always written first.
+
+1. Load the template `templates/reports/html/pm-progress-report.html`. The
+   comment block at the top of that file lists every placeholder this command
+   must compute.
+2. Resolve every `{{INCLUDE: _partials/<name>.html}}` directive by inlining the
+   referenced file from `templates/reports/html/_partials/`. Iterate until no
+   `{{INCLUDE:` markers remain.
+3. Substitute `{{BRAND_LOGO_DATAURI}}` with the contents of
+   `templates/reports/html/_partials/astucia-logo.b64.txt`, **stripping leading
+   and trailing whitespace** (the file may end with a newline that must not
+   appear inside `src="…"`).
+4. Substitute `{{BRAND_NAME}}` (default `Astucia`) and `{{BRAND_TAGLINE}}`
+   (default `AI Development Studio`) unless the user provided overrides.
+5. Substitute every cross-cutting placeholder
+   (`REPORT_TITLE`, `REPORT_TITLE_HTML`, `REPORT_SUBTITLE`, `EYEBROW`,
+   `GENERATED_DATE`, `GENERATED_DATETIME`, `AUTHOR_AGENT`, `CLASSIFICATION`,
+   `PROJECT_NAME`, `NAV_LINKS`, `FOOTER_PRIMARY_LINE`,
+   `FOOTER_SECONDARY_LINE`, `FOOTER_NOTE_BLOCK`, `EXTRA_SCRIPTS`).
+6. Substitute the per-template scalar placeholders using the same values you
+   computed for the Markdown report:
+   - `HEALTH_VERDICT` (`At risk` / `On track` / `Ahead`) and
+     `HEALTH_VERDICT_CLASS` (`danger` / `ok` / empty)
+   - `EXECUTIVE_SUMMARY_HTML` — 1–3 paragraph executive summary, HTML allowed
+   - `KPI_TOTAL`, `KPI_DONE`, `KPI_REVIEW`, `KPI_IN_PROGRESS`, `KPI_BACKLOG`,
+     `KPI_BLOCKED`
+   - `PCT_DONE`, `PCT_REVIEW`, `PCT_IN_PROGRESS`, `PCT_BACKLOG` (integers,
+     no `%` sign — the template adds it)
+   - `SPRINT_GOAL`, `VELOCITY_PCT`, `POINTS_COMPLETED`, `POINTS_COMMITTED`,
+     `COMPLETED_LAST_7`, `COMPLETED_LAST_30`, `AVG_DAYS_IN_PROGRESS`,
+     `OPEN_BUGS`, `NEXT_REPORT_DATE` — substitute `—` for unknown values
+7. Expand each `{{#LIST}}…{{/LIST}}` block once per item, substituting the
+   inner per-item placeholders:
+   - `HERO_META_CELLS` — `LABEL`, `VALUE`
+   - `IN_PROGRESS` — `FTR_ID`, `TITLE`, `OWNER`, `DAYS_IN_PROGRESS`, `BLOCKERS`
+   - `IN_REVIEW` — `FTR_ID`, `TITLE`, `OWNER`, `REVIEW_STATUS`
+   - `RECENT_DONE` — `FTR_ID`, `TITLE`, `COMPLETED_DATE`
+   - `NEXT_PRIORITIES` — `FTR_ID`, `TITLE`, `COMPLEXITY`
+   - `BLOCKED_BY_DEPS` — `FTR_ID`, `TITLE`, `WAITING_ON`
+   - `BLOCKERS` — `FTR_ID`, `REASON`
+   - `IMMEDIATE_ACTIONS`, `SHORT_TERM`, `LONG_TERM` — `TITLE`, `DESC`
+8. For each list, set the matching `LIST_EMPTY_<NAME>` scalar to `""` if the
+   list has items, or to a short italic note (e.g., `<p class="empty-note">No
+   features in review.</p>`) if the list is empty. Names:
+   `LIST_EMPTY_IN_PROGRESS`, `LIST_EMPTY_IN_REVIEW`, `LIST_EMPTY_RECENT_DONE`,
+   `LIST_EMPTY_NEXT_PRIORITIES`, `LIST_EMPTY_BLOCKERS`,
+   `LIST_EMPTY_BLOCKED_BY_DEPS`, `LIST_EMPTY_IMMEDIATE_ACTIONS`,
+   `LIST_EMPTY_SHORT_TERM`, `LIST_EMPTY_LONG_TERM`.
+9. Write the rendered HTML next to the Markdown file:
+   `.virtualboard/reports/{YYYY-MM-DD}_Project_Progress_Report.html`.
+10. **Verify before reporting completion.** Search the rendered output for any
+    literal `{{` — there must be none. Resolve any leftovers (or substitute the
+    empty string for known-optional slots) before continuing.
+11. In your final reply, list **both** file paths (the `.md` and the `.html`).
+
+A filled-in reference example lives at
+`templates/reports/examples/pm-progress-report.example.html` — open it
+side-by-side with `reports/virtualboard-architecture-review-rev3.html` to
+confirm visual parity.

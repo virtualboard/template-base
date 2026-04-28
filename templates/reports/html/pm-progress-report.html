@@ -1,0 +1,285 @@
+<!--
+  Template: pm-progress-report.html
+  Used by:  prompts/agents/pm/PM-Generate_Project_Progress_Report.md (GPP)
+  Pairs with the Markdown report at:
+            .virtualboard/reports/{YYYY-MM-DD}_Project_Progress_Report.md
+
+  Cross-cutting placeholders (see templates/reports/README.md):
+    REPORT_TITLE, REPORT_TITLE_HTML, REPORT_SUBTITLE, EYEBROW
+    GENERATED_DATE, GENERATED_DATETIME, AUTHOR_AGENT, CLASSIFICATION
+    PROJECT_NAME, BRAND_NAME, BRAND_TAGLINE, BRAND_LOGO_DATAURI
+    NAV_LINKS, MAIN_CONTENT, EXTRA_SCRIPTS
+    HERO_META_CELLS  → list of {LABEL, VALUE}
+    FOOTER_PRIMARY_LINE, FOOTER_SECONDARY_LINE, FOOTER_NOTE_BLOCK
+
+  Per-template scalar placeholders:
+    HEALTH_VERDICT          – "At risk" | "On track" | "Ahead"
+    HEALTH_VERDICT_CLASS    – "danger" | "ok" | "" (drives KPI accent)
+    EXECUTIVE_SUMMARY_HTML  – 1–3 paragraph executive summary (HTML allowed)
+    KPI_TOTAL, KPI_DONE, KPI_REVIEW, KPI_IN_PROGRESS, KPI_BACKLOG, KPI_BLOCKED
+    PCT_DONE, PCT_REVIEW, PCT_IN_PROGRESS, PCT_BACKLOG  (integers, no % sign)
+    SPRINT_GOAL             – text or "—"
+    VELOCITY_PCT            – integer or "—"
+    POINTS_COMPLETED        – integer or "—"
+    POINTS_COMMITTED        – integer or "—"
+    COMPLETED_LAST_7        – integer
+    COMPLETED_LAST_30       – integer
+    AVG_DAYS_IN_PROGRESS    – integer or decimal
+    OPEN_BUGS               – integer or "—"
+    NEXT_REPORT_DATE        – YYYY-MM-DD
+
+  Per-template list placeholders (each name appears as an opening/closing
+  block elsewhere in this file; the agent expands it once per item):
+    IN_PROGRESS       items: FTR_ID, TITLE, OWNER, DAYS_IN_PROGRESS, BLOCKERS
+    IN_REVIEW         items: FTR_ID, TITLE, OWNER, REVIEW_STATUS
+    RECENT_DONE       items: FTR_ID, TITLE, COMPLETED_DATE
+    NEXT_PRIORITIES   items: FTR_ID, TITLE, COMPLEXITY (XS/S/M/L/XL)
+    BLOCKED_BY_DEPS   items: FTR_ID, TITLE, WAITING_ON
+    BLOCKERS          items: FTR_ID, REASON
+    IMMEDIATE_ACTIONS items: TITLE, DESC
+    SHORT_TERM        items: TITLE, DESC
+    LONG_TERM         items: TITLE, DESC
+
+  Empty-state convention: if a list is empty, the surrounding section still
+  renders. Pair the list with a plain-text fallback shown only when empty by
+  substituting LIST_EMPTY_<NAME> with HTML ("" if items exist, an italic note
+  otherwise). The fallbacks below are wrapped in <p class="empty-note">.
+-->
+{{INCLUDE: _partials/head.html}}
+<body>
+
+{{INCLUDE: _partials/topnav.html}}
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">{{EYEBROW}}</span>
+    <h1>{{REPORT_TITLE_HTML}}</h1>
+    <p class="subtitle">{{REPORT_SUBTITLE}}</p>
+    <div class="hero-meta">
+      {{#HERO_META_CELLS}}
+      <div class="cell">
+        <div class="label">{{LABEL}}</div>
+        <div class="value">{{VALUE}}</div>
+      </div>
+      {{/HERO_META_CELLS}}
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section id="summary">
+    <h2><span class="num">01</span>Executive Summary</h2>
+    <p class="lead">A single-glance read on project health, momentum, and the items most likely to need attention this week.</p>
+    {{EXECUTIVE_SUMMARY_HTML}}
+  </section>
+
+  <section id="status">
+    <h2><span class="num">02</span>Feature Status Overview</h2>
+    <p class="lead">Counts and percentages across the canonical lifecycle.</p>
+    <div class="kpi">
+      <div class="stat"><div class="n">{{KPI_TOTAL}}</div><div class="l">Total features</div></div>
+      <div class="stat"><div class="n">{{KPI_DONE}}</div><div class="l">Done · {{PCT_DONE}}%</div></div>
+      <div class="stat"><div class="n">{{KPI_REVIEW}}</div><div class="l">In review · {{PCT_REVIEW}}%</div></div>
+      <div class="stat"><div class="n">{{KPI_IN_PROGRESS}}</div><div class="l">In progress · {{PCT_IN_PROGRESS}}%</div></div>
+      <div class="stat"><div class="n">{{KPI_BACKLOG}}</div><div class="l">Backlog · {{PCT_BACKLOG}}%</div></div>
+      <div class="stat"><div class="n">{{KPI_BLOCKED}}</div><div class="l">Blocked</div></div>
+    </div>
+  </section>
+
+  <section id="in-progress">
+    <h2><span class="num">03</span>In Progress</h2>
+    <p class="lead">Features actively owned. Long-running rows often signal a hidden blocker.</p>
+    <table class="component-table">
+      <thead>
+        <tr><th>Feature</th><th>Title</th><th>Owner</th><th>Days in progress</th><th>Blockers</th></tr>
+      </thead>
+      <tbody>
+        {{#IN_PROGRESS}}
+        <tr>
+          <td>{{FTR_ID}}</td>
+          <td>{{TITLE}}</td>
+          <td>{{OWNER}}</td>
+          <td>{{DAYS_IN_PROGRESS}}</td>
+          <td>{{BLOCKERS}}</td>
+        </tr>
+        {{/IN_PROGRESS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_IN_PROGRESS}}
+  </section>
+
+  <section id="in-review">
+    <h2><span class="num">04</span>In Review</h2>
+    <p class="lead">Features awaiting verification before reaching <code>done</code>.</p>
+    <table class="component-table">
+      <thead>
+        <tr><th>Feature</th><th>Title</th><th>Owner</th><th>Review status</th></tr>
+      </thead>
+      <tbody>
+        {{#IN_REVIEW}}
+        <tr>
+          <td>{{FTR_ID}}</td>
+          <td>{{TITLE}}</td>
+          <td>{{OWNER}}</td>
+          <td>{{REVIEW_STATUS}}</td>
+        </tr>
+        {{/IN_REVIEW}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_IN_REVIEW}}
+  </section>
+
+  <section id="momentum">
+    <h2><span class="num">05</span>Momentum &amp; Next Up</h2>
+    <p class="lead">What just shipped, and what's queued to start next.</p>
+    <div class="top5">
+      <div class="top5-col opps">
+        <h3>Recently Completed</h3>
+        <ol>
+          {{#RECENT_DONE}}
+          <li><strong>{{FTR_ID}}</strong> — {{TITLE}} <em style="color: var(--text-mute);">· {{COMPLETED_DATE}}</em></li>
+          {{/RECENT_DONE}}
+        </ol>
+        {{LIST_EMPTY_RECENT_DONE}}
+      </div>
+      <div class="top5-col">
+        <h3 style="color: var(--accent);">Next Priorities</h3>
+        <ol>
+          {{#NEXT_PRIORITIES}}
+          <li><strong>{{FTR_ID}}</strong> — {{TITLE}} <em style="color: var(--text-mute);">· {{COMPLEXITY}}</em></li>
+          {{/NEXT_PRIORITIES}}
+        </ol>
+        {{LIST_EMPTY_NEXT_PRIORITIES}}
+      </div>
+    </div>
+  </section>
+
+  <section id="blockers">
+    <h2><span class="num">06</span>Blockers &amp; Dependency Holds</h2>
+    <p class="lead">Active blockers and features waiting on upstream work.</p>
+
+    <h4>Active blockers</h4>
+    <div>
+      {{#BLOCKERS}}
+      <div class="tradeoff"><p><strong>{{FTR_ID}}</strong> — {{REASON}}</p></div>
+      {{/BLOCKERS}}
+    </div>
+    {{LIST_EMPTY_BLOCKERS}}
+
+    <h4>Blocked by dependencies</h4>
+    <table class="component-table">
+      <thead>
+        <tr><th>Feature</th><th>Title</th><th>Waiting on</th></tr>
+      </thead>
+      <tbody>
+        {{#BLOCKED_BY_DEPS}}
+        <tr>
+          <td>{{FTR_ID}}</td>
+          <td>{{TITLE}}</td>
+          <td>{{WAITING_ON}}</td>
+        </tr>
+        {{/BLOCKED_BY_DEPS}}
+      </tbody>
+    </table>
+    {{LIST_EMPTY_BLOCKED_BY_DEPS}}
+  </section>
+
+  <section id="recommendations">
+    <h2><span class="num">07</span>Recommended Next Steps</h2>
+    <p class="lead">Three horizons. Read top-down: immediate, then sprint, then roadmap.</p>
+
+    <div class="reco-track">
+      <div class="reco-horizon">
+        <h3>Immediate <span class="tag">THIS WEEK</span></h3>
+        <p class="horizon-lead">Items that should be in motion before the next progress report.</p>
+        <div class="reco-items">
+          {{#IMMEDIATE_ACTIONS}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/IMMEDIATE_ACTIONS}}
+        </div>
+        {{LIST_EMPTY_IMMEDIATE_ACTIONS}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Short-term <span class="tag">NEXT SPRINT</span></h3>
+        <p class="horizon-lead">Plan-now items for the following cycle.</p>
+        <div class="reco-items">
+          {{#SHORT_TERM}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/SHORT_TERM}}
+        </div>
+        {{LIST_EMPTY_SHORT_TERM}}
+      </div>
+
+      <div class="reco-horizon">
+        <h3>Long-term <span class="tag">ROADMAP</span></h3>
+        <p class="horizon-lead">Strategic initiatives or epics worth tracking.</p>
+        <div class="reco-items">
+          {{#LONG_TERM}}
+          <div class="reco-item">
+            <div class="n">→</div>
+            <div class="body">
+              <div class="title">{{TITLE}}</div>
+              <div class="desc">{{DESC}}</div>
+            </div>
+          </div>
+          {{/LONG_TERM}}
+        </div>
+        {{LIST_EMPTY_LONG_TERM}}
+      </div>
+    </div>
+  </section>
+
+  <section id="capacity">
+    <h2><span class="num">08</span>Capacity &amp; Trends</h2>
+    <p class="lead">Sprint capacity and rolling completion metrics. Substitute "—" for unknown values.</p>
+
+    <div class="callout">
+      <p><strong>Sprint goal:</strong> {{SPRINT_GOAL}}</p>
+    </div>
+
+    <div class="kpi">
+      <div class="stat"><div class="n">{{POINTS_COMPLETED}}</div><div class="l">Points completed</div></div>
+      <div class="stat"><div class="n">{{POINTS_COMMITTED}}</div><div class="l">Points committed</div></div>
+      <div class="stat"><div class="n">{{VELOCITY_PCT}}%</div><div class="l">Velocity</div></div>
+      <div class="stat"><div class="n">{{COMPLETED_LAST_7}}</div><div class="l">Completed · 7d</div></div>
+      <div class="stat"><div class="n">{{COMPLETED_LAST_30}}</div><div class="l">Completed · 30d</div></div>
+      <div class="stat"><div class="n">{{AVG_DAYS_IN_PROGRESS}}</div><div class="l">Avg days in progress</div></div>
+      <div class="stat"><div class="n">{{OPEN_BUGS}}</div><div class="l">Open bugs</div></div>
+    </div>
+  </section>
+
+</main>
+
+{{INCLUDE: _partials/footer.html}}
+
+{{INCLUDE: _partials/back-to-top.html}}
+
+<style>
+  .empty-note {
+    color: var(--text-mute);
+    font-size: 13px;
+    font-style: italic;
+    padding: 14px 18px;
+    background: var(--bg-1);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    margin: 12px 0 0;
+  }
+</style>
+
+</body>
+</html>
