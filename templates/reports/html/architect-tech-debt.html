@@ -1,33 +1,12 @@
 <!--
   Template: architect-tech-debt.html
   Used by:  prompts/agents/architect/Architect-Generate_Technical_Debt_Report.md (GTD)
-  Pairs with: .virtualboard/architecture/technical-debt/TD-{YYYY-MM-DD}.md
+  Pairs with: $VB_ROOT/reports/architecture/technical-debt/TD-{YYYY-MM-DD}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    EXECUTIVE_SUMMARY_HTML
-    KPI_TOTAL, KPI_HIGH, KPI_MEDIUM, KPI_LOW
-    EFFORT_TOTAL_WEEKS     – e.g. "11.5"
-    DEBT_TREND             – "Increasing" | "Stable" | "Decreasing"
-    DEBT_TREND_CLASS       – "danger" | "" | "ok"
-    METRICS_HTML           – complexity / duplication / coverage paragraphs
-    DEPENDENCIES_HTML      – outdated dependencies + deprecated APIs
-    ARCHITECTURE_DEBT_HTML
-    PERFORMANCE_HTML
-    SECURITY_HTML
-    DOCUMENTATION_HTML
-    COST_BENEFIT_HTML
-    NEXT_REVIEW_DATE
-
-  Per-template list placeholders:
-    DEBT_BY_CATEGORY       items: CATEGORY, COUNT, HIGH, MEDIUM, LOW, EFFORT_DAYS
-    HIGH_DEBT              items: ID, TITLE, CATEGORY, SEVERITY, LOCATION, IMPACT, EFFORT, RISK, RECO
-    MEDIUM_DEBT            items: ID, TITLE, CATEGORY, LOCATION, IMPACT, EFFORT, RECO
-    LOW_DEBT               items: ID, TITLE, CATEGORY, LOCATION, RECO
-    SPRINT_1_ITEMS         items: ID, TITLE, OWNER, DUE
-    SPRINT_2_3_ITEMS       items: ID, TITLE, OWNER, DUE
-    QUARTER_ITEMS          items: TITLE, DESC
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template architect-tech-debt --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

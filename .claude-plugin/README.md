@@ -1,423 +1,148 @@
 # VirtualBoard Claude Code Plugin
 
-A comprehensive Feature Spec Workflow system for Claude Code that enables multi-agent collaboration with specialized roles, feature lifecycle management, and powerful agent commands.
+VirtualBoard packages its Markdown-first software-delivery framework as a
+Claude Code marketplace plugin. The installed plugin contributes:
 
-## Overview
+- 10 specialized agents
+- 31 namespaced workflow commands
+- 1 feature implementation skill (`work-on`)
 
-VirtualBoard transforms how you manage features and collaborate with AI agents in your projects. It provides:
+Claude Code reports commands and skills together under `Skills`, so the
+expected installed inventory is **Skills (32)** and **Agents (10)**.
 
-- **10 specialized AI agent roles** (PM, Architect, Backend/Frontend/Fullstack Dev, QA, DevOps, Security, Data Engineer, UX Designer)
-- **29+ agent commands** for common development tasks
-- **Feature lifecycle management** (backlog → in-progress → review → done)
-- **Markdown-first workflow** for easy version control and collaboration
-- **Built-in validation** and automation scripts
+## Install
 
-## Features
-
-### Multi-Agent System
-
-Each agent role comes with:
-- **Specialized prompts** defining role responsibilities and workflows
-- **Custom commands** tailored to that role's tasks
-- **Clear rules of engagement** for collaboration
-
-**Available Agents:**
-- **Project Manager** - Sprint planning, progress reports, backlog grooming
-- **System Architect** - Architecture decisions, reviews, technical debt tracking
-- **Backend Developer** - API endpoints, database migrations, documentation
-- **Frontend Developer** - Components, accessibility, Storybook stories
-- **Fullstack Developer** - Full features, integration contracts, E2E tests
-- **QA Engineer** - Test plans, bug reports, coverage analysis
-- **DevOps Engineer** - Deployment checklists, incident response, readiness checks
-- **Security Engineer** - Security audits, threat models, reviews
-- **Data Engineer** - Data pipelines, metrics dashboards, data quality, ERDs
-- **UX/Product Designer** - User journeys, wireframes, design systems
-
-### Feature Lifecycle Management
-
-Features move through a clear lifecycle:
-
-```
-backlog → in-progress → review → done
-              ↓
-           blocked (when dependencies aren't met)
-```
-
-Each feature is a Markdown file with:
-- Structured frontmatter (validated against JSON schema)
-- Problem statement and requirements
-- Acceptance criteria
-- Implementation notes and links
-- Owner tracking
-
-### Agent Commands
-
-30+ specialized commands across all roles:
-
-**Project Manager Commands:**
-- `GPP` - Generate Project Progress Report
-- `GBG` - Generate Backlog Grooming Report
-
-**Architect Commands:**
-- `GAD` - Generate Architecture Diagram
-- `GAR` - Generate Architecture Review
-- `GTD` - Generate Technical Debt Analysis
-
-**Backend Developer Commands:**
-- `GAD` - Generate API Documentation
-- `GAE` - Generate API Endpoint
-- `GDM` - Generate Data Migration
-
-**Frontend Developer Commands:**
-- `GAA` - Generate Accessibility Audit
-- `GC` - Generate Component
-- `GCS` - Generate Component Storybook
-
-**Fullstack Developer Commands:**
-- `GFF` - Generate Full Feature
-- `GIC` - Generate Integration Contract
-- `GETE` - Generate End-to-End Test
-
-**QA Engineer Commands:**
-- `GBR` - Generate Bug Report
-- `GTCR` - Generate Test Coverage Report
-- `GTP` - Generate Test Plan
-- `GBAT` - Generate Browser Automation Tests (Playwright)
-
-**DevOps Commands:**
-- `GDC` - Generate Deployment Checklist
-- `GDRR` - Generate Deployment Readiness Report
-- `GIR` - Generate Incident Report
-
-**Security Commands:**
-- `GSA` - Generate Security Audit
-- `GSR` - Generate Security Review
-- `GTM` - Generate Threat Model
-
-**Data Engineer Commands:**
-- `GDP` - Generate Data Pipeline
-- `GMD` - Generate Metrics Dashboard
-- `GDQ` - Generate Data Quality Report
-- `ERD` - Generate Entity Relationship Diagram
-
-**UX Designer Commands:**
-- `GDS` - Generate Design System Component
-- `GUJ` - Generate User Journey Map
-- `GWF` - Generate Wireframe
-
-## Installation
-
-### From GitHub (Recommended)
-
-1. Clone or install the plugin:
-   ```bash
-   claude plugin marketplace add virtualboard/template-base
-   claude plugin install virtualboard
-   ```
-
-### Manual Installation
-
-1. Clone the repository to your plugins directory
-2. Run validation:
-   ```bash
-   claude plugin validate
-   ```
-
-## Usage
-
-### Quick Start
-
-1. **Initialize VirtualBoard in your project:**
-   ```bash
-   # Copy the VirtualBoard structure to your project
-   cp -r /path/to/template-base/{features,agents,prompts,scripts,templates,schemas} .virtualboard
-   ```
-
-2. **Install the latest `vb` CLI (required):**
-   ```bash
-   ./scripts/install-vb-cli.sh --ensure-latest
-   vb version
-   ```
-   `--ensure-latest` installs when missing, upgrades via `vb upgrade` (with `sudo vb upgrade` fallback) when outdated, and is a no-op when already up to date.
-
-3. **Start using agents:**
-   ```bash
-   # In Claude Code, agents will automatically detect the VirtualBoard structure
-   # Just ask Claude to adopt a role:
-   "Adopt the Project Manager agent role and review the backlog"
-   ```
-
-### Working with Features
-
-All feature commands run through the `vb` CLI. Ensure the latest version is installed first: `./scripts/install-vb-cli.sh --ensure-latest`.
-
-**Create a new feature:**
-```bash
-vb new "User Authentication" security backend
-```
-
-**Move feature to in-progress:**
-```bash
-vb move FTR-0001 in-progress --owner fullstack_dev
-```
-
-**Validate all features:**
-```bash
-vb validate
-```
-
-**Generate feature index:**
-```bash
-vb index
-```
-
-### Using Agent Commands
-
-When working with an agent, you can trigger specialized commands:
-
-```
-# As Project Manager
-"GPP - Generate project progress report"
-
-# As Backend Developer
-"GAE - Create a new API endpoint for user registration"
-
-# As Frontend Developer
-"GC - Generate a UserProfile component"
-
-# Commands can also be triggered by their full file names
-# e.g., "PM-Generate_Project_Progress_Report" or short code "GPP"
-```
-
-Each command follows a structured workflow and produces standardized output.
-
-## Directory Structure
-
-```
-your-project/
-├── features/                 # Feature specifications
-│   ├── backlog/             # Unassigned features
-│   ├── in-progress/         # Features being worked on
-│   ├── blocked/             # Features waiting on dependencies
-│   ├── review/              # Features ready for review
-│   ├── done/                # Completed features
-│   └── INDEX.md             # Auto-generated feature index
-├── agents/                  # Agent role definitions
-│   ├── pm.md
-│   ├── architect.md
-│   ├── backend_dev.md
-│   ├── frontend_dev.md
-│   ├── fullstack_dev.md
-│   ├── qa.md
-│   ├── devops_engineer.md
-│   ├── security_compliance_engineer.md
-│   ├── data_analytics_engineer.md
-│   ├── ux_product_designer.md
-│   ├── AGENTS.md            # Agent system overview
-│   └── RULES.md             # Shared rules of engagement
-├── prompts/                 # Agent commands
-│   ├── agents/              # Role-specific commands
-│   │   ├── pm/
-│   │   ├── architect/
-│   │   ├── backend_dev/
-│   │   ├── frontend_dev/
-│   │   ├── fullstack_dev/
-│   │   ├── qa/
-│   │   ├── devops/
-│   │   ├── security/
-│   │   ├── data_engineer/
-│   │   └── ux_designer/
-│   ├── common/              # Shared templates
-│   └── AGENTS.md            # Commands overview
-├── scripts/                 # Bootstrap + helper scripts
-│   ├── install-vb-cli.sh    # Bootstrap installer for the `vb` CLI
-│   └── worktree-setup.sh    # Git worktree setup for /work-on skill
-├── templates/               # Templates
-│   ├── feature.md           # Feature spec template
-│   ├── pr-template.md       # Pull request template
-│   └── rules.yml            # Agent rules configuration
-└── schemas/                 # Validation schemas
-    └── frontmatter.schema.json
-```
-
-## Virtual Board CLI
-
-The [Virtual Board CLI (`vb`)](https://github.com/virtualboard/vb-cli) is **required** for all feature workflow operations. Install or upgrade it with the bootstrap script:
+Add the repository marketplace and install the plugin:
 
 ```bash
-./scripts/install-vb-cli.sh --ensure-latest
+claude plugin marketplace add virtualboard/template-base
+claude plugin install virtualboard@virtualboard-marketplace
 ```
 
-`--ensure-latest` is non-interactive and handles every state: install when missing, `vb upgrade` (with `sudo vb upgrade` fallback) when outdated, no-op when already up to date. Agents should run this at the start of any task.
+Inspect the installed component inventory:
 
-Core commands:
 ```bash
-vb new "Feature Title" label1 label2
-vb move FTR-0001 in-progress --owner fullstack_dev
-vb validate
-vb index
-vb upgrade
+claude plugin details virtualboard@virtualboard-marketplace
 ```
 
-## Benefits
+The plugin supplies agent behavior and workflows. Run it in a project that has
+been initialized as a VirtualBoard workspace and follow the workspace's
+`AGENTS.md` and `virtualboard.json` contract.
 
-### For Teams
-- **Clear responsibilities** - Each agent knows their role
-- **Parallel work** - Multiple agents can work on different features simultaneously
-- **Consistent workflow** - Standardized processes across all features
-- **Automated validation** - Catch issues early with built-in validation
+## Components
 
-### For AI Collaboration
-- **Deterministic** - Clear rules that AI agents can follow reliably
-- **Context-aware** - Agents understand the full project structure
-- **Specialized** - Each agent has focused expertise
-- **Traceable** - All changes are tracked through feature files
+### Agents
 
-### For Development
-- **Markdown-first** - Easy to version control and review
-- **Automation-ready** - One CLI entry point for every workflow operation
-- **CI/CD friendly** - Validation hooks for continuous integration
-- **Zero runtime dependencies** - A single static `vb` binary, no Node.js required
+The following agents are available by their scoped plugin names:
 
-## Configuration
+- `pm` — project planning and coordination
+- `architect` — system design and architecture decisions
+- `backend-dev` — APIs, data stores, and server-side behavior
+- `frontend-dev` — interfaces, accessibility, and client behavior
+- `fullstack-dev` — end-to-end implementation
+- `qa` — quality planning and verification
+- `devops` — delivery, infrastructure, and reliability
+- `security` — security and compliance analysis
+- `data` — analytics, pipelines, and data quality
+- `ux` — product and experience design
 
-### Customizing Agent Roles
+### Workflow commands
 
-Edit agent files in `agents/` to customize:
-- Role responsibilities
-- Communication style
-- Workflows and processes
-- Tool preferences
+Commands use collision-free names derived from the canonical command IDs. For
+example:
 
-### Adding New Commands
+```text
+/virtualboard:pm-progress-report
+/virtualboard:architect-decision
+/virtualboard:backend-api-documentation
+/virtualboard:qa-browser-automation
+/virtualboard:security-threat-model
+```
 
-1. Create a new command file in `prompts/agents/{role}/`
-2. Follow the command structure template
-3. Update the role's README to list the new command
-4. Test with validation scripts
+The complete command registry, aliases, role ownership, and effect declarations
+live in `virtualboard.json` at the repository root.
 
-### Modifying Feature Template
+### Feature implementation skill
 
-Edit `templates/feature.md` to customize:
-- Frontmatter fields
-- Section structure
-- Acceptance criteria format
-- Implementation notes
+Use the namespaced skill to work on a feature:
 
-## Validation
+```text
+/virtualboard:work-on FTR-0001
+```
 
-The system includes comprehensive validation:
+## Package layout
 
-- **Schema validation** - Frontmatter must match JSON schema
-- **Location validation** - File location must match status field
-- **Dependency validation** - No circular dependencies
-- **Ownership validation** - Prevent conflicts
+This repository is a marketplace root, while the distributable plugin is a
+self-contained subdirectory:
 
-Run validation:
+```text
+.claude-plugin/
+  marketplace.json
+plugins/claude/virtualboard/
+  .claude-plugin/plugin.json
+  agents/
+  commands/
+  skills/
+```
+
+Using a dedicated plugin root is intentional. Claude Code discovers components
+from the standard directories, strict validation does not mistake framework
+documentation for runtime agents, installed plugins are self-contained, and
+`claude plugin details` can report the complete inventory.
+
+The runtime files under `agents/`, `commands/`, and `skills/` inside the plugin
+package are generated. Their canonical sources are:
+
+- `virtualboard.json` — role and command registry plus inventory expectations
+- `agents/` — agent prompts
+- `prompts/agents/` — workflow command bodies
+- `skills/` — reusable skills and supporting files
+
+## Development and validation
+
+After changing a canonical component, synchronize the package:
+
 ```bash
-vb validate
+python3 tools/sync_claude_plugin.py --write
+python3 tools/sync_work_on_plugins.py --write
 ```
 
-## Integration
+Verify generated-file drift without changing files:
 
-### CI/CD Integration
-
-Add to your CI pipeline:
-
-```yaml
-- name: Install Virtual Board CLI
-  run: |
-    ./scripts/install-vb-cli.sh --ensure-latest
-    vb version
-
-- name: Validate Features
-  run: vb validate
-
-- name: Generate Index
-  run: vb index
+```bash
+python3 tools/sync_claude_plugin.py --check
+python3 tools/sync_work_on_plugins.py --check
 ```
 
-### Pre-commit Hooks
+Run strict manifest validation and the isolated installation smoke test:
 
-Add to `.pre-commit-config.yaml`:
-
-```yaml
-- repo: local
-  hooks:
-    - id: validate-features
-      name: Validate feature specs
-      entry: vb validate
-      language: system
-      pass_filenames: false
+```bash
+claude plugin validate plugins/claude/virtualboard --strict
+claude plugin validate . --strict
+tests/test-claude-plugin.sh
 ```
 
-## Examples
+The smoke test installs the marketplace into a temporary `HOME`; it does not
+modify the developer's global Claude Code configuration. If the Claude Code CLI
+is not installed, it still verifies generated inventory and skips runtime
+checks. Set `REQUIRE_CLAUDE_PLUGIN_CLI=1` to make a missing CLI fail.
 
-### Sample Features Included
+For an interactive local development session, load the actual plugin root:
 
-- **FTR-0001** (backlog) - User Authentication
-- **FTR-0002** (in-progress) - Dashboard Widgets
-- **FTR-0003** (blocked) - External API Integration
-- **FTR-0004** (review) - Notification System
-- **FTR-0005** (done) - Basic Application Layout
+```bash
+claude --plugin-dir ./plugins/claude/virtualboard
+```
 
-### Sample Workflows
+## Release invariant
 
-**Sprint Planning Workflow:**
-1. PM agent adopts role: "Adopt PM role"
-2. Reviews backlog: "Show me available features"
-3. Generates progress report: "GPP"
-4. Grooms backlog: "GBG"
+Before publishing, all of the following must agree:
 
-**Feature Development Workflow:**
-1. Developer claims feature: `vb move FTR-0001 in-progress backend_dev`
-2. Architect reviews design: "Adopt architect role and GAR for FTR-0001"
-3. Backend dev implements: "Adopt backend_dev role and GAE for user login"
-4. QA creates test plan: "Adopt qa role and GTP for FTR-0001"
-5. Move to review: `vb move FTR-0001 review`
-
-## Troubleshooting
-
-### "Feature already owned"
-
-- Another agent is working on it
-- Check `/features/INDEX.md` for ownership
-
-### "Circular dependency"
-
-- Dependencies form a loop
-- Review feature dependencies in frontmatter
-
-### "Invalid transition"
-
-- Not allowed to move to that status
-- Check lifecycle rules in `agents/RULES.md`
-
-### `vb: command not found`
-
-- Install (or upgrade) the CLI: `./scripts/install-vb-cli.sh --ensure-latest`
-- Verify with `vb version`
-
-## Contributing
-
-Contributions welcome! Please:
-1. Follow existing patterns
-2. Update documentation
-3. Run `vb validate` before committing
-4. Regenerate the feature index with `vb index`
+1. `virtualboard.json` role, workflow, and skill expectations
+2. generated package contents
+3. `.claude-plugin/marketplace.json` metadata and source path
+4. `plugins/claude/virtualboard/.claude-plugin/plugin.json` metadata
+5. strict validation and installed `claude plugin details` output
 
 ## License
 
 MIT
-
-## Support
-
-- GitHub Issues: <https://github.com/virtualboard/template-base/issues>
-- Documentation: See `/docs` directory
-- Examples: See `/features` directory
-
-## Version
-
-Current version: 0.1.0
-
-See CHANGELOG.md for version history.

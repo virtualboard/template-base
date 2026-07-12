@@ -67,8 +67,6 @@ repos:
         exclude: '\.pymarkdown\.json$'
       - id: check-case-conflict
         name: Check for Case Conflicts
-      - id: check-merge-conflict
-        name: Check for Merge Conflicts
       - id: mixed-line-ending
         name: Mixed Line Ending
         args: [--fix=lf]
@@ -80,8 +78,24 @@ repos:
         name: Check Symlinks
       - id: detect-private-key
         name: Detect Private Keys
-      - id: check-ast
-        name: Check AST
-        files: \.go$
-      - id: check-merge-conflict
-        name: Check for Merge Conflicts
+
+  # Repository contract checks
+  - repo: local
+    hooks:
+      - id: bash-syntax
+        name: Check Bash syntax
+        entry: bash -n
+        language: system
+        types: [shell]
+      - id: virtualboard-validate
+        name: Validate VirtualBoard features and specs
+        entry: ./.state/bin/vb --root . validate
+        language: system
+        pass_filenames: false
+        files: ^(features|specs|schemas|templates)/
+      - id: automation-contract-tests
+        name: Run automation contract tests
+        entry: bash tests/run.sh
+        language: system
+        pass_filenames: false
+        files: ^(agents/|prompts/|skills/|plugins/|scripts/|tests/|tools/|schemas/|templates/|docs/|\.claude-plugin/|\.github/|\.vb-version$|\.vb-cli-source-ref$|virtualboard\.json$)

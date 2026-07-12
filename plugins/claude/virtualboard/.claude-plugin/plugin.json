@@ -1,0 +1,19 @@
+{
+  "name": "virtualboard",
+  "description": "Feature Spec Workflow system with multi-agent collaboration, feature lifecycle management, and specialized agent commands",
+  "version": "0.8.0",
+  "author": {
+    "name": "Ernesto Ruy Sanchez"
+  },
+  "homepage": "https://github.com/virtualboard/template-base",
+  "repository": "https://github.com/virtualboard/template-base",
+  "license": "MIT",
+  "keywords": [
+    "feature-management",
+    "workflow",
+    "agents",
+    "project-management",
+    "collaboration",
+    "markdown"
+  ]
+}

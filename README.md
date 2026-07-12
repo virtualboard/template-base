@@ -1,430 +1,375 @@
-# VirtualBoard Feature Spec Workflow
+# VirtualBoard
 
-This directory contains the complete implementation of the Feature Spec Workflow system for managing features with multiple AI agents.
+VirtualBoard is a Markdown-first feature workflow for people and coding agents.
+It keeps requirements, lifecycle state, ownership, review evidence, and project
+decisions in Git while using a pinned `vb` CLI for safe mutations.
 
-## Claude Code Plugin
+VirtualBoard is intentionally a workflow and packaging framework, not a hosted
+agent scheduler. Local locks coordinate processes that share a workspace. Teams
+working across separate clones must publish an atomic remote claim before
+implementation or configure another remote lease mechanism. Local-only work must
+explicitly select shared-workspace mode; it is never inferred silently.
 
-VirtualBoard is now available as a Claude Code plugin! Install it directly in Claude Code:
+## Why it exists
+
+- One durable feature specification per user-visible change
+- Reviewable lifecycle state instead of chat-only task memory
+- Explicit ownership, dependencies, authorization, and handoff rules
+- Isolated worktrees with a canonical branch convention
+- Specialized roles and workflows packaged for supported agent runtimes
+- Executable validation, fixtures, and plugin inventory checks
+
+[`virtualboard.json`](virtualboard.json) is the machine-readable mirror of the
+fixed framework contract, not a project customization surface. The CLI rejects
+changes to canonical paths, identities, statuses, transitions, ownership rules,
+and actor syntax. Human guides, plugin packages, schemas, and tests must agree
+with that contract.
+
+## Lifecycle
+
+```text
+backlog ──> in-progress ──> review ──> done
+                 │             │
+                 └──> blocked ─┘
+```
+
+The exact allowed transitions are:
+
+| From | To |
+|---|---|
+| `backlog` | `in-progress` |
+| `in-progress` | `blocked`, `review` |
+| `blocked` | `in-progress` |
+| `review` | `in-progress`, `done` |
+| `done` | terminal |
+
+Active, blocked, review, and done features require a concrete owner. `backlog`
+may use `owner: unassigned`. `implementation_owner` preserves the implementer
+when review ownership changes, while `status_changed` records lifecycle age
+without overloading the generic `updated` date.
+
+## Repository quick start
+
+This checkout is itself a valid VirtualBoard workspace:
+
+On macOS and Linux, prerequisites are Git, Bash, curl, and Python 3.9 or newer.
+On Windows, the complete repository and agent workflow requires Git Bash or WSL
+plus Git and Python 3.9 or newer. PowerShell 5.1 or newer can bootstrap and
+inspect the native `vb.exe`, but it does not run the Bash worktree, `/work-on`,
+plugin-generation, or verification scripts. Node is needed only for the optional
+Claude runtime packaging check and JavaScript-specific project workflows.
+
+```bash
+VB_ROOT="$(./bin/vb-root)"
+"$VB_ROOT/scripts/install-vb-cli.sh" \
+  --ensure-latest "$VB_ROOT/.state/bin"
+VB="$VB_ROOT/.state/bin/vb"
+
+"$VB" version
+"$VB" --root "$VB_ROOT" validate
+python3 "$VB_ROOT/tools/check_contract.py"
+bash "$VB_ROOT/tests/run.sh"
+```
+
+Native Windows PowerShell can bootstrap the release's `.exe` asset and run
+read-only validation and contract inspection without Git Bash:
+
+```powershell
+$VBRoot = (Resolve-Path .).Path
+& "$VBRoot\scripts\install-vb-cli.ps1" `
+  -EnsureLatest -InstallDirectory "$VBRoot\.state\bin"
+$VB = "$VBRoot\.state\bin\vb.exe"
+
+& $VB version
+& $VB --root $VBRoot validate
+python "$VBRoot\tools\check_contract.py"
+```
+
+After that bootstrap, use Git Bash or WSL for the full command sequence shown in
+this repository. Native PowerShell support is intentionally limited to CLI
+bootstrap and read-only inspection, including the Python contract check above.
+Use Git Bash or WSL before feature mutation, worktree, plugin-generation, or the
+full repository test suite.
+
+Both installers download the exact version in `.vb-version` over bounded HTTPS,
+require exactly one valid SHA-256 manifest entry, verify the binary before and
+after same-directory staging, reject symlink/junction destination components,
+flush staged bytes, and activate with one atomic replacement. The Unix installer
+never uses sudo unless `--allow-sudo` is explicitly supplied; the Windows
+installer never elevates. Installing beneath `.state/bin` avoids modifying a
+system binary and prevents PATH ambiguity.
+
+### Initialized application layout
+
+`vb init` places the framework beneath `.virtualboard/` in an application repo.
+Resolve it without hardcoding a layout:
+
+```bash
+APP_ROOT="$(git rev-parse --show-toplevel)"
+VB_ROOT="$("$APP_ROOT/.virtualboard/bin/vb-root" "$APP_ROOT")"
+export VIRTUALBOARD_ROOT="$VB_ROOT"
+```
+
+When developing this template directly, `./bin/vb-root` resolves the repository
+root. `VIRTUALBOARD_ROOT` always wins when explicitly set to a directory containing
+`virtualboard.json`.
+
+Initialization downloads only the template release pinned into that CLI,
+validates its declared version and required scaffold files, extracts it through
+a bounded path-safe staging directory, and atomically activates a clean board.
+Template feature history is never copied into a new application. A second
+`vb init` refuses to overwrite an existing workspace; `vb init --update`
+previews/reviews framework-file changes, while an explicit `--force` refresh
+preserves `features`, `archive`, `specs`, `reports`, locks, and `.state` data.
+
+`vb install cursor` and `vb install opencode` copy the scaffolded integration
+sources into the application atomically, preserve unrelated IDE configuration,
+and fail on differing managed files unless `--force` is explicitly chosen.
+Use global `--dry-run` first when inspecting an installation. Claude installation
+invokes its external marketplace and remains an explicit `install` plus
+`external-write` effect.
+
+## Core workflow
+
+All mutations use the workspace-local pinned CLI:
+
+```bash
+VB="$VIRTUALBOARD_ROOT/.state/bin/vb"
+export AGENT_ID="dev-alex"
+
+"$VB" --root "$VIRTUALBOARD_ROOT" --actor "$AGENT_ID" new "User Authentication" auth security
+"$VB" --root "$VIRTUALBOARD_ROOT" validate
+LOCK_TOKEN=$("$VB" --root "$VIRTUALBOARD_ROOT" --actor "$AGENT_ID" lock FTR-0001 --token-only)
+[[ "$LOCK_TOKEN" =~ ^[0-9a-f]{64}$ ]] || exit 1
+"$VB" --root "$VIRTUALBOARD_ROOT" --actor "$AGENT_ID" move FTR-0001 in-progress --owner "$AGENT_ID"
+"$VB" --root "$VIRTUALBOARD_ROOT" --actor "$AGENT_ID" update FTR-0001 --field priority=P1
+"$VB" --root "$VIRTUALBOARD_ROOT" --actor "$AGENT_ID" move FTR-0001 review --owner reviewer-sam
+"$VB" --root "$VIRTUALBOARD_ROOT" validate
+"$VB" --root "$VIRTUALBOARD_ROOT" --actor "$AGENT_ID" lock FTR-0001 --release --token "$LOCK_TOKEN"
+REVIEW_LOCK_TOKEN=$("$VB" --root "$VIRTUALBOARD_ROOT" --actor reviewer-sam lock FTR-0001 --token-only)
+[[ "$REVIEW_LOCK_TOKEN" =~ ^[0-9a-f]{64}$ ]] || exit 1
+"$VB" --root "$VIRTUALBOARD_ROOT" --actor reviewer-sam move FTR-0001 done --owner reviewer-sam
+"$VB" --root "$VIRTUALBOARD_ROOT" --actor reviewer-sam lock FTR-0001 --release --token "$REVIEW_LOCK_TOKEN"
+
+# Run after integration on main, not in independent feature commits.
+"$VB" --root "$VIRTUALBOARD_ROOT" index
+"$VB" --root "$VIRTUALBOARD_ROOT" index --check
+```
+
+Every feature mutation requires a stable actor through `--actor`,
+`VIRTUALBOARD_ACTOR`, or `AGENT_ID`; `--owner` assigns workflow ownership but
+never authenticates the caller. The CLI never falls back to the operating-system
+username. Read-only commands such as `validate`, `index --check`, and
+`lock --status` do not require an actor.
+
+Lock acquisition returns an opaque token. Keep it in memory and supply that
+exact token to `--release --token`; do not print, commit, or persist it. Feature
+branches commit only their feature lifecycle/evidence changes. The shared
+`features/INDEX.md` aggregate is refreshed after integration on `main` and
+checked by the main/CI gate, avoiding conflicts between unrelated branches.
+Review handoff requires an explicitly supplied owner distinct from
+`implementation_owner`; there is no implicit self-review fallback.
+
+The canonical audit log is configured by `workspace.paths.auditLog`. Verify its
+hash chain without changing state:
+
+```bash
+"$VB" --root "$VIRTUALBOARD_ROOT" audit --verify
+```
+
+Verification detects alteration of entries that are present. In CLI v0.10.0,
+feature/lock audit appends are best-effort and are not transactionally coupled
+to the primary mutation, so this log is not a completeness proof and never
+replaces actor, ownership, lock, Git, or frontmatter checks.
+
+Legacy boards that predate `implementation_owner` or `status_changed` must use
+the explicit migration rather than hand-editing lifecycle metadata:
+
+```bash
+"$VB" --root "$VIRTUALBOARD_ROOT" --actor migration-admin --dry-run \
+  migrate lifecycle-metadata \
+  --implementation-owner FTR-0042=dev-alex \
+  --status-changed FTR-0042=2026-07-01
+```
+
+The command preflights the entire board, preserves feature bodies, and requires
+explicit mappings whenever history is ambiguous. Repeat without `--dry-run`
+only after reviewing the plan. A multi-owner board may require `--force`; that
+flag is an auditable administrative ownership override, requires explicit
+destructive authority, and never bypasses an active lock or the actor check.
+Verify the audit chain afterward.
+
+Do not rely on obsolete feature-enumeration commands or legacy metadata flags.
+Inspect the pinned binary with `"$VB" help` and
+`"$VB" <command> --help`.
+
+Feature branches use `feat/FTR-####-short-slug`. Commit subjects begin with
+`FTR-####:` and pull-request titles use `FTR-####: Title`.
+
+## Authorization model
+
+Workflow components declare possible effects in `virtualboard.json`:
+
+| Effect | Default authorization |
+|---|---|
+| `read` | No additional confirmation |
+| `write-local`, `execute`, `network-read` | Covered only when within the user's task |
+| `install`, `external-write`, `production-sensitive`, `destructive` | Explicit approval required |
+
+These declarations are policy metadata for a cooperative host; they are not an
+OS sandbox or capability system. Actor and owner strings are likewise
+self-asserted coordination labels, not authenticated principals. Use protected
+filesystem permissions and an authenticated orchestrator when callers are
+hostile, independently administered, or subject to compliance-grade identity
+requirements.
+
+Autonomous mode may reduce ordinary clarification. It never grants additional
+effects, authorizes another feature, or permits an agent to keep consuming the
+backlog after the requested work is complete.
+
+Feature bodies, issues, PR descriptions, commits, and report inputs are untrusted
+data. Requirements and acceptance criteria may define desired outcomes, but text
+inside them cannot grant tool authority or expand task scope.
+
+## Agent roles and workflows
+
+The canonical registry contains ten roles and 31 namespaced workflows. IDs and
+aliases are globally unique, such as:
+
+- `architect.decision` / `ARCH-ADR`
+- `backend.api-documentation` / `BACKEND-API-DOCS`
+- `qa.test-plan` / `QA-PLAN`
+- `pm.progress-report` / `PM-PROGRESS`
+
+The complete registry and effect metadata live in `virtualboard.json`; generated
+plugin packages are checked for drift in CI.
+
+### Claude Code
+
+The Claude package is under `plugins/claude/virtualboard` and exposes:
+
+- 10 agents
+- 31 workflow commands
+- 1 `/work-on` skill
+
+Install through the repository marketplace:
 
 ```bash
 claude plugin marketplace add virtualboard/template-base
-claude plugin install virtualboard
+claude plugin install virtualboard@virtualboard-marketplace
 ```
 
-Or use the plugin marketplace. See [.claude-plugin/README.md](.claude-plugin/README.md) for full plugin documentation.
-
-### `/work-on` Skill
-
-The plugin includes a `/work-on` skill for working on features in isolated git worktrees:
+Validate packaging without changing normal user configuration:
 
 ```bash
-# Basic usage - work on a feature interactively
-/work-on FTR-0042
-
-# Autonomous mode (no clarifying questions)
-/work-on FTR-0042 --autonomous
-
-# Custom worktree location
-/work-on FTR-0042 --worktree-path ~/worktrees
-
-# Branch from develop instead of main
-/work-on FTR-0042 --base-branch develop
-
-# Create PR after pushing
-/work-on FTR-0042 --create-pr
+bash tests/test-claude-plugin.sh
 ```
 
-The skill:
-- Creates a git worktree with branch `feature/FTR-XXXX/feature-slug`
-- Detects and resumes existing work on the branch
-- Spawns a new Claude Code session in the worktree
-- Commits with footer: `FTR-XXXX implemented using the @virtualboard /work-on skill`
-- Pushes the branch (and optionally creates a PR)
+### Codex
 
-See `skills/work-on/config.md` for configuration options.
+The separate Codex-native package is under `plugins/codex/virtualboard`. It uses
+a runtime-specific `.codex-plugin` manifest and exposes an exact generated copy
+of the canonical task-scoped `work-on` skill. Claude agent and command fields
+are deliberately not reused as if they were portable; procedural workflow
+guardrails remain identical across runtimes.
 
-## Cursor IDE Integration
+### Cursor and OpenCode
 
-VirtualBoard includes a `.cursor/rules/virtualboard.mdc` file that enables automatic integration with [Cursor](https://cursor.sh/) IDE. This rule tells Cursor to use the VirtualBoard workflow and agent system.
+Integration sources live under `docs/.cursor` and `docs/.opencode`. Install them
+through the supported `vb install cursor` and `vb install opencode` commands for
+the pinned CLI. Generated integration tests verify paths before release.
 
-### Option 1: Project-Level Installation (Recommended)
+## Feature specifications
 
-Copy the `.cursor` folder to your project root to enable VirtualBoard for that specific project:
+Feature files are named `FTR-####-short-description.md`, with at most six slug
+words. Folder location is lifecycle status. IDs and filenames are immutable.
+
+The canonical body template is [`templates/feature.md`](templates/feature.md).
+It covers problem, goals, user stories, functional and non-functional requirements,
+testable acceptance criteria, UX, data/API, rollout, monitoring, security,
+implementation notes, and links.
+
+The body contract is structural: exactly one ordered copy of all 14 canonical
+H2 sections must appear inside exactly one `<untrusted-content>` boundary.
+Fenced example headings do not count. Review requires at least one meaningful
+acceptance item and every item checked; done additionally requires meaningful
+Implementation Notes and a concrete artifact, work item, commit, URL, or local
+path in Links.
+
+## System specifications
+
+`templates/specs/` contains project-blueprint templates for technology, local
+development, infrastructure, CI/CD, databases, caching, security, and operations.
+Copy selected templates into `specs/`, replace every placeholder with real data,
+and validate them against `schemas/system-spec.schema.json`.
+
+## Reports
+
+Markdown is the primary report format. Optional branded HTML is rendered by one
+strict implementation:
 
 ```bash
-# If you're using this template
-cp -r .cursor /path/to/your/project/
-
-# Or if you're cloning this repository
-git clone https://github.com/virtualboard/template-base.git
-cp -r template-base/.cursor /path/to/your/project/
+python3 tools/render_report.py \
+  --template pm-progress-report \
+  --data /tmp/report-data.json \
+  --output reports/2026-07-10_Project_Progress_Report.html
 ```
 
-### Option 2: Global Installation
-
-To enable VirtualBoard across all your projects in Cursor, add the rule globally:
-
-1. Open Cursor Settings (Cmd/Ctrl + ,)
-2. Navigate to "Cursor Settings" → "Rules for AI"
-3. Click "Edit in settings.json"
-4. Add the VirtualBoard rule:
-
-```json
-{
-  "cursor.rules": [
-    {
-      "description": "Virtualboard Task Tracker",
-      "alwaysApply": true,
-      "content": "You will use the Virtualboard strategy defined on @.virtualboard/AGENTS.md to keep track of tasks and progress\n\nWorkspace for the Virtualboard is the @.virtualboard/features folder"
-    }
-  ]
-}
-```
-
-**Note:** Project-level rules (`.cursor/rules/`) take precedence over global rules. If you have both, the project-level rule will be used.
-
-## OpenCode Integration
-
-VirtualBoard agents can be easily integrated into [OpenCode](https://github.com/stackblitz/opencode), an open source AI coding tool.
-
-To enable VirtualBoard agents in OpenCode:
-
-1. **Copy agent files to OpenCode directory:**
-   ```bash
-   mkdir -p .opencode/agent && cp -Rf .virtualboard/agents .opencode/agent
-   ```
-
-2. **Reload OpenCode:**
-   Restart your OpenCode session to load the agents.
-
-3. **Use agents:**
-   Once reloaded, the VirtualBoard agents (PM, Architect, Frontend Dev, Backend Dev, QA, etc.) will be available in OpenCode.
-
-**What gets copied:**
-- All agent role definitions (`agents/*.md`)
-- Agent command system (`prompts/agents/`)
-- Shared rules of engagement (`agents/RULES.md`)
-
-**Benefits:**
-- Native agent integration
-- Quick access to specialized agent commands
-- Consistent agent behavior
-- No additional configuration needed
-
-## Implementation
-
-All workflow operations run through the `vb` CLI — a single static binary with no runtime dependencies (no Node.js, npm, or Python). This approach provides:
-
-- **Zero runtime dependencies**: A single binary for macOS/Linux on amd64/arm64
-- **Universal compatibility**: Works on any Unix-like system
-- **Consistent behavior**: One canonical implementation of validation, moves, indexing, and locks
-- **CI/CD friendly**: Install once, then invoke `vb` commands directly
-
-**CLI Tool Requirement:** The `vb` CLI is **required**. Agents and CI must run `./scripts/install-vb-cli.sh --ensure-latest` before any `vb` command — that single call installs `vb` if missing, upgrades it via `vb upgrade` (with `sudo vb upgrade` fallback) if outdated, and is a no-op if already on the latest release. There are no shell-script fallbacks for feature operations.
-
-## System Specification Templates
-
-Beyond feature files, the template ships with a `/templates/specs` catalog of reusable system blueprints. Copy any Markdown file to your project's `/specs` directory to document foundational decisions before (or alongside) feature work:
-
-- `tech-stack.md` – Languages, runtimes, frameworks, third-party services, and guiding principles.
-- `local-development.md` – Environment setup, tooling, secrets, seeding, and troubleshooting checklists.
-- `hosting-and-infrastructure.md` – Cloud/on-prem topology, networking, DR, and cost governance.
-- `ci-cd-pipeline.md` – Build/test/deploy stages, gating, security checks, and ownership.
-- `database-schema.md` – Authoritative data model, migrations, lifecycle, and performance considerations.
-- `caching-and-performance.md` – Cache layers, SLIs/SLOs, invalidation strategy, and perf testing.
-- `security-and-compliance.md` – Threat model, controls, logging/audit needs, and incident workflows.
-- `observability-and-incident-response.md` – Telemetry coverage, alerting, runbooks, and postmortems.
-
-Each template includes frontmatter compatible with `schemas/system-spec.schema.json`, so `vb validate` enforces required metadata just like feature specs. See `templates/specs/README.md` for usage tips.
-
-## Quick Start
-
-1. **Install the Virtual Board CLI (required):**
-   ```bash
-   # Install to /usr/local/bin (requires sudo)
-   ./scripts/install-vb-cli.sh
-
-   # Or install to current directory:
-   ./scripts/install-vb-cli.sh --local
-
-   # For help:
-   ./scripts/install-vb-cli.sh --help
-   ```
-
-   The installer automatically:
-   - Checks if `vb` is already installed and compares versions
-   - Suggests `vb upgrade` if an older version is installed
-   - Detects your OS (macOS/Linux) and architecture (amd64/arm64)
-   - Downloads the appropriate binary from the latest GitHub release
-
-   > **Note:** Agents should bootstrap the CLI automatically with `./scripts/install-vb-cli.sh --ensure-latest` at the start of any task. That one command installs `vb` if missing, runs `vb upgrade` (or `sudo vb upgrade` as a fallback) if outdated, and is a no-op if already on the latest release.
-
-2. **Verify the installation:**
-   ```bash
-   vb version
-   vb help
-   ```
-
-3. **Initialize a VirtualBoard workspace:**
-   ```bash
-   vb init                                              # New workspace
-   vb init --update                                     # Update to latest template
-   vb init --update --files agents/pm.md,templates/feature.md
-   ```
-
-4. **Core commands:**
-   ```bash
-   vb new "Feature Title" label1 label2                 # Create a new feature
-   vb move FTR-0001 in-progress --owner fullstack_dev   # Move + claim
-   vb validate                                          # Validate features + specs
-   vb index                                             # Regenerate features/INDEX.md
-   ```
-
-   **IMPORTANT**: `vb move` updates frontmatter (`status`, `updated`, `owner`) automatically — do not edit these fields by hand when transitioning a feature.
-
-## Directory Structure
-
-```
-├── features/                 # Feature specifications
-│   ├── backlog/             # Unassigned features
-│   ├── in-progress/         # Features being worked on
-│   ├── blocked/             # Features waiting on dependencies
-│   ├── review/              # Features ready for review
-│   ├── done/                # Completed features
-│   └── INDEX.md             # Auto-generated feature index
-├── templates/               # Templates and configuration
-│   ├── feature.md           # Feature spec template
-│   ├── pr-template.md       # Pull request template
-│   ├── rules.yml            # Agent rules configuration
-│   └── specs/               # System specification templates
-│       ├── README.md        # Catalog + usage instructions
-│       ├── tech-stack.md    # Tech stack blueprint
-│       ├── local-development.md # Local dev environment spec
-│       ├── hosting-and-infrastructure.md
-│       ├── ci-cd-pipeline.md
-│       ├── database-schema.md
-│       ├── caching-and-performance.md
-│       ├── security-and-compliance.md
-│       └── observability-and-incident-response.md
-├── specs/                   # Project-specific system specifications
-│   └── (copy templates here for your project)
-├── agents/                  # Agent documentation and role prompts
-│   ├── AGENTS.md            # Catalog of agent system prompts
-│   ├── RULES.md             # Shared rules of engagement
-│   ├── pm.md                # Project manager prompt
-│   ├── architect.md         # System architect prompt
-│   ├── ux_product_designer.md # UX/product designer prompt
-│   ├── backend_dev.md       # Backend engineer prompt
-│   ├── frontend_dev.md      # Frontend engineer prompt
-│   ├── fullstack_dev.md     # Fullstack engineer prompt
-│   ├── devops_engineer.md   # DevOps & reliability prompt
-│   ├── security_compliance_engineer.md # Security & compliance prompt
-│   ├── data_analytics_engineer.md # Data & analytics prompt
-│   └── qa.md                # QA engineer prompt
-├── prompts/                 # Agent commands and specialized actions
-│   ├── AGENTS.md            # Command system overview and catalog
-│   ├── agents/              # Role-specific command files
-│   │   ├── pm/              # PM commands (PM-Generate_*.md)
-│   │   ├── architect/       # Architect commands (Architect-Generate_*.md)
-│   │   ├── backend_dev/     # Backend commands (BackendDeveloper-Generate_*.md)
-│   │   ├── frontend_dev/    # Frontend commands (FrontendDeveloper-Generate_*.md)
-│   │   ├── fullstack_dev/   # Fullstack commands (FullstackDeveloper-Generate_*.md)
-│   │   ├── data_engineer/   # Data Engineer commands (DataEngineer-Generate_*.md)
-│   │   ├── devops/          # DevOps commands (DevOps-Generate_*.md)
-│   │   ├── security/        # Security commands (Security-Generate_*.md)
-│   │   ├── qa/              # QA commands (QA-Generate_*.md)
-│   │   └── ux_designer/     # UX Designer commands (UXDesigner-Generate_*.md)
-│   └── common/              # Common templates and utilities
-│       └── session-handoff.md # Session handoff template
-├── scripts/                 # Bootstrap + helper scripts
-│   ├── install-vb-cli.sh    # Bootstrap installer for the `vb` CLI
-│   └── worktree-setup.sh    # Git worktree setup for /work-on skill
-├── skills/                  # Claude Code plugin skills
-│   └── work-on/             # /work-on skill for feature development
-│       ├── SKILL.md         # Skill definition
-│       └── config.md        # Configuration reference
-└── schemas/                 # Schema definitions
-    ├── frontmatter.schema.json     # Feature frontmatter validation schema
-    └── system-spec.schema.json     # System specification frontmatter schema
-```
-
-## Sample Features
-
-The system includes sample features in different states to demonstrate the workflow:
-
-- **FTR-0001** (backlog): User Authentication - Ready to be claimed
-- **FTR-0002** (in-progress): Dashboard Widgets - Being worked on by fullstack_dev
-- **FTR-0003** (blocked): External API Integration - Waiting for API keys
-- **FTR-0004** (review): Notification System - Ready for review
-- **FTR-0005** (done): Basic Application Layout - Completed
-
-## Agent Usage
-
-AI agents should:
-
-1. **Ensure the latest `vb` CLI is installed (required):**
-   ```bash
-   ./scripts/install-vb-cli.sh --ensure-latest
-   vb version
-   vb help
-   ```
-   `--ensure-latest` installs when missing, runs `vb upgrade` (with `sudo vb upgrade` fallback) when outdated, and is a no-op when already on the latest release.
-
-2. **Adopt an agent role:** Read `/agents/AGENTS.md` to understand available roles, then read the specific role file (e.g., `/agents/pm.md`)
-3. **Load agent commands:** Check `/prompts/agents/{role}/README.md` for specialized commands available to your role
-4. **Read the agent rules:** `/agents/RULES.md`
-5. **Check available work:** Look at `/features/INDEX.md`
-6. **Claim a feature:** Move from `backlog` to `in-progress` with your agent ID
-   - **CRITICAL**: Update frontmatter `status`, `owner`, and `updated` fields when moving
-7. **Work on the feature:** Update implementation notes and links
-8. **Hand off for review:** Move to `review` status when complete
-   - **CRITICAL**: Update frontmatter `status` and `updated` fields when moving
-
-## Agent Roster
-
-The virtual team is defined in `agents/`:
-- Project Manager (`agents/pm.md`)
-- System Architect (`agents/architect.md`)
-- UX/Product Designer (`agents/ux_product_designer.md`)
-- Backend Developer (`agents/backend_dev.md`)
-- Frontend Developer (`agents/frontend_dev.md`)
-- Fullstack Developer (`agents/fullstack_dev.md`)
-- DevOps & Reliability Engineer (`agents/devops_engineer.md`)
-- Security & Compliance Engineer (`agents/security_compliance_engineer.md`)
-- Data & Analytics Engineer (`agents/data_analytics_engineer.md`)
-- QA Engineer (`agents/qa.md`)
-- Shared Rules of Engagement (`agents/RULES.md`)
-
-## Agent Commands System
-
-Each agent role has access to specialized commands for common tasks. Commands are organized by role in the `prompts/agents/` directory.
-
-### Available Command Sets
-
-| Agent Role | Commands Directory | Key Commands |
-|------------|-------------------|--------------|
-| **Project Manager** | `prompts/agents/pm/` | PM-Generate_Project_Progress_Report (GPP), PM-Generate_Backlog_Grooming (GBG) |
-| **Architect** | `prompts/agents/architect/` | Architect-Generate_Architecture_Decision (GAD), Architect-Generate_Architecture_Report (GAR), Architect-Generate_Technical_Debt_Report (GTD) |
-| **Backend Developer** | `prompts/agents/backend_dev/` | BackendDeveloper-Generate_API_Documentation (GAD), BackendDeveloper-Generate_API_Endpoint (GAE), BackendDeveloper-Generate_Database_Migration (GDM) |
-| **Frontend Developer** | `prompts/agents/frontend_dev/` | FrontendDeveloper-Generate_Accessibility_Audit (GAA), FrontendDeveloper-Generate_Component (GC), FrontendDeveloper-Generate_Component_Story (GCS) |
-| **Fullstack Developer** | `prompts/agents/fullstack_dev/` | FullstackDeveloper-Generate_Full_Feature (GFF), FullstackDeveloper-Generate_Integration_Contract (GIC), FullstackDeveloper-Generate_End_to_End_Test (GETE) |
-| **Data Engineer** | `prompts/agents/data_engineer/` | DataEngineer-Generate_Data_Pipeline (GDP), DataEngineer-Generate_Metrics_Dashboard (GMD), DataEngineer-Generate_Data_Quality_Check (GDQ), DataEngineer-Generate_Entity_Relationship_Diagram (ERD) |
-| **DevOps Engineer** | `prompts/agents/devops/` | DevOps-Generate_Deployment_Checklist (GDC), DevOps-Generate_Deployment_Readiness_Report (GDRR), DevOps-Generate_Incident_Report (GIR) |
-| **Security Engineer** | `prompts/agents/security/` | Security-Generate_Security_Audit (GSA), Security-Generate_Security_Review (GSR), Security-Generate_Threat_Model (GTM) |
-| **QA Engineer** | `prompts/agents/qa/` | QA-Generate_Bug_Report (GBR), QA-Generate_Test_Coverage_Report (GTCR), QA-Generate_Test_Plan (GTP), QA-Generate_Browser_Automation_Tests (GBAT) |
-| **UX Designer** | `prompts/agents/ux_designer/` | UXDesigner-Generate_Design_System_Component (GDS), UXDesigner-Generate_User_Journey (GUJ), UXDesigner-Generate_Wireframe (GWF) |
-
-### Using Agent Commands
-
-When adopting an agent role:
-
-1. **Read your role's README:** Check `prompts/agents/{role}/README.md` for available commands
-2. **Display available commands:** Agents should show users what commands they can execute
-3. **Execute commands:** Follow the detailed workflow in each command file (e.g., `prompts/agents/pm/PM-Generate_Project_Progress_Report.md`)
-4. **Follow templates:** Use the exact report structure and file paths specified in each command
-
-See `prompts/AGENTS.md` for complete documentation on the command system.
-
-## Validation
-
-The system enforces several validation rules:
-
-- Frontmatter must match JSON schema
-- File location must match frontmatter `status` field (CRITICAL)
-- Frontmatter `status` field must be updated when moving files
-- Frontmatter `updated` field must be updated when making changes
-- Dependencies must be resolved before `in-progress`
-- No circular dependencies allowed
-- Ownership conflicts are prevented
-- System specs in `/specs` must satisfy `schemas/system-spec.schema.json` (status, spec_type, applicability, last_updated)
-
-## Integration with CI/CD
-
-Add these steps to your CI pipeline:
-
-```yaml
-- name: Install Virtual Board CLI
-  run: |
-    ./scripts/install-vb-cli.sh --ensure-latest
-    vb version
-
-- name: Validate Features
-  run: vb validate
-
-- name: Generate Index
-  run: vb index
-```
-
-## Troubleshooting
-
-**Common Issues:**
-
-1. **"Feature already owned"** - Another agent is working on it
-2. **"Circular dependency"** - Dependencies form a loop
-3. **"Invalid transition"** - Not allowed to move to that status
-4. **"Dependency not done"** - Required dependencies aren't complete
-
-**Solutions:**
-
-- Check `/features/INDEX.md` for available features
-- Run `vb validate` to check frontmatter, dependencies, and folder/status alignment
-- Review the agent rules in `/agents/RULES.md`
-- Ensure the CLI is properly installed: `vb version`
-- To install or upgrade the CLI: `./scripts/install-vb-cli.sh` (fresh install) or `vb upgrade` (existing install)
-
-## Contributing
-
-When adding new features or modifying the system:
-
-1. Follow the existing patterns
-2. Update documentation as needed
-3. Run `vb validate` before committing
-4. Regenerate the feature index with `vb index`
-
-## Virtual Board CLI
-
-All workflow operations use the [Virtual Board CLI (`vb`)](https://github.com/virtualboard/vb-cli). The CLI provides:
-
-- **Streamlined interface**: Single entry point for all feature workflow operations
-- **Schema-backed validation**: Enforces frontmatter, dependencies, and folder/status alignment
-- **Lifecycle safety**: Validated moves, ownership claims, and locks
-- **Consistent experience**: One canonical implementation across local dev and CI
-
-See the [Quick Start](#quick-start) section above for installation instructions and basic usage.
-
-### Additional CLI Commands
+Ordinary values are escaped. Allowlisted markup, URLs, numbers, tokens, and inline
+JSON require explicit typed input and context validation.
+All 21 templates are rendered by `tests/test_report_renderer.py`. See
+[`templates/reports/README.md`](templates/reports/README.md) for the data contract.
+Markdown reports and their optional HTML companions are intended to be reviewed
+and committed. Heavy browser evidence such as videos, traces, and screenshots is
+ignored by default and should live in an approved artifact store.
+
+## Verification
+
+The main local suite is:
 
 ```bash
-# Initialize workspace (first time setup)
-vb init
-
-# Update workspace to latest template
-vb init --update
-
-# Update specific template files
-vb init --update --files agents/pm.md,templates/spec.md
-
-# Auto-apply updates without prompting
-vb init --update --yes
-
-# Upgrade CLI to latest version
-vb upgrade
-# Or use sudo if installed to system directory:
-sudo vb upgrade
-
-# List available features
-vb list
-
-# Show feature details
-vb show FTR-0001
-
-# Delete a feature
-vb delete FTR-0001
-
-# Manage feature locks
-vb lock FTR-0001
-vb lock --release FTR-0001
-
-# Update feature metadata
-vb update FTR-0001 --priority P1 --complexity H
+python3 tools/check_contract.py
+bash tests/run.sh
+"$VB" --root "$VB_ROOT/examples/demo-project" validate
+git diff --check
 ```
+
+`examples/demo-project` contains five real features—one in every lifecycle state—
+and an approved system spec. This prevents a green, zero-input validation result.
+
+CI builds the exact CLI commit in `.vb-cli-source-ref`, compiles this checkout's
+archive digest into that candidate, and exercises built-binary initialization,
+validation, index drift, Cursor, and OpenCode installation before running the
+remaining installer, worktree, schema, plugin, generated-component, report,
+documentation, and cleanliness checks. This source bootstrap avoids requiring a
+CLI release that itself depends on the not-yet-published template asset.
+
+Template v0.8 is staged on an immutable release branch while `main` remains safe
+for v0.9 clients that still download the moving branch. Maintainers must follow
+the stop-ship sequence in [Release bootstrap](docs/RELEASE_BOOTSTRAP.md); in
+particular, a v0.8 tag is not permission to merge v0.8 onto `main`.
+
+## Project structure
+
+```text
+.vb-cli-source-ref      Exact CLI source commit used for release bootstrap
+agents/                 Canonical role instructions
+bin/                    Workspace-root resolver
+examples/demo-project/  Non-vacuous lifecycle fixture
+features/               This repository's real feature work
+plugins/                Runtime-specific distributable packages
+prompts/                Canonical workflow sources
+schemas/                Feature, system-spec, and framework contracts
+scripts/                CLI installer and worktree helper
+skills/                 Canonical shared skill sources
+templates/              Feature, system-spec, PR, rules, and report templates
+tests/                   Contract and integration tests
+tools/                   Generators, contract checks, and report renderer
+virtualboard.json        Machine-readable source of truth
+```
+
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md),
+[Release bootstrap](docs/RELEASE_BOOTSTRAP.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md),
+and [LICENSE](LICENSE). Do not report vulnerabilities in a public issue.

@@ -1,26 +1,12 @@
 <!--
   Template: architect-adr.html (optional, S+R)
   Used by:  prompts/agents/architect/Architect-Generate_Architecture_Decision.md (GAD)
-  Pairs with: .virtualboard/architecture/decisions/ADR-{NNNN}-{slug}.md
+  Pairs with: $VB_ROOT/reports/architecture/decisions/ADR-{NNNN}-{slug}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    ADR_NUMBER             – e.g. "ADR-0042"
-    ADR_TITLE
-    ADR_STATUS             – "Proposed" | "Accepted" | "Deprecated" | "Superseded"
-    ADR_STATUS_CLASS       – "" | "ok" | "danger"
-    DECISION_DATE
-    DECIDERS               – e.g. "Architecture Council, Backend Lead, SRE Lead"
-    SUPERSEDES, SUPERSEDED_BY  – ADR ids or "—"
-    CONTEXT_HTML           – the situation that requires a decision
-    DECISION_HTML          – the chosen approach
-    CONSEQUENCES_HTML      – positive + negative consequences
-    REFERENCES_HTML        – links / further reading
-
-  Per-template list placeholders:
-    ALTERNATIVES           items: TITLE, PROS_HTML, CONS_HTML, REJECTED_REASON
-    RELATED_ADRS           items: ID, TITLE, RELATIONSHIP
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template architect-adr --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

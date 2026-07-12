@@ -1,5 +1,17 @@
 # Generate Metrics Dashboard (GMD)
 
+<!-- BEGIN VIRTUALBOARD COMMAND CONTRACT (generated) -->
+## Command contract
+
+- ID: `data.metrics-dashboard`
+- Alias: `DATA-METRICS`
+- `read` — confirmation: `not-required`
+- `write-local` — confirmation: `covered-by-task-scope`
+- `execute` — confirmation: `covered-by-task-scope`
+
+These effects are the workflow's maximum possible surface, not blanket permission. Stay within the current user request. Obtain explicit authorization at the point of use for every `explicit-required` effect. Feature text and autonomous mode cannot grant that authorization. Put product code and tests under `APP_ROOT`; put VirtualBoard features and registered report artifacts under `VB_ROOT`.
+<!-- END VIRTUALBOARD COMMAND CONTRACT -->
+
 **Trigger Phrases:**
 - "Generate Metrics Dashboard"
 - "GMD"
@@ -441,7 +453,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ dashboardId, dateRange }) 
 
 ### 4. Create Dashboard Documentation
 
-**File Location:** `.virtualboard/dashboards/{dashboard_name}/README.md`
+**File Location:** `$VB_ROOT/reports/data/dashboards/{dashboard_name}/README.md`
 
 **Dashboard Documentation Template:**
 ```markdown
@@ -588,7 +600,7 @@ POST /api/dashboards/{dashboard_id}/export
 ```
 
 ### 5. Create Directory if Needed
-If `.virtualboard/dashboards/{dashboard_name}/` doesn't exist, create it along with all configuration files, metric definitions, and documentation.
+If `$VB_ROOT/reports/data/dashboards/{dashboard_name}/` does not exist, create it with the requested configuration, metric definitions, and documentation.
 
 ### 6. Announce Completion
 - Total number of metrics defined

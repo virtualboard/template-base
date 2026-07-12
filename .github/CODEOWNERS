@@ -1,0 +1,9 @@
+# Framework contract, release, and security ownership
+* @virtualboard
+
+/.github/ @virtualboard
+/.claude-plugin/ @virtualboard
+/plugins/ @virtualboard
+/schemas/ @virtualboard
+/scripts/ @virtualboard
+/virtualboard.json @virtualboard

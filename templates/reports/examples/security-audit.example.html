@@ -1,7 +1,7 @@
 <!--
   Template: security-audit.html
   Used by:  prompts/agents/security/Security-Generate_Security_Audit.md (GSA)
-  Pairs with: .virtualboard/security/audits/SA-{YYYY-MM-DD}.md
+  Pairs with: $VB_ROOT/reports/security/audits/SA-{YYYY-MM-DD}.md
 
   Cross-cutting placeholders: REPORT_TITLE, REPORT_TITLE_HTML, REPORT_SUBTITLE,
   EYEBROW, GENERATED_DATE, GENERATED_DATETIME, AUTHOR_AGENT, CLASSIFICATION,
@@ -918,7 +918,8 @@
   <div class="hero-inner">
     <span class="eyebrow">&#9679; Security Audit &middot; Q2 2026</span>
     <h1>Security <span class="green">Audit</span> Report</h1>
-    <p class="subtitle">Periodic security audit for <strong>VirtualBoard</strong>. Companion HTML to <code>.virtualboard/security/audits/SA-2026-04-28.md</code>.</p>
+    <p class="subtitle">Periodic security audit for <strong>VirtualBoard</strong>. Companion HTML to <code>$VB_ROOT/reports/security/audits/SA-2026-04-28.md</code>.</p>
+    <p class="subtitle"><strong>Historical sample data:</strong> findings are intentionally frozen as a renderer demonstration from 2026-04-28 and do not describe the current release.</p>
     <div class="hero-meta">
       
       <div class="cell">
@@ -1146,7 +1147,7 @@
   </div>
   <p style="margin: 0;">Security Audit &middot; <strong style="color: var(--accent);">VirtualBoard</strong> &middot; 2026-04-28</p>
   <p style="margin: 8px 0 0; font-size: 12px;">Conducted by the Security Engineer agent &middot; Internal advisory &middot; Not for external distribution.</p>
-  <p style="margin: 14px 0 0; font-size: 11px; color: var(--text-mute);">Markdown companion: <code>.virtualboard/security/audits/SA-2026-04-28.md</code> &middot; Next audit: 2026-07-28.</p>
+  <p style="margin: 14px 0 0; font-size: 11px; color: var(--text-mute);">Markdown companion: <code>$VB_ROOT/reports/security/audits/SA-2026-04-28.md</code> &middot; Next audit: 2026-07-28.</p>
 </footer>
 
 
@@ -1169,39 +1170,70 @@
 
 <script>
   const RISKS = [{"id": "C1", "sev": "critical", "title": "Upgrade path produces checksums but does not verify them", "file": "vb-cli upgrade.go:116", "impact": "Supply-chain attack vector amplified by --ensure-latest running on every agent turn.", "likelihood": "Medium (opportunistic) \u2014 High (targeted)", "reco": "Fetch checksums.txt; sha256-compare before chmod +x. ~30 LOC."}, {"id": "C2", "sev": "critical", "title": "Prompt injection via untrusted feature body", "file": "RULES.md, agents/*.md", "impact": "Malicious PR body can drive arbitrary agent action via /work-on.", "likelihood": "Medium \u2014 realistic with public repos", "reco": "Add &lt;untrusted-content&gt; delimiter convention; document data-not-instructions policy."}, {"id": "H1", "sev": "high", "title": "No audit log anywhere in vb-cli", "file": "vb-cli tree", "impact": "Logrus stdout only; no append-only trail; SOC2/HIPAA-blocking.", "likelihood": "Always", "reco": "Add internal/audit JSONL writer, hooked into Create/Move/Delete. ~60 LOC."}, {"id": "H2", "sev": "high", "title": "Locking not wired into mutation commands", "file": "cmd/new.go, cmd/move.go", "impact": "Concurrent vb new allocates duplicate FTR IDs; concurrent vb move races on writes.", "likelihood": "Medium \u2014 multi-agent is the stated use case", "reco": "Wrap NextID() and MoveFeature() in flock. ~20 LOC."}, {"id": "H3", "sev": "high", "title": "Silent sudo escalation on upgrade retry", "file": "install-vb-cli.sh", "impact": "Non-interactive sudo for an upgrade that does not verify the binary.", "likelihood": "Medium \u2014 when user install is shadowed by system install", "reco": "Require explicit --allow-sudo; default fail-closed."}, {"id": "M1", "sev": "medium", "title": "String version comparison in vb upgrade", "file": "upgrade.go:52-55", "impact": "v1.10.0 &lt; v1.9.0 by string compare. Silent failure once minor passes 9.", "likelihood": "Will happen at 0.10.x or 1.10.x", "reco": "Use golang.org/x/mod/semver."}, {"id": "M2", "sev": "medium", "title": "Worktrees default to /tmp", "file": "worktree-setup.sh:43", "impact": "WIP code (incl. .env) leaks on shared hosts.", "likelihood": "Low\u2013Medium", "reco": "Default to $XDG_STATE_HOME/virtualboard/worktrees."}, {"id": "M3", "sev": "medium", "title": "GitHub API unauthenticated", "file": "upgrade.go:32", "impact": "60 req/hr per IP rate limit; CI flake risk.", "likelihood": "Low\u2013Medium", "reco": "Honor GITHUB_TOKEN env var when set."}, {"id": "M4", "sev": "medium", "title": "State machine declared in three places", "file": "status.go + RULES.md + schemas/*.json", "impact": "Drift risk over time.", "likelihood": "Low\u2013Medium over time", "reco": "Single YAML source; Go and JSON schema both derive."}, {"id": "L1", "sev": "low", "title": "Installer operator-precedence bug", "file": "install-vb-cli.sh:~211", "impact": "Cosmetic help-text defect.", "likelihood": "Low", "reco": "Parenthesize the compound condition."}, {"id": "L2", "sev": "low", "title": "Aspirational monitoring section", "file": "RULES.md:205-223", "impact": "Misleads users into thinking metrics exist.", "likelihood": "High", "reco": "Either implement or remove the section."}];
+  const ALLOWED_RISK_SEVERITIES = new Set(['critical', 'high', 'medium', 'low']);
   const list = document.getElementById('risksList');
+  function riskText(value) {
+    return value == null ? '' : String(value);
+  }
+  function riskSeverity(value) {
+    const severity = riskText(value).toLowerCase();
+    return ALLOWED_RISK_SEVERITIES.has(severity) ? severity : 'unknown';
+  }
+  function textElement(className, value) {
+    const element = document.createElement('div');
+    element.className = className;
+    element.textContent = riskText(value);
+    return element;
+  }
+  function detailElement(label, value) {
+    const item = document.createElement('div');
+    item.appendChild(textElement('k', label));
+    item.appendChild(textElement('v', value));
+    return item;
+  }
   function renderRisks(filter, query) {
     filter = filter || 'all';
     query = (query || '').trim().toLowerCase();
-    list.innerHTML = '';
+    list.replaceChildren();
     const filtered = RISKS.filter(function (r) {
-      if (filter !== 'all' && r.sev !== filter) return false;
+      const risk = r && typeof r === 'object' ? r : {};
+      if (filter !== 'all' && riskSeverity(risk.sev) !== filter) return false;
       if (!query) return true;
-      return ((r.title || '') + ' ' + (r.file || '') + ' ' + (r.reco || '') + ' ' + (r.impact || '')).toLowerCase().indexOf(query) !== -1;
+      return (riskText(risk.title) + ' ' + riskText(risk.file) + ' ' + riskText(risk.reco) + ' ' + riskText(risk.impact)).toLowerCase().indexOf(query) !== -1;
     });
     if (!filtered.length) {
-      list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-mute);border:1px dashed var(--border);border-radius:12px;">No findings match your filters.</div>';
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding:40px;text-align:center;color:var(--text-mute);border:1px dashed var(--border);border-radius:12px;';
+      empty.textContent = 'No findings match your filters.';
+      list.appendChild(empty);
       return;
     }
     filtered.forEach(function (r) {
+      const risk = r && typeof r === 'object' ? r : {};
+      const severity = riskSeverity(risk.sev);
       const row = document.createElement('div');
       row.className = 'risk-row';
-      row.dataset.sev = r.sev;
-      row.innerHTML =
-        '<div class="risk-id">' + r.id + '</div>' +
-        '<div><span class="risk-sev" data-sev="' + r.sev + '">' + r.sev + '</span></div>' +
-        '<div class="risk-title">' + r.title + '</div>' +
-        '<div class="risk-file">' + (r.file || '') + '</div>' +
-        '<div class="risk-chevron">&#9654;</div>';
+      row.dataset.sev = severity;
+      const severityCell = document.createElement('div');
+      const severityBadge = document.createElement('span');
+      severityBadge.className = 'risk-sev';
+      severityBadge.dataset.sev = severity;
+      severityBadge.textContent = severity;
+      severityCell.appendChild(severityBadge);
+      row.appendChild(textElement('risk-id', risk.id));
+      row.appendChild(severityCell);
+      row.appendChild(textElement('risk-title', risk.title));
+      row.appendChild(textElement('risk-file', risk.file));
+      row.appendChild(textElement('risk-chevron', '\u25b6'));
       const details = document.createElement('div');
       details.className = 'risk-details';
-      details.dataset.sev = r.sev;
-      details.innerHTML =
-        '<div class="risk-detail-grid">' +
-          '<div><div class="k">Impact</div><div class="v">' + (r.impact || '') + '</div></div>' +
-          '<div><div class="k">Likelihood</div><div class="v">' + (r.likelihood || '') + '</div></div>' +
-          '<div><div class="k">Remediation</div><div class="v">' + (r.reco || '') + '</div></div>' +
-        '</div>';
+      details.dataset.sev = severity;
+      const detailGrid = document.createElement('div');
+      detailGrid.className = 'risk-detail-grid';
+      detailGrid.appendChild(detailElement('Impact', risk.impact));
+      detailGrid.appendChild(detailElement('Likelihood', risk.likelihood));
+      detailGrid.appendChild(detailElement('Remediation', risk.reco));
+      details.appendChild(detailGrid);
       row.addEventListener('click', function () {
         const isOpen = row.classList.toggle('open');
         details.classList.toggle('open', isOpen);

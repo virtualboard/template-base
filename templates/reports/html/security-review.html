@@ -1,28 +1,12 @@
 <!--
   Template: security-review.html
   Used by:  prompts/agents/security/Security-Generate_Security_Review.md (GSR)
-  Pairs with: .virtualboard/security/reviews/SR-{YYYY-MM-DD}-{component}.md
+  Pairs with: $VB_ROOT/reports/security/reviews/SR-{YYYY-MM-DD}-{component}.md
 
-  Cross-cutting placeholders: as in security-audit.html.
-
-  Per-template scalar placeholders:
-    REVIEW_SCOPE_HTML
-    EXECUTIVE_SUMMARY_HTML
-    OVERALL_RATING         – "Critical" | "Needs Improvement" | "Good"
-    OVERALL_RATING_CLASS   – "danger" | "" | "ok"
-    KPI_FILES_REVIEWED, KPI_LOC_REVIEWED, KPI_FINDINGS_TOTAL, KPI_FINDINGS_CRITICAL, KPI_FINDINGS_HIGH
-    OWASP_HTML             – HTML for the OWASP Top 10 checklist
-    DEPENDENCY_VULN_HTML   – HTML for the dependency vulnerabilities table
-    POSITIVE_FINDINGS_HTML
-    NEXT_REVIEW_DATE
-
-  Per-template list placeholders:
-    FINDINGS               items: ID, SEV (critical|high|medium|low), TITLE,
-                                  FILE_REF, DESCRIPTION_HTML, REMEDIATION_HTML,
-                                  PRIORITY_LABEL (e.g. "Within 24 hours")
-    IMMEDIATE_ACTIONS      items: TITLE, DESC
-    SHORT_TERM_ACTIONS     items: TITLE, DESC
-    LONG_TERM_ACTIONS      items: TITLE, DESC
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template security-review --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

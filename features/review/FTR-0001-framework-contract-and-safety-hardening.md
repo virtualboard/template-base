@@ -1,20 +1,20 @@
 ---
 id: FTR-0001
 title: Framework Contract and Safety Hardening
-status: in-progress
-owner: codex-root
+status: review
+owner: codex-review
 implementation_owner: codex-root
 priority: P0
 complexity: XL
 created: "2026-07-10"
-updated: "2026-07-10"
-status_changed: "2026-07-10"
+updated: "2026-07-11"
+status_changed: "2026-07-11"
 labels:
     - framework
     - agents
     - security
 dependencies: []
-risk_notes: "Cross-platform packaging, external CLI compatibility, and lifecycle migration require end-to-end verification."
+risk_notes: Cross-platform packaging, external CLI compatibility, and lifecycle migration require end-to-end verification.
 ---
 # Feature Spec: Framework Contract and Safety Hardening
 
@@ -86,43 +86,24 @@ This undermines the central promise of deterministic, parallel agent work.
   lifecycle definitions.
 
 ## Acceptance Criteria (Testable)
-- [ ] A single checked-in contract defines workspace paths, statuses, transitions,
-      roles, commands, branch naming, command effects, and CLI compatibility.
-- [ ] Claude plugin runtime inventory exposes every advertised agent/workflow, and
-      CI asserts the expected inventory rather than relying on manifest validation.
-- [ ] Platform-specific packages do not conflate Claude and Codex manifest formats.
-- [ ] A fresh local initialization resolves all scripts, features, prompts, and
-      templates without cwd-dependent path failures.
-- [ ] QA and backlog-grooming paths use only declared lifecycle transitions.
-- [ ] `/work-on` acquires an owner-attributed collision lock before creating a
-      worktree, records a dedicated lifecycle-and-index claim commit before
-      changing code, requires a published claim for cross-clone coordination,
-      validates before handoff, and transitions to review before push.
-- [ ] Agents stop after the requested unit of work unless continuous processing is
-      explicitly authorized.
-- [ ] Feature requirements may define outcomes but cannot grant tool permissions or
-      authorize unrelated commands and external side effects.
-- [ ] The installer installs the exact configured CLI version, verifies the final
-      version and checksum, uses timeouts and cleanup traps, and never implicitly sudoes.
-- [ ] Worktree setup validates refs, resolves the base deterministically, never
-      deletes unowned directories, surfaces fetch/rebase failures, and supports JSON.
-- [ ] Ownership and lock limitations are truthfully documented and covered by tests;
-      unsafe/incompatible CLI behavior fails a compatibility gate.
-- [ ] Feature and system-spec schemas validate instantiated templates and enforce
-      status-appropriate ownership constraints.
-- [ ] Legacy features can be migrated to lifecycle provenance metadata without
-      rewriting their bodies or guessing an implementation owner; ambiguous
-      review/done records require an explicit human assignment.
-- [ ] All report templates render through executable code with contextual escaping,
-      no unresolved placeholders, and golden/smoke tests.
-- [ ] CI runs shell, schema, link, prompt-contract, plugin-inventory, lifecycle,
-      renderer, installer, worktree, demo-workspace, and generated-drift checks.
-- [ ] The repository contains a real demo lifecycle instead of claiming nonexistent
-      sample features, and source validation is non-vacuous.
-- [ ] All documented CLI examples execute against the supported version or are removed.
-- [ ] LICENSE, SECURITY, CONTRIBUTING, CODE_OF_CONDUCT, CODEOWNERS guidance, and a
-      standard pull-request template are present and internally consistent.
-- [ ] A final audit against the original review findings has no known P0/P1 gaps.
+- [x] A single checked-in contract defines workspace paths, statuses, transitions, roles, commands, branch naming, command effects, and CLI compatibility.
+- [x] Claude and Codex packages expose generated, validated inventories without conflating their manifest formats.
+- [x] Fresh initialization resolves scripts, features, prompts, templates, schemas, and supported integrations without current-directory assumptions.
+- [x] QA, backlog grooming, review handback, blocked-state, and completion paths use only declared lifecycle transitions.
+- [x] `/work-on` captures a tokenized lock before setup, creates a dedicated lifecycle claim commit before implementation, detects an exact remote branch claim for cross-clone coordination, leaves aggregate index publication to the integration owner, validates before handoff, and makes push, PR, and cleanup explicit opt-in effects.
+- [x] Agents stop after the requested unit of work unless continuous processing is explicitly authorized.
+- [x] Feature requirements define outcomes but cannot grant permissions or authorize unrelated commands, installs, destructive actions, production changes, or external writes.
+- [x] Unix and Windows installers select the exact configured CLI version, verify bounded downloads and checksums, validate the executable version, preserve an existing binary on activation failure, and never invoke implicit elevation.
+- [x] Worktree setup validates identifiers and refs, resolves the base deterministically, avoids unowned deletion, reports fetch and rebase failures, and emits deterministic JSON.
+- [x] Cooperative owner, actor, lock, audit, and hostile-environment limitations are documented honestly and enforced by executable compatibility and security tests.
+- [x] Feature and system-spec schemas validate instantiated templates and enforce lifecycle, ownership, provenance, date, dependency-depth, body-shape, and link constraints.
+- [x] Legacy features can be migrated without rewriting trusted prose or guessing review and done implementation ownership.
+- [x] All report templates render through contextual escaping with no unresolved placeholders and reproducible golden or smoke coverage.
+- [x] CI runs contract, shell, schema, link, prompt, plugin, lifecycle, renderer, installer, worktree, demo, cross-platform, race, security-scan, and generated-drift gates.
+- [x] The repository contains a validated five-state demo lifecycle and non-vacuous source fixtures.
+- [x] Documented CLI examples match the pinned supported version or have been removed.
+- [x] LICENSE, SECURITY, CONTRIBUTING, CODE_OF_CONDUCT, CODEOWNERS guidance, and the pull-request template are present and internally consistent.
+- [x] Independent final audits found no unresolved P0/P1 gap after remediation.
 
 ## UI/UX Notes
 - Keep Markdown as the primary interface. Discovery output should be concise and
@@ -152,16 +133,24 @@ This undermines the central promise of deterministic, parallel agent work.
   evidence without committing ephemeral local lock state.
 
 ## Implementation Notes
-- Prefer small dependency-free scripts and generated Markdown where practical.
-- Changes to the external CLI must be represented by compatibility tests and an
-  explicit supported version; repository prompts must not assume unverified behavior.
+- The template repository now derives agent catalogs, role prompts, plugin inventories, integration payloads, HTML references, and the `/work-on` packages from checked-in generators with drift checks.
+- The CLI implements journaled compare-and-swap feature mutations, a serialized board graph, bounded no-follow discovery, tokenized root-scoped locks, strict streaming audit storage, exact lifecycle body parsing, dependency and date validation, and schema copies authenticated against compiled semantics.
+- Cursor and OpenCode installation use captured verified payloads and no-replace activation with recovery; the upgrader retains checksum-bound handles, scans an exactly framed embedded version marker without executing downloads, stages privately on the target filesystem, and restores the prior executable after ambiguous activation.
+- Windows is supported through the verified PowerShell bootstrap and native validation jobs; in-place self-upgrade of a running Windows executable is intentionally rejected.
+- Central index generation is an integration responsibility, so feature branches publish a scoped lifecycle commit without racing on aggregate index files.
+- The verification record includes Go unit and race suites, vet, measured coverage, gosec on native and Windows targets, cross-compilation, Python contract and generator suites, installer fault injection, demo lifecycle tests, release-candidate smoke tests, and plugin validation.
 
 ## Open Questions
 - Whether distributed claims should use GitHub issue assignment, a dedicated lease
   service, or a compare-and-swap claim commit remains an architectural decision;
   local filesystem locks alone must not be marketed as distributed safety.
 
-</untrusted-content>
 
 ## Links
-- Repository architecture and safety audit in the preceding review conversation.
+- [Canonical framework contract](../../virtualboard.json)
+- [Executable framework test gate](../../tests/run.sh)
+- [Coordinated release runbook](../../docs/RELEASE_BOOTSTRAP.md)
+- [Pinned CLI source revision](../../.vb-cli-source-ref)
+- [VirtualBoard CLI implementation](https://github.com/virtualboard/vb-cli)
+
+</untrusted-content>
