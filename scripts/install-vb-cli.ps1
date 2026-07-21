@@ -326,7 +326,18 @@ function Invoke-AtomicActivation {
     }
 
     if ([IO.File]::Exists($Target)) {
-        [IO.File]::Replace($Stage, $Target, $null, $true)
+        # A literal $null destinationBackupFileName is documented as legal but
+        # throws "The path is empty" on this overload in practice; use a real,
+        # cleaned-up backup path instead of relying on that null behavior.
+        $backupFile = Join-Path -Path (Split-Path -Path $Target -Parent) -ChildPath (".vb.install.backup.{0}.exe" -f [guid]::NewGuid().ToString('N'))
+        try {
+            [IO.File]::Replace($Stage, $Target, $backupFile, $true)
+        }
+        finally {
+            if ([IO.File]::Exists($backupFile)) {
+                Remove-Item -LiteralPath $backupFile -Force -ErrorAction SilentlyContinue
+            }
+        }
     }
     else {
         [IO.File]::Move($Stage, $Target)
