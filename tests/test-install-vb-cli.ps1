@@ -101,7 +101,19 @@ function Invoke-TestInstaller {
         foreach ($entry in $ExtraEnvironment.GetEnumerator()) {
             [Environment]::SetEnvironmentVariable([string]$entry.Key, [string]$entry.Value)
         }
-        $output = & $shell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $installer @InstallerArguments 2>&1
+        # Windows PowerShell 5.1 (unlike pwsh 7+) escalates a native child's
+        # stderr lines into terminating errors under ErrorActionPreference
+        # 'Stop', even when merged via 2>&1. Relax it only for this call so
+        # the installer's own expected failures surface as $LASTEXITCODE
+        # instead of aborting this harness.
+        $previousErrorActionPreference = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        try {
+            $output = & $shell -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $installer @InstallerArguments 2>&1
+        }
+        finally {
+            $ErrorActionPreference = $previousErrorActionPreference
+        }
         return [pscustomobject]@{
             ExitCode = $LASTEXITCODE
             Output = ($output | Out-String)
