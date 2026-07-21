@@ -1,0 +1,46 @@
+#!/bin/sh
+# Resolve the canonical VirtualBoard workspace root from any project subdirectory.
+
+set -eu
+
+fail() {
+    echo "vb-root: $*" >&2
+    exit 1
+}
+
+canonical_directory() {
+    directory=$1
+    [ -d "$directory" ] || return 1
+    (cd "$directory" 2>/dev/null && pwd -P)
+}
+
+if [ -n "${VIRTUALBOARD_ROOT:-}" ]; then
+    explicit=$(canonical_directory "$VIRTUALBOARD_ROOT") ||
+        fail "VIRTUALBOARD_ROOT is not a readable directory: $VIRTUALBOARD_ROOT"
+    [ -f "$explicit/virtualboard.json" ] ||
+        fail "VIRTUALBOARD_ROOT does not contain virtualboard.json: $explicit"
+    printf '%s\n' "$explicit"
+    exit 0
+fi
+
+start=${1:-"$PWD"}
+current=$(canonical_directory "$start") || fail "not a readable directory: $start"
+
+while :; do
+    if [ -L "$current/.virtualboard" ]; then
+        fail "refusing symbolic-link workspace candidate: $current/.virtualboard"
+    fi
+    if [ -f "$current/.virtualboard/virtualboard.json" ]; then
+        canonical_directory "$current/.virtualboard"
+        exit 0
+    fi
+    if [ -f "$current/virtualboard.json" ]; then
+        printf '%s\n' "$current"
+        exit 0
+    fi
+    parent=$(dirname "$current")
+    [ "$parent" != "$current" ] || break
+    current=$parent
+done
+
+fail "no VirtualBoard workspace found from $start"

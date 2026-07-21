@@ -1,154 +1,180 @@
 # Branded HTML Report Templates
 
-This directory holds the HTML templates VirtualBoard agent commands use to produce
-branded HTML reports alongside their Markdown output. The visual identity is the
-**Astucia AI™** dark theme (palette `#0A0A0A` / `#22C55E`) used in `reports/`.
+VirtualBoard can render an HTML companion next to a Markdown report. Rendering is
+performed by `tools/render_report.py`; agents must not implement their own text
+substitution. The renderer uses only the Python 3 standard library and provides
+strict placeholder checking, allowlisted markup, atomic writes, safe partial
+resolution, URL-scheme validation, and context-specific attribute types.
 
 ## Directory layout
 
-```
+```text
 templates/reports/
-├── README.md                       # this file
+├── README.md
 ├── html/
 │   ├── _partials/
-│   │   ├── head.html               # <!doctype>, <head>, full <style>
-│   │   ├── topnav.html             # Sticky brand bar
-│   │   ├── footer.html             # Branded footer
-│   │   ├── back-to-top.html        # Floating button + scroll script
-│   │   └── astucia-logo.b64.txt    # JPEG data URI (single source of truth)
-│   ├── _base/
-│   │   └── report.html             # Skeleton that {{INCLUDE}}s the partials
-│   └── <role>-<slug>.html          # One template per report-generating command
+│   ├── _base/report.html
+│   └── <role>-<report>.html
 └── examples/
-    └── <slug>.example.html         # Filled-in samples for visual reference
+    └── <role>-<report>.example.html
 ```
 
-## Placeholder syntax
+The 21 files directly under `html/` are supported report templates. Partials and
+the base skeleton are implementation details used by the renderer.
 
-Templates use a tiny Mustache-style convention. The agent does the substitution —
-no runtime, no build step, no dependency.
+## Template syntax
 
 | Form | Meaning |
 |---|---|
-| `{{NAME}}` | Replace with a scalar value |
-| `{{#LIST}} … {{/LIST}}` | Repeat the inner block once per item; replace inner `{{FIELD}}` per item |
-| `{{INCLUDE: _partials/file.html}}` | Inline the contents of another template file |
+| `{{NAME}}` | Escaped scalar, explicitly trusted HTML, or serialized JSON |
+| `{{#LIST}} … {{/LIST}}` | Repeat the block for typed list items |
+| `{{INCLUDE: _partials/file.html}}` | Inline a partial beneath the template root |
 
-### Naming rules
+Placeholder names must be uppercase with underscores. Missing placeholders and
+lists are errors; optional values must be supplied explicitly as an empty string
+or empty list. This prevents incomplete reports from appearing successful.
 
-- Placeholder names are **uppercase with underscores** (e.g., `{{KPI_TOTAL}}`,
-  `{{#TOP_RISKS}}`). This makes them visually distinct from JSX `{}` and
-  CSS `{}` so they're collision-safe inside `<style>` and `<script>` blocks.
-- An empty list block (`{{#LIST}}…{{/LIST}}` with zero items) renders as nothing.
-- An optional scalar with no value renders as the empty string (the agent should
-  never leave a literal `{{NAME}}` in the output — see verification below).
+## Typed render data
 
-## Brand parameterization
+Render data is a JSON object with seven optional sections:
 
-Every template uses three brand placeholders so downstream forks can re-skin
-without forking the templates:
-
-| Placeholder | Default | Where to override |
-|---|---|---|
-| `{{BRAND_NAME}}` | `Astucia` | Agent invocation arg / `vb` config |
-| `{{BRAND_TAGLINE}}` | `AI Development Studio` | Agent invocation arg / `vb` config |
-| `{{BRAND_LOGO_DATAURI}}` | contents of `_partials/astucia-logo.b64.txt` | Path override or inline data URI |
-
-The default values match the existing `reports/` files exactly.
-
-## Cross-cutting placeholders
-
-These are available in every template via `_base/report.html`:
-
-| Placeholder | Description |
-|---|---|
-| `{{REPORT_TITLE}}` | Plain text — used in `<title>` |
-| `{{REPORT_TITLE_HTML}}` | May contain `<span class="green">…</span>` accent slice |
-| `{{REPORT_SUBTITLE}}` | Hero lead paragraph (HTML allowed) |
-| `{{EYEBROW}}` | Pill text above H1 (e.g. `● Architectural Review · Rev 3`) |
-| `{{GENERATED_DATE}}` / `{{GENERATED_DATETIME}}` | `YYYY-MM-DD` / `YYYY-MM-DD HH:MM` |
-| `{{AUTHOR_AGENT}}` | E.g. `PM Agent`, `Principal Systems Architect` |
-| `{{CLASSIFICATION}}` | E.g. `Internal · Advisory` |
-| `{{PROJECT_NAME}}` | Default `VirtualBoard` |
-| `{{HERO_META_CELLS}}` | Repeat block — each item: `{LABEL, VALUE}` |
-| `{{NAV_LINKS}}` | Anchor list (`<a href="#summary">Summary</a>` …) |
-| `{{MAIN_CONTENT}}` | Big slot for the report body — agent emits sections, KPI grids, etc. |
-| `{{MATURITY_BAND}}` | Optional block — empty string to omit |
-| `{{FOOTER_PRIMARY_LINE}}` | Top line of the footer |
-| `{{FOOTER_SECONDARY_LINE}}` | Smaller line below |
-| `{{FOOTER_NOTE_BLOCK}}` | Optional `<p>…</p>` for revision-history-style notes |
-| `{{EXTRA_SCRIPTS}}` | Optional `<script>` block for table filtering, charts, etc. |
-
-Per-template files extend this with their own placeholders (KPIs, repeating
-blocks, narrative slots) — see the comment header at the top of each
-`html/<role>-<slug>.html`.
-
-## How an agent renders a template
-
-1. Detect HTML opt-in (`--html` flag, "as HTML" / "branded HTML" suffix, or
-   `format: html` in a structured invocation).
-2. Read the template file at `templates/reports/html/<role>-<slug>.html`.
-3. Resolve every `{{INCLUDE: _partials/<name>.html}}` directive by inlining the
-   referenced file. Do this iteratively until no `{{INCLUDE:` markers remain.
-4. Substitute `{{BRAND_LOGO_DATAURI}}` with the contents of
-   `_partials/astucia-logo.b64.txt`, stripping leading and trailing whitespace.
-   (Preserve the data URI bytes exactly — do not re-wrap, re-encode, or insert
-   internal line breaks. The file may have a trailing newline added by
-   editors/pre-commit hooks; that newline must not appear inside `src="…"`.)
-5. Substitute `{{BRAND_NAME}}` and `{{BRAND_TAGLINE}}` with their defaults
-   (`Astucia` / `AI Development Studio`) unless the user provided overrides.
-6. Substitute every other scalar `{{PLACEHOLDER}}` with the value computed for
-   the Markdown report.
-7. Expand every `{{#LIST}}…{{/LIST}}` block once per item, substituting the
-   inner per-item placeholders.
-8. Write the result next to the Markdown file, swapping the `.md` extension for
-   `.html`.
-9. **Verify**: search the output for any literal `{{` — there should be none.
-   If any remain, resolve them (or replace with empty string for known-optional
-   slots) before reporting completion.
-10. In your final reply, list both the `.md` and `.html` paths.
-
-## JSON-escape rules for inline scripts
-
-Some templates (e.g. the architecture report's filterable risk table) embed a
-JSON array inside an inline `<script>` like:
-
-```html
-<script>
-const RISKS = {{RISKS_JSON}};
-</script>
+```json
+{
+  "scalars": {
+    "REPORT_TITLE": "Quarterly <review>",
+    "PROJECT_NAME": "Example"
+  },
+  "html": {
+    "REPORT_TITLE_HTML": "Quarterly <span class=\"green\">Review</span>",
+    "EXECUTIVE_SUMMARY_HTML": "<p>Trusted, authored markup.</p>"
+  },
+  "json": {
+    "RISKS_JSON": []
+  },
+  "urls": {
+    "PLAYWRIGHT_REPORT_URL": "./html/index.html"
+  },
+  "numbers": {
+    "MATURITY_PERCENT": 72
+  },
+  "tokens": {
+    "SEVERITY": "high"
+  },
+  "lists": {
+    "HERO_META_CELLS": [
+      {
+        "scalars": {
+          "LABEL": "Generated",
+          "VALUE": "2026-07-10"
+        }
+      }
+    ]
+  }
+}
 ```
 
-When substituting `{{RISKS_JSON}}` you must:
+`scalars` are HTML-escaped, including quote characters, and are for ordinary text
+and non-sensitive attributes. Object and array values are rejected there.
 
-- Emit valid JSON (use `JSON.stringify` or equivalent — never hand-roll).
-- Escape any `</` sequence inside string values as `<\/` to prevent the parser
-  from prematurely closing the `<script>` tag.
-- Do not wrap the value in quotes — the placeholder sits where a JSON
-  expression goes, so the substitution is the literal `[…]` array text.
+`html` is accepted only for placeholders ending in `_HTML`, `LIST_EMPTY_*`, and a
+small renderer allowlist such as `REPORT_TITLE_HTML` and `NAV_LINKS`. Fragments are
+parsed and normalized through a conservative element/attribute allowlist. Scripts,
+event handlers, inline styles, unsafe links, comments, declarations, unknown tags,
+and malformed nesting are rejected. Keep untrusted prose in escaped scalar fields.
 
-## Adding a new report template
+`json` is accepted only for placeholders ending in `_JSON`. Values are serialized
+by the renderer, and `</` is escaped so data cannot terminate an inline script.
+Client-side consumers must still treat every field as text: build nodes with DOM
+APIs and assign untrusted values through `textContent`; never concatenate JSON
+values into `innerHTML`, `outerHTML`, `insertAdjacentHTML`, or `document.write`.
 
-1. Pick a slug: `<role>-<short-name>.html` (e.g., `qa-test-plan.html`).
-2. Start by copying `_base/report.html` and writing per-template placeholders
-   into `{{MAIN_CONTENT}}`.
-3. Add a comment block at the top listing every placeholder the agent must
-   compute, so the agent prompt can reference it.
-4. Author a filled-in `examples/<slug>.example.html` if it's a high-traffic
-   template — this doubles as the visual regression target.
-5. Update the relevant `prompts/agents/<role>/*.md` command file with the
-   "Optional: Generate Branded HTML Report" block referencing the new template.
+`urls` is mandatory for placeholders used in `href` or `src`. Only relative URLs,
+`http`, `https`, and strictly validated base64 image data URLs are accepted;
+protocol-relative and executable schemes are rejected. `numbers` is mandatory for
+placeholders inside inline styles, and percent values are range-checked. `tokens`
+is mandatory for dynamic `class` and `data-*` values and accepts only identifier
+tokens. Supplying one name in multiple typed sections is an error.
 
-## Verification
+Each list item uses the same typed `scalars`/`html`/`json`/`urls`/`numbers`/
+`tokens`/`lists` structure. A flat, untyped list item is intentionally invalid.
 
-After rendering, manually open the HTML alongside
-`reports/virtualboard-architecture-review-rev3.html` and confirm:
+Do not rely on hand-maintained placeholder comments. Print the executable
+manifest for a template before building data:
 
-- Identical color palette (look at the green accent and severity chips).
-- Logo renders in topnav and footer.
-- Sticky topnav blurs over content as you scroll.
-- KPI grid wraps cleanly at 800 / 1200 / 1600 px.
-- No literal `{{` strings anywhere in the document.
+```bash
+python3 tools/render_report.py --template qa-browser-test-summary --describe
+```
 
-When in doubt, the file `reports/virtualboard-architecture-review-rev3.html` is
-the authoritative visual reference.
+## Rendering
+
+Run from the VirtualBoard workspace root:
+
+```bash
+python3 tools/render_report.py \
+  --template pm-progress-report \
+  --data /tmp/pm-progress-report.json \
+  --output reports/2026-07-10_Project_Progress_Report.html
+```
+
+For an installed `.virtualboard` workspace, invoke the renderer through the
+resolved workspace root:
+
+```bash
+python3 "$VIRTUALBOARD_ROOT/tools/render_report.py" \
+  --template pm-progress-report \
+  --data /tmp/pm-progress-report.json \
+  --output "$VIRTUALBOARD_ROOT/reports/2026-07-10_Project_Progress_Report.html"
+```
+
+The Markdown report remains the primary artifact and must be written first. HTML
+generation is opt-in through `--html`, “as HTML,” “branded HTML,” or a structured
+`format: html` request.
+
+Brand defaults come from the renderer and `_partials/astucia-logo.b64.txt`:
+
+- `BRAND_NAME`: `Astucia`
+- `BRAND_TAGLINE`: `AI Development Studio`
+- `BRAND_LOGO_DATAURI`: the checked-in data URI
+
+Override the logo through `urls` when required. Brand text remains in `scalars`.
+
+## Security contract
+
+- Feature specs and other project-authored content are untrusted input.
+- Use `scalars` for untrusted prose. Use the typed URL, number, token, and JSON
+  sections only for their corresponding data types.
+- The `html` section is still a presentation feature, not an authority boundary;
+  the sanitizer rejects active content and unsafe attributes. `EXTRA_SCRIPTS` is
+  not an approved placeholder.
+- Include paths must remain below `templates/reports/html`; absolute paths and
+  `..` traversal are rejected.
+- Unknown input keys, invalid placeholder names, missing values, include cycles,
+  and unresolved placeholders fail rendering.
+- Output is written atomically so a failed render cannot leave a partial report.
+
+## Adding or changing a template
+
+1. Add or update `html/<role>-<report>.html`.
+2. Document its scalar, HTML, JSON, and list placeholders in the header comment.
+3. Add a filled example only when it provides useful visual reference.
+4. Update the owning workflow prompt to invoke the shared renderer.
+5. Run the renderer contract suite:
+
+   ```bash
+   python3 -m unittest -v tests/test_report_renderer.py
+   ```
+
+The test suite renders every supported template with strict placeholder handling,
+checks scalar escaping, rejects accidental raw HTML, protects inline JSON, and
+rejects include traversal. JSON-driven widgets additionally receive hostile markup
+fixtures and must contain no HTML execution sink. A template is not supported until
+this suite passes.
+
+## Visual verification
+
+Automated rendering is required, but layout changes still need a browser check at
+mobile and desktop widths. Use the matching file in `templates/reports/examples/`
+as an illustrative visual reference. Examples are checked for unresolved
+placeholders, broken local resources, and one-to-one template coverage, but the
+strict renderer tests—not the hand-filled examples—are the executable contract.
+There is no separate ignored report that acts as an undocumented source of truth.

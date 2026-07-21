@@ -1,24 +1,12 @@
 <!--
   Template: ux-design-system.html
   Used by:  prompts/agents/ux_designer/UXDesigner-Generate_Design_System_Component.md (GDS)
-  Pairs with: .virtualboard/design/systems/DS-{project}.md
+  Pairs with: $VB_ROOT/reports/design/systems/DS-{project}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    COMPONENT_NAME, VERSION, STATUS  – component being documented
-    OVERVIEW_HTML
-    USAGE_HTML             – when to use / when not to use
-    ANATOMY_HTML           – structural anatomy of the component
-    ACCESSIBILITY_NOTES_HTML
-    BEHAVIOR_HTML
-
-  Per-template list placeholders:
-    TOKENS                 items: NAME, VALUE, USAGE
-    VARIANTS               items: NAME, DESC, EXAMPLE_HTML
-    PROPS                  items: NAME, TYPE, DEFAULT, DESC
-    DO_LIST                items: TEXT
-    DONT_LIST              items: TEXT
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template ux-design-system --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

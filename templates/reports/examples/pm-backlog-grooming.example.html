@@ -11,8 +11,8 @@
     HEALTH_SCORE           – integer 0–10 (overall backlog health)
     SCORE_SPEC, SCORE_DEPS, SCORE_PRIORITY, SCORE_READINESS  – integers 0–10
     EXECUTIVE_SUMMARY_HTML
-    KPI_FULLY_IMPLEMENTED, KPI_PARTIALLY, KPI_SPEC_UPDATED,
-    KPI_ARCHIVED, KPI_VALIDATED  – integers
+    KPI_IMPLEMENTATION_EVIDENCE, KPI_PARTIALLY, KPI_SPEC_UPDATED,
+    KPI_REMOVAL_CANDIDATES, KPI_VALIDATED  – integers
     P0_COUNT, P1_COUNT, P2_COUNT, P3_COUNT  – integers
     P0_PCT, P1_PCT, P2_PCT, P3_PCT  – integers
     READY_COUNT, BLOCKED_COUNT, NEEDS_REFINEMENT_COUNT, STALE_COUNT
@@ -21,11 +21,11 @@
 
   Per-template list placeholders:
     HERO_META_CELLS         items: LABEL, VALUE
-    FULLY_IMPLEMENTED       items: FTR_ID, TITLE, RECOMMENDATION, DECISION
+    IMPLEMENTATION_EVIDENCE items: FTR_ID, TITLE, RECOMMENDATION, DECISION
     PARTIAL                 items: FTR_ID, TITLE, COMPLETED_PCT, RECOMMENDATION, DECISION
     VALIDATED_READY         items: FTR_ID, TITLE, PRIORITY, COMPLEXITY, NOTES
     SPEC_UPDATED            items: FTR_ID, TITLE, CHANGES, REASON
-    ARCHIVED                items: FTR_ID, TITLE, REASON
+    REMOVAL_CANDIDATES      items: FTR_ID, TITLE, REASON
     DEFERRED                items: FTR_ID, TITLE, OLD_PRIORITY, NEW_PRIORITY, REASON
     NEEDS_REFINEMENT        items: FTR_ID, ISSUE
     STALE                   items: FTR_ID, TITLE, AGE_DAYS, LAST_UPDATED, RECOMMENDATION
@@ -960,7 +960,7 @@
   <section id="summary">
     <h2><span class="num">01</span>Executive Summary</h2>
     <p class="lead">Backlog health, what changed in the session, and the action items that need a stakeholder decision.</p>
-    <p>Backlog is healthy: dependency hygiene strong, priority distribution balanced. 4 features moved to review/done; 2 archived as obsolete.</p>
+    <p>Backlog is healthy: dependency hygiene strong and priority distribution balanced. Four features moved through valid review paths; two were flagged as removal candidates for human approval.</p>
     <div class="callout"><p><strong>Health score:</strong> 8 / 10 &middot; <strong>Spec quality</strong> 8/10 &middot; <strong>Dependency hygiene</strong> 9/10 &middot; <strong>Priority clarity</strong> 7/10 &middot; <strong>Readiness</strong> 8/10</p></div>
   </section>
 
@@ -968,24 +968,24 @@
     <h2><span class="num">02</span>Session Results</h2>
     <p class="lead">23 of 47 backlog items reviewed in 47 minutes.</p>
     <div class="kpi">
-      <div class="stat"><div class="n">4</div><div class="l">Fully implemented</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">Implementation evidence</div></div>
       <div class="stat"><div class="n">2</div><div class="l">Partially implemented</div></div>
       <div class="stat"><div class="n">3</div><div class="l">Spec updated</div></div>
-      <div class="stat"><div class="n">2</div><div class="l">Archived</div></div>
+      <div class="stat"><div class="n">2</div><div class="l">Removal candidates</div></div>
       <div class="stat"><div class="n">12</div><div class="l">Validated as-is</div></div>
     </div>
   </section>
 
   <section id="implementation-status">
     <h2><span class="num">03</span>Implementation Status</h2>
-    <p class="lead">Features that should leave the backlog and those that need a split.</p>
+    <p class="lead">Possible existing implementations that remain in backlog pending evidence recovery, plus scopes that may need a split.</p>
 
-    <h3>Fully implemented (move out of backlog)</h3>
+    <h3>Possible existing implementation (remain in backlog)</h3>
     <table class="component-table">
       <thead><tr><th>Feature</th><th>Title</th><th>Recommendation</th><th>Decision</th></tr></thead>
       <tbody>
         
-        <tr><td>FTR-0044</td><td>Astucia branding partials</td><td>Move to DONE</td><td>Done</td></tr>
+        <tr><td>FTR-0044</td><td>Astucia branding partials</td><td>Run evidence-recovery workflow</td><td>Remain in backlog</td></tr>
         
       </tbody>
     </table>
@@ -1005,7 +1005,7 @@
 
   <section id="relevance">
     <h2><span class="num">04</span>Relevance Analysis</h2>
-    <p class="lead">For features not yet implemented: validated, updated, archived, or deferred.</p>
+    <p class="lead">For features not yet implemented: validated, updated, recommended for removal, or deferred.</p>
 
     <h3>Validated &amp; ready</h3>
     <table class="component-table">
@@ -1029,7 +1029,7 @@
     </table>
     
 
-    <h3 style="margin-top: 32px;">Archived</h3>
+    <h3 style="margin-top: 32px;">Removal candidates</h3>
     <table class="component-table">
       <thead><tr><th>Feature</th><th>Title</th><th>Reason</th></tr></thead>
       <tbody>
@@ -1073,7 +1073,7 @@
       <thead><tr><th>Feature</th><th>Title</th><th>Age</th><th>Last updated</th><th>Recommendation</th></tr></thead>
       <tbody>
         
-        <tr><td>FTR-0008</td><td>Dark-mode toggle</td><td>120 d</td><td>2025-12-29</td><td>Refresh or archive</td></tr>
+        <tr><td>FTR-0008</td><td>Dark-mode toggle</td><td>120 d</td><td>2025-12-29</td><td>Refresh or recommend removal</td></tr>
         
       </tbody>
     </table>

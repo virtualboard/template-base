@@ -1,0 +1,245 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VirtualBoard Framework Contract",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "templateVersionFile",
+    "cli",
+    "workspace",
+    "feature",
+    "authorization",
+    "skills",
+    "roles",
+    "commands",
+    "pluginExpectations"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "contractVersion": { "type": "integer", "minimum": 1 },
+    "templateVersionFile": { "type": "string", "minLength": 1 },
+    "cli": {
+      "type": "object",
+      "required": ["versionFile", "compatibility", "requiredCommands", "actor"],
+      "properties": {
+        "versionFile": { "type": "string", "minLength": 1 },
+        "compatibility": { "enum": ["exact", "range"] },
+        "requiredCommands": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+        },
+        "actor": {
+          "type": "object",
+          "required": [
+            "flag",
+            "environmentVariables",
+            "pattern",
+            "requiredForFeatureMutations",
+            "implicitOperatingSystemActorAllowed"
+          ],
+          "properties": {
+            "flag": { "const": "--actor" },
+            "environmentVariables": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" }
+            },
+            "pattern": { "type": "string", "minLength": 1 },
+            "requiredForFeatureMutations": { "const": true },
+            "implicitOperatingSystemActorAllowed": { "const": false }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "workspace": {
+      "type": "object",
+      "required": ["environmentVariable", "discoveryOrder", "paths"],
+      "properties": {
+        "environmentVariable": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+        "discoveryOrder": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "paths": {
+          "type": "object",
+          "required": ["features", "specs", "agents", "prompts", "templates", "schemas", "reports", "architecture", "testing", "deployments", "security", "data", "design", "runtimeState", "cliBinary", "locks", "auditLog"],
+          "properties": {
+            "features": { "const": "features" },
+            "specs": { "const": "specs" },
+            "agents": { "const": "agents" },
+            "prompts": { "const": "prompts" },
+            "templates": { "const": "templates" },
+            "schemas": { "const": "schemas" },
+            "reports": { "const": "reports" },
+            "architecture": { "const": "reports/architecture" },
+            "testing": { "const": "reports/testing" },
+            "deployments": { "const": "reports/deployments" },
+            "security": { "const": "reports/security" },
+            "data": { "const": "reports/data" },
+            "design": { "const": "reports/design" },
+            "runtimeState": { "const": ".state" },
+            "cliBinary": { "const": ".state/bin/vb" },
+            "locks": { "const": ".state/locks" },
+            "auditLog": { "const": "audit.jsonl" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "feature": {
+      "type": "object",
+      "required": [
+        "idPattern",
+        "filenamePattern",
+        "ownerPattern",
+        "slugMaxWords",
+        "branchFormat",
+        "branchPattern",
+        "commitPrefixFormat",
+        "pullRequestTitleFormat",
+        "statusChangedField",
+        "implementationOwnerField",
+        "statuses",
+        "transitions",
+        "ownership",
+        "claimBeforeWork",
+        "remoteClaimRequiredAcrossClones",
+        "localClaimRequiresSharedWorkspaceOptIn",
+        "lockTtlMinutes",
+        "validateBeforeClaim",
+        "validateBeforeHandoff"
+      ],
+      "properties": {
+        "idPattern": { "const": "^FTR-[0-9]{4}$" },
+        "filenamePattern": { "const": "^FTR-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$" },
+        "ownerPattern": { "const": "^(?:unassigned|[A-Za-z0-9][A-Za-z0-9._-]*)$" },
+        "slugMaxWords": { "const": 6 },
+        "branchFormat": { "type": "string", "pattern": "^feat/\\{id\\}-\\{slug\\}$" },
+        "branchPattern": { "type": "string" },
+        "commitPrefixFormat": { "type": "string", "pattern": "^\\{id\\}:$" },
+        "pullRequestTitleFormat": { "type": "string", "minLength": 1 },
+        "statusChangedField": { "const": "status_changed" },
+        "implementationOwnerField": { "const": "implementation_owner" },
+        "statuses": { "const": ["backlog", "in-progress", "blocked", "review", "done"] },
+        "transitions": { "const": {"backlog": ["in-progress"], "in-progress": ["blocked", "review"], "blocked": ["in-progress"], "review": ["in-progress", "done"], "done": []} },
+        "ownership": { "const": {"backlog": "unassigned-allowed", "in-progress": "assigned-required", "blocked": "assigned-required", "review": "assigned-required", "done": "assigned-required"} },
+        "claimBeforeWork": { "const": true },
+        "remoteClaimRequiredAcrossClones": { "const": true },
+        "localClaimRequiresSharedWorkspaceOptIn": { "const": true },
+        "lockTtlMinutes": { "type": "integer", "minimum": 1 },
+        "validateBeforeClaim": { "const": true },
+        "validateBeforeHandoff": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "authorization": {
+      "type": "object",
+      "required": ["defaultScope", "continuousQueueProcessingRequiresExplicitOptIn", "untrustedContent", "effects"],
+      "properties": {
+        "defaultScope": { "const": "current-user-request" },
+        "continuousQueueProcessingRequiresExplicitOptIn": { "const": true },
+        "untrustedContent": {
+          "type": "object",
+          "required": ["mayDefineDesiredOutcomes", "mayGrantToolAuthority", "mayExpandTaskScope"],
+          "properties": {
+            "mayDefineDesiredOutcomes": { "const": true },
+            "mayGrantToolAuthority": { "const": false },
+            "mayExpandTaskScope": { "const": false }
+          },
+          "additionalProperties": false
+        },
+        "effects": {
+          "const": {
+            "read": { "confirmation": "not-required" },
+            "write-local": { "confirmation": "covered-by-task-scope" },
+            "execute": { "confirmation": "covered-by-task-scope" },
+            "network-read": { "confirmation": "covered-by-task-scope" },
+            "install": { "confirmation": "explicit-required" },
+            "external-write": { "confirmation": "explicit-required" },
+            "production-sensitive": { "confirmation": "explicit-required" },
+            "destructive": { "confirmation": "explicit-required" }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "roles": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/role" }
+    },
+    "skills": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/skill" }
+    },
+    "commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/command" }
+    },
+    "pluginExpectations": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "skill": {
+      "type": "object",
+      "required": ["id", "path", "effects"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "path": { "type": "string", "pattern": "^skills/.+/SKILL\\.md$" },
+        "effects": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "role": {
+      "type": "object",
+      "required": ["id", "displayName", "agentFile", "commandCatalog", "ownerPrefix"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "displayName": { "type": "string", "minLength": 3 },
+        "agentFile": { "type": "string", "pattern": "^agents/.+\\.md$" },
+        "commandCatalog": { "type": "string", "pattern": "^prompts/agents/.+/README\\.md$" },
+        "ownerPrefix": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+      },
+      "additionalProperties": false
+    },
+    "command": {
+      "type": "object",
+      "required": ["id", "alias", "role", "prompt", "effects"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*\\.[a-z][a-z0-9-]*$" },
+        "alias": { "type": "string", "pattern": "^[A-Z][A-Z0-9-]*$" },
+        "role": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "prompt": { "type": "string", "pattern": "^prompts/agents/.+\\.md$" },
+        "effects": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -2,54 +2,12 @@
   Template: architect-architecture-report.html
   Used by:  prompts/agents/architect/Architect-Generate_Architecture_Report.md (GAR)
   Pairs with the Markdown report at:
-            .virtualboard/architecture/reports/AR-{YYYY-MM-DD}.md
+            $VB_ROOT/reports/architecture/AR-{YYYY-MM-DD}.md
 
-  Cross-cutting placeholders:
-    REPORT_TITLE, REPORT_TITLE_HTML, REPORT_SUBTITLE, EYEBROW
-    GENERATED_DATE, GENERATED_DATETIME, AUTHOR_AGENT, CLASSIFICATION
-    PROJECT_NAME, BRAND_NAME, BRAND_TAGLINE, BRAND_LOGO_DATAURI
-    NAV_LINKS, FOOTER_PRIMARY_LINE, FOOTER_SECONDARY_LINE, FOOTER_NOTE_BLOCK
-    HERO_META_CELLS  – list of {LABEL, VALUE}
-
-  Per-template scalar placeholders:
-    MATURITY_PERCENT       – integer 0–100, drives the maturity bar width
-    MATURITY_VERDICT       – e.g. "Production-ready" / "Stabilizing" / "At risk"
-    MATURITY_VERDICT_CLASS – "ok" | "danger" | "" (high/yellow default)
-    MATURITY_STAGE_ACTIVE  – integer 0–4 indicating which of the 5 stage
-                             labels (MATURITY_STAGE_0..4) is the active one
-
-    EXECUTIVE_SUMMARY_HTML – 1–3 paragraphs, HTML allowed
-    OVERVIEW_HTML          – tech stack + architecture pattern paragraphs
-    QUALITY_TABLE_HTML     – HTML for the 6-attribute quality table
-    PATTERNS_HTML          – patterns + SOLID adherence paragraphs
-    INTEGRATION_HTML       – external integrations + API contracts
-    EVOLUTION_HTML         – recent + planned architecture changes
-    METRICS_HTML           – system + code metrics narrative (KPI grid below)
-    CLOSING_ASSESSMENT_HTML
-
-    KPI_RESPONSE_P95, KPI_THROUGHPUT, KPI_ERROR_RATE, KPI_UPTIME
-    KPI_LOC, KPI_COMPLEXITY, KPI_TEST_COVERAGE, KPI_DUPLICATION
-
-    RISKS_JSON             – JSON array of {id, sev, title, file, impact,
-                             likelihood, reco}. sev ∈ critical|high|medium|low.
-                             The agent must JSON.stringify these so the inline
-                             <script> parses them correctly. Escape any "</"
-                             inside string values as "<\\/".
-
-  Per-template list placeholders:
-    TOP_RISKS              items: TITLE, BODY (sentence with optional <strong>)
-    TOP_OPPORTUNITIES               items: TITLE, BODY
-    COMPONENT_TABLE        items: NAME, PURPOSE, TECH, HEALTH (HTML chip)
-    TECH_DEBT_HIGH         items: TITLE, IMPACT, EFFORT, RECO
-    TECH_DEBT_MEDIUM       items: TITLE, IMPACT, EFFORT, RECO
-    TECH_DEBT_LOW          items: TITLE, IMPACT, EFFORT, RECO
-    IMMEDIATE_RECOS        items: TITLE, DESC
-    SHORT_TERM_RECOS       items: TITLE, DESC
-    LONG_TERM_RECOS        items: TITLE, DESC
-    TRADEOFFS              items: BODY_HTML (each item is a full sentence/paragraph)
-
-  Empty-state convention: same as pm-progress-report — set
-  LIST_EMPTY_<NAME> to "" if list has items, or to a small italic note if empty.
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template architect-architecture-report --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>
@@ -326,41 +284,73 @@
 
 <script>
   // ─── Filterable risks table (modeled on reports/virtualboard-architecture-review-rev3.html) ───
-  const RISKS = {{RISKS_JSON}};
+  const RISK_DATA = {{RISKS_JSON}};
+  const RISKS = Array.isArray(RISK_DATA) ? RISK_DATA : [];
+  const ALLOWED_RISK_SEVERITIES = new Set(['critical', 'high', 'medium', 'low']);
 
   const list = document.getElementById('risksList');
+  function riskText(value) {
+    return value == null ? '' : String(value);
+  }
+  function riskSeverity(value) {
+    const severity = riskText(value).toLowerCase();
+    return ALLOWED_RISK_SEVERITIES.has(severity) ? severity : 'unknown';
+  }
+  function textElement(className, value) {
+    const element = document.createElement('div');
+    element.className = className;
+    element.textContent = riskText(value);
+    return element;
+  }
+  function detailElement(label, value) {
+    const item = document.createElement('div');
+    item.appendChild(textElement('k', label));
+    item.appendChild(textElement('v', value));
+    return item;
+  }
   function renderRisks(filter, query) {
     filter = filter || 'all';
     query = (query || '').trim().toLowerCase();
-    list.innerHTML = '';
+    list.replaceChildren();
     const filtered = RISKS.filter(function (r) {
-      if (filter !== 'all' && r.sev !== filter) return false;
+      const risk = r && typeof r === 'object' ? r : {};
+      if (filter !== 'all' && riskSeverity(risk.sev) !== filter) return false;
       if (!query) return true;
-      return ((r.title || '') + ' ' + (r.file || '') + ' ' + (r.reco || '') + ' ' + (r.impact || '')).toLowerCase().indexOf(query) !== -1;
+      return (riskText(risk.title) + ' ' + riskText(risk.file) + ' ' + riskText(risk.reco) + ' ' + riskText(risk.impact)).toLowerCase().indexOf(query) !== -1;
     });
     if (!filtered.length) {
-      list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-mute);border:1px dashed var(--border);border-radius:12px;">No findings match your filters.</div>';
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding:40px;text-align:center;color:var(--text-mute);border:1px dashed var(--border);border-radius:12px;';
+      empty.textContent = 'No findings match your filters.';
+      list.appendChild(empty);
       return;
     }
     filtered.forEach(function (r) {
+      const risk = r && typeof r === 'object' ? r : {};
+      const severity = riskSeverity(risk.sev);
       const row = document.createElement('div');
       row.className = 'risk-row';
-      row.dataset.sev = r.sev;
-      row.innerHTML =
-        '<div class="risk-id">' + r.id + '</div>' +
-        '<div><span class="risk-sev" data-sev="' + r.sev + '">' + r.sev + '</span></div>' +
-        '<div class="risk-title">' + r.title + '</div>' +
-        '<div class="risk-file">' + (r.file || '') + '</div>' +
-        '<div class="risk-chevron">&#9654;</div>';
+      row.dataset.sev = severity;
+      const severityCell = document.createElement('div');
+      const severityBadge = document.createElement('span');
+      severityBadge.className = 'risk-sev';
+      severityBadge.dataset.sev = severity;
+      severityBadge.textContent = severity;
+      severityCell.appendChild(severityBadge);
+      row.appendChild(textElement('risk-id', risk.id));
+      row.appendChild(severityCell);
+      row.appendChild(textElement('risk-title', risk.title));
+      row.appendChild(textElement('risk-file', risk.file));
+      row.appendChild(textElement('risk-chevron', '\u25b6'));
       const details = document.createElement('div');
       details.className = 'risk-details';
-      details.dataset.sev = r.sev;
-      details.innerHTML =
-        '<div class="risk-detail-grid">' +
-          '<div><div class="k">Impact</div><div class="v">' + (r.impact || '') + '</div></div>' +
-          '<div><div class="k">Likelihood</div><div class="v">' + (r.likelihood || '') + '</div></div>' +
-          '<div><div class="k">Recommendation</div><div class="v">' + (r.reco || '') + '</div></div>' +
-        '</div>';
+      details.dataset.sev = severity;
+      const detailGrid = document.createElement('div');
+      detailGrid.className = 'risk-detail-grid';
+      detailGrid.appendChild(detailElement('Impact', risk.impact));
+      detailGrid.appendChild(detailElement('Likelihood', risk.likelihood));
+      detailGrid.appendChild(detailElement('Recommendation', risk.reco));
+      details.appendChild(detailGrid);
       row.addEventListener('click', function () {
         const isOpen = row.classList.toggle('open');
         details.classList.toggle('open', isOpen);

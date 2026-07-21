@@ -1,28 +1,12 @@
 <!--
   Template: qa-test-plan.html
   Used by:  prompts/agents/qa/QA-Generate_Test_Plan.md (GTP)
-  Pairs with: .virtualboard/testing/plans/TP-{FTR-####}-{name}.md
+  Pairs with: $VB_ROOT/reports/testing/plans/TP-{FTR-####}-{name}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    FTR_ID                 – feature being tested
-    FEATURE_TITLE
-    PLAN_OBJECTIVE_HTML
-    SCOPE_IN_HTML, SCOPE_OUT_HTML
-    EXIT_CRITERIA_HTML
-    KPI_TOTAL_CASES, KPI_CRITICAL, KPI_HIGH, KPI_MEDIUM, KPI_LOW
-    KPI_AUTOMATED_PCT      – integer 0–100
-    ENVIRONMENT_HTML       – test envs, data, tooling
-    ROLES_HTML             – who runs / approves / signs off
-    SCHEDULE_HTML          – key dates
-    RISK_AREAS_HTML
-
-  Per-template list placeholders:
-    TEST_CASES             items: TC_ID, NAME, TYPE, PRIORITY, STEPS_HTML, EXPECTED_HTML, PASS_CRIT
-    ACCEPTANCE_CRITERIA    items: AC_ID, CRITERION
-    ASSUMPTIONS            items: TEXT
-    DEPENDENCIES           items: TEXT
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template qa-test-plan --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

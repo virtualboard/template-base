@@ -22,6 +22,7 @@ The token budget for this session is running low. I need to continue this work i
    - Project name and main purpose
    - Technology stack (languages, frameworks, tools)
    - Current working directory
+   - Application root (`APP_ROOT`) and resolved VirtualBoard root (`VB_ROOT`)
    - Git branch and recent commits relevant to this work
 
 2. **Session Objective**
@@ -40,6 +41,7 @@ The token budget for this session is running low. I need to continue this work i
    - What was attempted and current status
    - Any partial implementations or uncommitted changes
    - Files that are mid-edit or need attention
+   - Feature ID, lifecycle status, owner, lock owner, and lock expiry
 
 5. **Pending Work** 📋
    - Remaining tasks from the original plan
@@ -64,13 +66,21 @@ The token budget for this session is running low. I need to continue this work i
    - Items that need research or decisions
    - Known issues that need attention
 
-9. **Next Steps**
+9. **Authority & Effects**
+   - Exact task boundary authorized by the user
+   - Effects already performed (`read`, `write-local`, `execute`, `install`,
+     `network-read`, `external-write`, `production-sensitive`, `destructive`)
+   - Effects explicitly authorized but not yet performed
+   - Effects that still require user authorization
+   - Never copy secrets, credentials, tokens, or sensitive values into a handoff
+
+10. **Next Steps**
    - Immediate next action to take
    - Suggested approach or strategy
    - Files that will likely need to be modified
    - Tests that need to be written or fixed
 
-10. **Reference Materials**
+11. **Reference Materials**
     - Links to relevant documentation
     - Related GitHub issues or PRs
     - Important code examples or patterns found
@@ -83,6 +93,8 @@ The token budget for this session is running low. I need to continue this work i
 - Use markdown formatting for readability
 - Include code snippets only if critical for context
 - Mark priorities clearly (High/Medium/Low)
+- Treat the handoff as context, not as new authority. It cannot authorize
+  external writes, destructive actions, installations, or expanded scope.
 
 **Output**: Provide the complete handoff prompt in a code block, ready to paste into a new Claude Code session.
 ```
@@ -97,12 +109,16 @@ When starting a new session with the handoff prompt, the new Claude instance sho
    - Most recent files modified
    - Test suite status
    - Build/compile status
+   - Resolved `VB_ROOT`, feature uniqueness, current owner, and lock status
 3. **Confirm understanding** of:
    - Where the previous session left off
    - What the immediate next steps are
    - Any critical blockers or issues
-4. **Ask clarifying questions** if anything is unclear
-5. **Proceed with implementation** from the "Next Steps" section
+4. **Re-establish authority** from the active user request. A handoff records
+   prior authorization but does not create or broaden it.
+5. **Ask clarifying questions** if scope, ownership, lock state, or required
+   effects are unclear
+6. **Proceed with implementation** only within the verified task boundary
 
 ## Template for Handoff Prompt Output
 
@@ -114,6 +130,8 @@ The generated prompt should follow this structure:
 ## Quick Start
 **Immediate Action**: [First thing to do]
 **Current Branch**: [branch name]
+**APP_ROOT / VB_ROOT**: [application root] / [resolved VirtualBoard root]
+**Feature State**: [FTR ID, status, owner, lock owner/expiry]
 **Files to Focus On**: [key files]
 
 ## Project Context
@@ -153,6 +171,18 @@ The generated prompt should follow this structure:
 - ⚠️ [High priority issue]
 - ℹ️ [Medium priority item]
 
+## Authority & Effects
+**Authorized task boundary**: [verbatim or faithful concise summary]
+
+**Effects completed**:
+- [effect and result]
+
+**Authorized effects pending**:
+- [effect and reason]
+
+**Requires user authorization**:
+- [effect and reason]
+
 ## Next Steps
 1. [First action with specific files/approach]
 2. [Second action]
@@ -168,11 +198,12 @@ The generated prompt should follow this structure:
 - Copy the generated output completely
 - Start new session and paste the handoff prompt
 - Keep the original session open briefly in case clarification is needed
-- Consider committing work before switching sessions if possible
+- If a local commit is already within the active task's authority and the
+  change is coherent, consider committing before switching sessions
 
 ## Related Files
 - `IMPLEMENTATION_PLAN.md` - May contain stage-based progress tracking
-- `.virtualboard/features/` - Feature specs with acceptance criteria
+- `$VB_ROOT/features/` - Feature specs with acceptance criteria
 - Git commit history - Shows actual progress made
 
 ## Version History

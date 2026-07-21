@@ -3,41 +3,10 @@
   Used by:  prompts/agents/pm/PM-Generate_Backlog_Grooming.md (GBG)
   Pairs with: reports/{YYYY-MM-DD}_Backlog_Grooming_Report.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    SESSION_DURATION       – e.g. "47 minutes"
-    FEATURES_REVIEWED, FEATURES_TOTAL  – integers
-    HEALTH_SCORE           – integer 0–10 (overall backlog health)
-    SCORE_SPEC, SCORE_DEPS, SCORE_PRIORITY, SCORE_READINESS  – integers 0–10
-    EXECUTIVE_SUMMARY_HTML
-    KPI_FULLY_IMPLEMENTED, KPI_PARTIALLY, KPI_SPEC_UPDATED,
-    KPI_ARCHIVED, KPI_VALIDATED  – integers
-    P0_COUNT, P1_COUNT, P2_COUNT, P3_COUNT  – integers
-    P0_PCT, P1_PCT, P2_PCT, P3_PCT  – integers
-    READY_COUNT, BLOCKED_COUNT, NEEDS_REFINEMENT_COUNT, STALE_COUNT
-    HAS_DEPENDENCIES_COUNT, AVG_DEPENDENCY_DEPTH, CIRCULAR_DEP_COUNT, INVALID_DEP_COUNT
-    NEXT_GROOMING_DATE, OPEN_QUESTIONS_HTML
-
-  Per-template list placeholders:
-    HERO_META_CELLS         items: LABEL, VALUE
-    FULLY_IMPLEMENTED       items: FTR_ID, TITLE, RECOMMENDATION, DECISION
-    PARTIAL                 items: FTR_ID, TITLE, COMPLETED_PCT, RECOMMENDATION, DECISION
-    VALIDATED_READY         items: FTR_ID, TITLE, PRIORITY, COMPLEXITY, NOTES
-    SPEC_UPDATED            items: FTR_ID, TITLE, CHANGES, REASON
-    ARCHIVED                items: FTR_ID, TITLE, REASON
-    DEFERRED                items: FTR_ID, TITLE, OLD_PRIORITY, NEW_PRIORITY, REASON
-    NEEDS_REFINEMENT        items: FTR_ID, ISSUE
-    STALE                   items: FTR_ID, TITLE, AGE_DAYS, LAST_UPDATED, RECOMMENDATION
-    QUICK_WINS              items: FTR_ID, TITLE, PRIORITY, COMPLEXITY, IMPACT, EFFORT
-    UNBLOCKERS              items: FTR_ID, TITLE, CURRENT_PRIORITY, UNBLOCKS, RECOMMENDATION
-    PROMOTIONS              items: FTR_ID, TITLE, CURRENT, RECOMMENDED, REASON
-    DEMOTIONS               items: FTR_ID, TITLE, CURRENT, RECOMMENDED, REASON
-    READY_TO_START          items: FTR_ID, TITLE, PRIORITY, COMPLEXITY, LABELS, EPIC
-    EPICS                   items: EPIC_ID, EPIC_NAME, FEATURE_COUNT, COMPLETED_COUNT, COMPLETED_PCT
-    IMMEDIATE_ACTIONS       items: TITLE, DESC
-    SHORT_TERM_ACTIONS      items: TITLE, DESC
-    LONG_TERM_ACTIONS       items: TITLE, DESC
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template pm-backlog-grooming --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>
@@ -73,28 +42,28 @@
     <h2><span class="num">02</span>Session Results</h2>
     <p class="lead">{{FEATURES_REVIEWED}} of {{FEATURES_TOTAL}} backlog items reviewed in {{SESSION_DURATION}}.</p>
     <div class="kpi">
-      <div class="stat"><div class="n">{{KPI_FULLY_IMPLEMENTED}}</div><div class="l">Fully implemented</div></div>
+      <div class="stat"><div class="n">{{KPI_IMPLEMENTATION_EVIDENCE}}</div><div class="l">Implementation evidence</div></div>
       <div class="stat"><div class="n">{{KPI_PARTIALLY}}</div><div class="l">Partially implemented</div></div>
       <div class="stat"><div class="n">{{KPI_SPEC_UPDATED}}</div><div class="l">Spec updated</div></div>
-      <div class="stat"><div class="n">{{KPI_ARCHIVED}}</div><div class="l">Archived</div></div>
+      <div class="stat"><div class="n">{{KPI_REMOVAL_CANDIDATES}}</div><div class="l">Removal candidates</div></div>
       <div class="stat"><div class="n">{{KPI_VALIDATED}}</div><div class="l">Validated as-is</div></div>
     </div>
   </section>
 
   <section id="implementation-status">
     <h2><span class="num">03</span>Implementation Status</h2>
-    <p class="lead">Features that should leave the backlog and those that need a split.</p>
+    <p class="lead">Possible existing implementations that remain in backlog pending evidence recovery, plus scopes that may need a split.</p>
 
-    <h3>Fully implemented (move out of backlog)</h3>
+    <h3>Possible existing implementation (remain in backlog)</h3>
     <table class="component-table">
       <thead><tr><th>Feature</th><th>Title</th><th>Recommendation</th><th>Decision</th></tr></thead>
       <tbody>
-        {{#FULLY_IMPLEMENTED}}
+        {{#IMPLEMENTATION_EVIDENCE}}
         <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{RECOMMENDATION}}</td><td>{{DECISION}}</td></tr>
-        {{/FULLY_IMPLEMENTED}}
+        {{/IMPLEMENTATION_EVIDENCE}}
       </tbody>
     </table>
-    {{LIST_EMPTY_FULLY_IMPLEMENTED}}
+    {{LIST_EMPTY_IMPLEMENTATION_EVIDENCE}}
 
     <h3 style="margin-top: 32px;">Partially implemented</h3>
     <table class="component-table">
@@ -110,7 +79,7 @@
 
   <section id="relevance">
     <h2><span class="num">04</span>Relevance Analysis</h2>
-    <p class="lead">For features not yet implemented: validated, updated, archived, or deferred.</p>
+    <p class="lead">For features not yet implemented: validated, updated, recommended for removal, or deferred.</p>
 
     <h3>Validated &amp; ready</h3>
     <table class="component-table">
@@ -134,16 +103,16 @@
     </table>
     {{LIST_EMPTY_SPEC_UPDATED}}
 
-    <h3 style="margin-top: 32px;">Archived</h3>
+    <h3 style="margin-top: 32px;">Removal candidates</h3>
     <table class="component-table">
       <thead><tr><th>Feature</th><th>Title</th><th>Reason</th></tr></thead>
       <tbody>
-        {{#ARCHIVED}}
+        {{#REMOVAL_CANDIDATES}}
         <tr><td>{{FTR_ID}}</td><td>{{TITLE}}</td><td>{{REASON}}</td></tr>
-        {{/ARCHIVED}}
+        {{/REMOVAL_CANDIDATES}}
       </tbody>
     </table>
-    {{LIST_EMPTY_ARCHIVED}}
+    {{LIST_EMPTY_REMOVAL_CANDIDATES}}
 
     <h3 style="margin-top: 32px;">Deferred / deprioritized</h3>
     <table class="component-table">
