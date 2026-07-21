@@ -210,6 +210,7 @@ try {
     Pass-Test 'rejects destination junctions before download'
 
     Write-Host "1..$testsRun"
+    exit 0
 }
 finally {
     Remove-Item -LiteralPath $testRoot -Recurse -Force -ErrorAction SilentlyContinue

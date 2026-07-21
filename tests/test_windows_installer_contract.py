@@ -45,7 +45,7 @@ class WindowsInstallerContractTests(unittest.TestCase):
         self.assertIn("post-install binary checksum mismatch", self.installer)
         self.assertIn("staging bytes changed before activation", self.installer)
         self.assertIn("$stream.Flush($true)", self.installer)
-        self.assertIn("[IO.File]::Replace($Stage, $Target, $null, $true)", self.installer)
+        self.assertIn("[IO.File]::Replace($Stage, $Target, $backupFile, $true)", self.installer)
         self.assertIn("[IO.File]::Move($Stage, $Target)", self.installer)
         self.assertNotIn("-Verb RunAs", self.installer)
         self.assertNotIn("Start-Process", self.installer)
