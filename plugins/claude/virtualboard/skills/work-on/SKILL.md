@@ -13,7 +13,7 @@ description: >
 Implement exactly one requested VirtualBoard feature in an isolated worktree.
 This skill never selects another feature after completion or failure.
 
-## Usage
+## Options
 
 ```text
 /work-on FTR-XXXX [options]
@@ -83,7 +83,7 @@ On Windows, run it from Git Bash or WSL. Native Windows PowerShell may bootstrap
 and inspect the pinned `vb.exe`, but it does not replace the Bash worktree,
 claim, verification, or plugin-generation workflow.
 
-## Workflow
+## Locate and claim the feature
 
 Follow these steps in order. Do not begin codebase analysis or implementation
 until Step 5 has verified the lifecycle claim in the worktree.
