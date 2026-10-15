@@ -49,14 +49,14 @@ AI agents should automatically detect the appropriate role based on:
 - Feature specs live under `/features/<status>/` with frontmatter-driven ownership, dates, and dependencies.
 - Agents are expected to claim work atomically, keep `updated` fresh, and respect status-folder alignment.
 - **CRITICAL**: When moving a feature file, agents MUST update the frontmatter `status` field to match the destination folder, update the `updated` field to today's date, and update `owner` field if claiming/releasing ownership.
-- Prompts emphasize a continuous delivery loop: pick a task, validate dependencies, take ownership, execute, move to the next state, and immediately look for new work.
+- Prompts use an explicit execution policy: validate the assigned task, respect ownership, execute, and hand off.
 
 ## Current Agent Prompts
 
 ### Project Manager — `agents/pm.md`
 - Owns planning cadence: sprint goals, prioritization, stakeholder updates, blocker removal.
 - Creates new specs in `/features/backlog/` and drives them through planning and review.
-- Must continuously monitor backlog, assign ownership, and maintain progress reporting loops.
+- Monitors backlog and coordinates ownership within the user’s requested planning scope.
 
 ### System Architect — `agents/architect.md`
 - Defines technical standards, architectural direction, and high-level implementation plans.
@@ -123,7 +123,7 @@ cat agents/frontend_dev.md
 Each agent file contains specific instructions for:
 - How to claim and work on tasks
 - What to focus on based on skill level
-- How to maintain continuous operation
+- How to respect execution modes and handoff limits
 - Role-specific responsibilities
 
 ### Step 5: Maintain Role Consistency
@@ -159,18 +159,9 @@ Each agent file contains specific instructions for:
 **Agent**: QA Engineer (`agents/qa.md`)
 **Action**: Read QA instructions, adopt QA identity, execute test plans
 
-## 🔄 Continuous Operation Pattern
+## Execution Modes
 
-All agents follow this pattern:
-1. **Find work**: Check `/features/backlog/` for available tasks
-2. **Select role**: Determine appropriate agent based on task type
-3. **Adopt identity**: Read agent file and announce role
-4. **Claim task**: Move to `/features/in-progress/` and set ownership
-   - **CRITICAL**: Update frontmatter `status`, `owner`, and `updated` fields when moving
-5. **Execute work**: Follow role-specific instructions
-6. **Complete task**: Move to `/features/review/` when done
-   - **CRITICAL**: Update frontmatter `status` and `updated` fields when moving
-7. **Repeat**: Immediately look for next available task
+Default to one assigned feature. Follow the shared [execution policy](RULES.md#execution-policy) for dispatched, standalone, review, and explicitly bounded queue sessions. A role charter supplies expertise, not authority to start unrelated work or publish changes.
 
 ## ⚠️ Important Notes
 
@@ -178,7 +169,7 @@ All agents follow this pattern:
 - **Announce your role** when beginning a task
 - **Stay in character** throughout the entire task lifecycle
 - **Follow role-specific workflows** as defined in each agent file
-- **Maintain continuous operation** - never end your session without finding the next task
+- **Respect execution limits** - stop after the assigned handoff unless the user authorized a bounded queue
 
 ## 💡 Example: How an AI Agent Would Use This System
 

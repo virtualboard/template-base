@@ -337,13 +337,13 @@
                 <div class="code-terminal-dot code-terminal-dot--green"></div>
               </div>
               <div class="code-terminal-body">
-<pre># Install if missing, upgrade if outdated
+<pre># Install or enforce the project-selected release
 ./scripts/install-vb-cli.sh --ensure-latest
 vb version</pre>
               </div>
             </div>
             <p class="text-xs text-muted-foreground mt-3">
-              Non-interactive: installs when missing, upgrades when outdated, exits cleanly when current.
+              Non-interactive: enforces the exact <code class="inline-code">.vb-version</code> pin, or resolves one latest tag when no pin is present. It verifies SHA-256 checksums before an atomic replacement.
             </p>
           </div>
 
@@ -386,7 +386,7 @@ vb index</pre>
     <section id="security" class="py-20 lg:py-28 section-gradient">
       <div class="max-w-5xl mx-auto px-6">
         <div class="text-center mb-14">
-          <p class="badge badge--warm mb-4 mx-auto inline-flex">Security &middot; v0.8.1</p>
+          <p class="badge badge--warm mb-4 mx-auto inline-flex">Security &middot; v0.8.0</p>
           <h2 class="mb-4">Security & Hardening</h2>
           <p class="text-muted-foreground max-w-xl mx-auto">
             Supply-chain integrity, audit logging, operational locking, and agent sandboxing

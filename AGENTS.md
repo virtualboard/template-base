@@ -15,9 +15,11 @@
 - Minimal merge conflicts; high parallelism across features
 - Automation hooks for validation, indexing, and guardrails
 
-**Implementation:** The system uses pure bash scripts for all automation, eliminating Node.js/npm dependencies and providing universal compatibility across Unix-like systems.
+**Implementation:** The Go `vb` CLI owns feature creation, validation, mutations, indexing, leases, and audit records. Shell helpers handle installation and worktree setup.
 
-**CLI Tool Integration:** The system first checks for the `vb` (Virtual Board) CLI tool. If available, agents should use `vb` commands for task management. If not found, agents should fall back to the shell scripts in `.virtualboard/scripts/` or use plain bash commands according to the strategy definition.
+**CLI Tool Integration:** Use `vb` for every feature mutation. If it is missing or incompatible, install the project-selected version or report the blocker; direct file moves and ad hoc shell mutations are unsupported.
+
+**Execution mode:** A dispatched agent follows its run contract, handles exactly its assigned feature, reports once, and stops. A standalone session handles one selected feature. Queue processing and publication require explicit scope and a stopping condition. Role expertise never grants permission to claim more work, push, or open pull requests.
 
 ---
 
@@ -29,7 +31,7 @@
 - **Owner:** The current human/agent responsible for a feature's next state transition.
 - **Agent:** Any automated actor (e.g., Cursor, CI bot) executing rules defined here.
 - **FTR ID:** Stable identifier `FTR-####` (e.g., `FTR-0123`).
-- **Status:** One of `backlog | in-progress | review | done` (mirrored by the folder location).
+- **Status:** One of `backlog | in-progress | blocked | review | done` (mirrored by the folder location).
 
 ---
 
@@ -55,7 +57,8 @@
   /done              # completed features
   INDEX.md           # auto-generated, do not edit
 /templates
-  feature.md         # canonical feature spec template
+  feature.md         # full template, default for vb new
+  feature-light.md   # compact template, vb new --template light
   pr-template.md     # pull request template
   rules.yml          # machine-readable agent rules & validation parameters
   /specs             # system specification templates
@@ -167,7 +170,7 @@ version.txt          # version tracking
 - `####` is a zero‑padded integer (e.g., `0001`).
 - `short-description` is kebab‑case, ≤ 6 words (e.g., `search-bar`, `user-authentication`).
 
-**Branch:** `feat/FTR-####-short-description`
+**Branch:** `feature/FTR-####/short-description`
 
 **Commit prefix:** `FTR-####:` (e.g., `FTR-0123: implement password reset flow`).
 
@@ -180,7 +183,7 @@ Every spec starts with YAML frontmatter (machine‑parsable):
 ```yaml
 id: FTR-0123
 title: User Authentication
-status: backlog # backlog | in-progress | review | done
+status: backlog # backlog | in-progress | blocked | review | done
 owner: unassigned # set to human/agent handle when in-progress
 priority: P2 # P0 | P1 | P2 | P3
 complexity: M # XS | S | M | L | XL
@@ -192,36 +195,16 @@ epic: EP-0005
 risk_notes: "Password policy and migration risk."
 ```
 
-**JSON Schema (excerpt) for **``**:**
-
-```json
-{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "required": ["id", "title", "status", "created", "updated"],
-  "properties": {
-    "id": { "type": "string", "pattern": "^FTR-\\d{4}$" },
-    "title": { "type": "string", "minLength": 3 },
-    "status": { "type": "string", "enum": ["backlog", "in-progress", "review", "done"] },
-    "owner": { "type": "string" },
-    "priority": { "type": "string", "enum": ["P0", "P1", "P2", "P3"] },
-    "complexity": { "type": "string", "enum": ["XS", "S", "M", "L", "XL"] },
-    "created": { "type": "string", "format": "date" },
-    "updated": { "type": "string", "format": "date" },
-    "labels": { "type": "array", "items": { "type": "string" } },
-    "dependencies": { "type": "array", "items": { "type": "string", "pattern": "^FTR-\\d{4}$" } },
-    "epic": { "type": "string" },
-    "risk_notes": { "type": "string" }
-  },
-  "additionalProperties": false
-}
-```
+Validate against [`schemas/frontmatter.schema.json`](schemas/frontmatter.schema.json); it is the authoritative schema. The optional `role` field selects an implementation role. Review-stage policy can select QA independently.
 
 ---
 
 ## 7) Spec Body Template (Markdown)
 
-> Copy from `/templates/feature.md` when creating a new feature.
+> `vb new` uses `/templates/feature.md`. Use `vb new "Small change" --template light`
+> for a compact summary, acceptance criteria, implementation notes, verification evidence,
+> and links. Both forms use the same metadata validation and lifecycle. Expand to the
+> full structure when the change needs rollout, data, security, or UI planning.
 
 ```markdown
 # Feature Spec: <Title>
@@ -299,6 +282,8 @@ Who is impacted, what pain exists, why now.
 
 - `backlog → in-progress`
 - `in-progress → review`
+- `in-progress → blocked`
+- `blocked → in-progress`
 - `review → in-progress` (changes requested)
 - `review → done`
 
@@ -312,7 +297,7 @@ Who is impacted, what pain exists, why now.
 **State rules:**
 
 - A spec may exist in **exactly one** lifecycle folder.
-- `id` and base filename are **immutable** after creation.
+- `id` is **immutable** after creation. `vb update` can rename the title slug while preserving the ID.
 - `updated` must change on every content edit.
 - Dependencies must be `done` before moving **into** `in-progress`.
 
@@ -324,20 +309,11 @@ The `vb` CLI is **required** for all feature workflow operations. There are no s
 
 ### A. Bootstrap check
 
-Run this at the start of any task that touches feature specs:
-
-```bash
-./.virtualboard/scripts/install-vb-cli.sh --ensure-latest
-vb version
-```
-
-`--ensure-latest` is non-interactive and handles every state:
-
-- **Not installed** → downloads and installs the latest release from `virtualboard/vb-cli` (OS/arch auto-detected).
-- **Installed but outdated** → runs `vb upgrade`, then retries with `sudo vb upgrade` if the first attempt fails.
-- **Already latest** → exits successfully with no changes.
-
-It is the only supported bootstrap path.
+Run `vb version` and inspect `vb help`. Use the project's selected version;
+`.vb-version` can pin the installer download. If the CLI is missing, install it
+with `./.virtualboard/scripts/install-vb-cli.sh --local` and add that directory
+to the command path. Tool upgrades are an explicit maintenance action, not a
+side effect of every feature task. Do not escalate privileges automatically.
 
 ### B. CLI usage
 
@@ -428,11 +404,11 @@ See `/prompts/AGENTS.md` for complete documentation.
 
 1. **Create the feature (after ensuring `vb` is installed — see §9):**
    ```bash
-   vb new "User Authentication" --labels "auth,frontend"
+   vb new "User Authentication" auth frontend
    ```
 
 2. `vb` assigns the next ID and creates `/features/backlog/FTR-####-user-authentication.md` from the template.
-3. Fill frontmatter (status=`backlog`, owner=`unassigned`).
+3. Set metadata with `vb update`; the CLI initializes status and owner.
 4. Complete minimal sections: Summary, Problem, Goals, Acceptance Criteria.
 
 ### B. Start Work on a Feature
@@ -443,7 +419,7 @@ See `/prompts/AGENTS.md` for complete documentation.
    ```
 
 2. Ensure dependencies are `done` (validation enforces this).
-3. Create branch `feat/FTR-####-short-description`.
+3. Create branch `feature/FTR-####/short-description`.
 4. Implement against Acceptance Criteria; update spec `Implementation Notes` and `Links` with PRs.
 
 ### C. Send for Review
@@ -471,16 +447,18 @@ See `/prompts/AGENTS.md` for complete documentation.
 
 ## 12) Concurrency & Locking (Multi‑Agent Safety)
 
-- **Soft lock via owner:** Only the current `owner` may edit a spec outside of trivial fixes.
-- **Optional hard lock:** Create `/locks/FTR-0123.lock` containing `{ owner, started_at, ttl_minutes }`. CI warns if TTL expired.
-- **Collision rule:** If an agent detects another owner or active lock, it must abort and comment in the PR or handoff file.
-- **Granularity:** Agents must **not** edit specs they do not own; they may read for dependency checks and indexing.
+- Claim a standalone feature with `vb lock FTR-0123 --owner agent-id` and set `VB_OWNER` to the same identity for mutations.
+- Preserve `VB_LOCK_TOKEN` in dispatched runs. Tokens prevent an old run from releasing or mutating under a replacement lease.
+- Use `vb lock FTR-0123 --status` to inspect a lease and `--renew --token TOKEN` to renew it. Do not create lock JSON files by hand.
+- An owner/token mismatch stops mutations. Report the conflict; never silently force a lease takeover.
+- Read other features for dependencies, but mutate only the feature assigned to the current execution mode.
+
 
 ---
 
 ## 13) Git & PR Conventions
 
-- **Branch:** `feat/FTR-####-short-description`
+- **Branch:** `feature/FTR-####/short-description`
 - **Commits:** Prefix with `FTR-####:`; keep changes cohesive to that feature.
 - **PR title:** `FTR-####: <title>`; **PR links** back to the spec.
 - **PR template:** Mirrors the spec’s Acceptance Criteria (checkboxes) + Risk Assessment + Rollback Plan.
@@ -568,17 +546,17 @@ Each agent role has:
 
 - **Check `/prompts/agents/{role}/README.md` first** when adopting an agent role
 - **Display available commands** to user when starting a session
-- Ensure the latest `vb` CLI is installed before touching any feature spec: `./scripts/install-vb-cli.sh --ensure-latest`
+- Use the project-selected `vb` version; follow §9 when it is missing.
 - Run `vb version` and `vb help` to confirm the CLI and inspect available commands
 - Read `/templates/rules.yml` on start.
 - Validate spec before edits; bail on lock/owner mismatch.
 - Only modify specs where `owner == agent-id`.
 - Update `updated` on every edit.
-- Preserve frontmatter ordering/whitespace; never change `id` or filename.
+- Preserve unknown metadata and body content; never change `id`. Use `vb update` for content and title changes.
 
 **MUST NOT:**
 
-- Move a file across folders without updating `status`.
+- Move spec files or set `status` directly; use `vb move` in standalone mode and the outcome report in dispatched mode.
 - Start work if any dependency not `done`.
 - Create duplicate IDs or specs.
 - Ignore commands defined in `/prompts/agents/{role}/` for your role.

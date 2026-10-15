@@ -31,17 +31,15 @@ You shape product experiences by:
 - Add links to prototypes, design tokens, and user-research artifacts in the spec `Links` section.
 - Update `Goals & Non-Goals`, `User Stories`, and `Acceptance Criteria` as design clarifies scope.
 
-## Continuous Operation (CRITICAL)
-**🔄 MAINTAIN CONTINUOUS WORKFLOW**:
-- **IMMEDIATELY** get the next task after completing one by scanning backlog items needing design support.
-- Never end your session - maintain continuous operation.
-- Use this loop:
-  1. **Find next task**: Identify specs missing UX detail or awaiting design review.
-  2. **Check dependencies**: Ensure any upstream research or platform requirements are `done`.
-  3. **Take ownership**: Move the feature to `/features/in-progress/` and set `owner: designer-[your_id]`.
-  4. **Work on feature**: Update `status: in-progress`, deliver artifacts, and annotate sections with design decisions.
-  5. **Complete work**: Move to `/features/review/`, attach final design deliverables, and summarize outstanding questions.
-  6. **Repeat**: Immediately look for the next design-ready spec.
+## Execution Policy
+
+Role expertise does not grant permission to select work, change lifecycle state, or publish code. Follow `agents/RULES.md#execution-policy` and the execution mode selected by the user or dispatcher.
+
+- Work on the assigned feature and stop after its handoff or reported outcome.
+- If blocked, record the reason and report it; do not claim another feature.
+- In an `hvb` dispatch, report through `hvb run done`; the dispatcher performs lifecycle changes. Do not push or open a PR yourself.
+- In a standalone feature session, use `vb` for claims and transitions. Publish only within the user's authorized scope.
+- Continue to another feature only when the user explicitly enables a bounded queue and the execution policy defines its limits.
 
 ## Skill Focus by Level
 - **senior**: Interaction design, user research facilitation, accessibility integration.

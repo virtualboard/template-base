@@ -154,40 +154,36 @@ Create docs at `.virtualboard/data/pipelines/{pipeline_name}.md`:
 
 ## Optional: Generate Branded HTML Report
 
-If the user appends `--html`, says "as HTML"/"branded HTML", or sets
-`format: html`, also produce an HTML rendering. **Additive** — the Markdown
-report is always written first.
+If the user requests `--html`, "as HTML"/"branded HTML", or `format: html`,
+write the Markdown deliverable first, then render an additional HTML report.
 
-1. Load `templates/reports/html/data-pipeline-doc.html`. The comment block at the top of
-   that file lists every placeholder this command must compute, with the same
-   names used in the Markdown report.
-2. Inline `{INCLUDE: _partials/<name>.html}` directives by reading and
-   pasting the referenced files; iterate until no `{INCLUDE:` markers remain.
-3. Substitute `{BRAND_LOGO_DATAURI}` with the contents of
-   `templates/reports/html/_partials/astucia-logo.b64.txt`, **stripping leading
-   and trailing whitespace** (the file may end in a newline that must not
-   appear inside `src="…"`).
-4. Substitute `{BRAND_NAME}` (default `Astucia`) and `{BRAND_TAGLINE}`
-   (default `AI Development Studio`) unless the user provided overrides.
-5. Substitute the cross-cutting placeholders (`REPORT_TITLE`,
-   `REPORT_TITLE_HTML`, `REPORT_SUBTITLE`, `EYEBROW`, `GENERATED_DATE`,
-   `GENERATED_DATETIME`, `AUTHOR_AGENT`, `CLASSIFICATION`, `PROJECT_NAME`,
-   `NAV_LINKS`, `FOOTER_PRIMARY_LINE`, `FOOTER_SECONDARY_LINE`,
-   `FOOTER_NOTE_BLOCK`, `EXTRA_SCRIPTS`).
-6. Substitute the per-template scalar placeholders:
-   `PIPELINE_NAME`, `OWNER`, `SOURCE`, `SINK`, `SCHEDULE`, `OVERVIEW_HTML`, `SLA_HTML`, `OBSERVABILITY_HTML`, `KPI_STAGES`, `KPI_INPUTS`, `KPI_OUTPUTS`, `KPI_TESTS`.
-7. Expand each `{#NAME}…{/NAME}` list block once per item using the
-   per-template list placeholders: `HERO_META_CELLS`, `STAGES`, `INPUTS`, `OUTPUTS`, `TESTS`, `OPEN_ITEMS`. The per-item field names are
-   documented in the template's top comment.
-8. For each list, set the matching `LIST_EMPTY_<NAME>` scalar to `""` if the
-   list has items, or to a small italic note (e.g.
-   `<p class="empty-note">No items.</p>`) if the list is empty.
-9. Write the rendered HTML next to the Markdown:
-   `.virtualboard/data/pipelines/{name}.html`.
-10. **Verify before reporting completion.** Search the rendered output for any
-    literal `{` — there must be none. Resolve leftovers (or substitute the
-    empty string for known-optional slots) before continuing.
-11. In your final reply, list **both** file paths.
+1. Read `templates/reports/html/data-pipeline-doc.html`. Its comment header lists the
+   scalar fields and list-item shapes. Use the same findings and measurements
+   as the Markdown report; do not invent values for unknown results.
+2. Write a companion JSON data file with uppercase field names, native numbers,
+   and arrays of objects for lists. Include every referenced field; use `""`,
+   `null`, or `[]` for explicitly empty values. The default brand and raster logo
+   are provided by the renderer.
+3. Run the deterministic renderer:
 
-A filled-in reference example lives at
-`templates/reports/examples/data-pipeline-doc.example.html`.
+   ```bash
+   vb report render --template data-pipeline-doc.html \
+     --data REPORT_DATA.json --output REPORT.html
+   ```
+
+   Replace the example paths with paths beside the Markdown deliverable, using
+   the same basename for `.md`, `.json`, and `.html`. Includes and repeated
+   blocks are resolved by the CLI; do not manually substitute template text.
+4. Strings are escaped, including `*_HTML` fields. Annotate reviewed markup as
+   `{"html":"<p>Reviewed content</p>"}` and add `--allow-html` only when those
+   fragments are intended as markup. Supply `*_JSON` fields as native JSON
+   values; the renderer safely serializes them in inline scripts.
+5. Validate with `--dry-run` if useful, then inspect the generated HTML. Existing
+   output requires `--force`; a rendering error must preserve earlier output.
+   If the installed CLI lacks `report render`, report that limitation instead
+   of claiming an HTML artifact was produced.
+6. List the Markdown and HTML paths in the final reply, with the companion JSON
+   path so the report can be reproduced.
+
+See `templates/reports/README.md` for the input contract and the runnable
+`templates/reports/examples/pm-progress-report.data.json` for a complete example.

@@ -274,29 +274,36 @@ When the QA agent receives this command, it should:
 
 ### 10. Optional — Generate Branded HTML Report
 
-If the user appends `--html`, says "as HTML"/"branded HTML", or sets
-`format: html`, also produce an HTML rendering. **Additive** — Markdown is
-always written first.
+If the user requests `--html`, "as HTML"/"branded HTML", or `format: html`,
+write the Markdown deliverable first, then render an additional HTML report.
 
-1. Load `templates/reports/html/qa-test-coverage.html`. Per-template
-   placeholders are listed in its top comment block.
-2. Inline partials; substitute `{{BRAND_LOGO_DATAURI}}` (stripped),
-   `{{BRAND_NAME}}`, `{{BRAND_TAGLINE}}`.
-3. Substitute scalars: `SCOPE`, `EXECUTIVE_SUMMARY_HTML`, `OVERALL_STATUS`,
-   `OVERALL_STATUS_CLASS`, `COVERAGE_OVERALL`, `COVERAGE_LINES`,
-   `COVERAGE_BRANCHES`, `COVERAGE_FUNCTIONS`, `COVERAGE_STATEMENTS`,
-   `COVERAGE_TREND`, the per-test-type KPIs (`UNIT_*`, `INTEGRATION_*`,
-   `E2E_*`), `FLAKY_COUNT`, `SKIPPED_COUNT`, `SLOW_COUNT`,
-   `PRODUCTION_LOC`, `TEST_LOC`, `TOOLS_HTML`, `EXCLUSIONS_HTML`,
-   `NEXT_REVIEW_DATE`.
-4. Expand list blocks: `HERO_META_CELLS`, `PER_FILE` (`FILE`, `LINES`,
-   `BRANCHES`, `FUNCTIONS`, `STATEMENTS`, `STATUS`), `ZERO_COVERAGE`
-   (`FILE`, `LINES`, `REASON`), `LOW_COVERAGE` (`FILE`, `LINES`, `COVERAGE`,
-   `PRIORITY`), `GAPS` (`TITLE`, `MODULE`, `SEVERITY`, `IMPACT`, `RECO`),
-   and the three action lists.
-5. Set each `LIST_EMPTY_<NAME>` accordingly.
-6. Write next to the Markdown:
-   `.virtualboard/testing/coverage/TCR-{YYYY-MM-DD}-{module}.html`.
-7. Verify no literal `{{` remains. Report both file paths.
+1. Read `templates/reports/html/qa-test-coverage.html`. Its comment header lists the
+   scalar fields and list-item shapes. Use the same findings and measurements
+   as the Markdown report; do not invent values for unknown results.
+2. Write a companion JSON data file with uppercase field names, native numbers,
+   and arrays of objects for lists. Include every referenced field; use `""`,
+   `null`, or `[]` for explicitly empty values. The default brand and raster logo
+   are provided by the renderer.
+3. Run the deterministic renderer:
 
-Reference example: `templates/reports/examples/qa-test-coverage.example.html`.
+   ```bash
+   vb report render --template qa-test-coverage.html \
+     --data REPORT_DATA.json --output REPORT.html
+   ```
+
+   Replace the example paths with paths beside the Markdown deliverable, using
+   the same basename for `.md`, `.json`, and `.html`. Includes and repeated
+   blocks are resolved by the CLI; do not manually substitute template text.
+4. Strings are escaped, including `*_HTML` fields. Annotate reviewed markup as
+   `{"html":"<p>Reviewed content</p>"}` and add `--allow-html` only when those
+   fragments are intended as markup. Supply `*_JSON` fields as native JSON
+   values; the renderer safely serializes them in inline scripts.
+5. Validate with `--dry-run` if useful, then inspect the generated HTML. Existing
+   output requires `--force`; a rendering error must preserve earlier output.
+   If the installed CLI lacks `report render`, report that limitation instead
+   of claiming an HTML artifact was produced.
+6. List the Markdown and HTML paths in the final reply, with the companion JSON
+   path so the report can be reproduced.
+
+See `templates/reports/README.md` for the input contract and the runnable
+`templates/reports/examples/pm-progress-report.data.json` for a complete example.

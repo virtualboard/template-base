@@ -54,9 +54,13 @@ if ! echo "$FEATURE_ID" | grep -qE '^FTR-[0-9]{4}$'; then
     exit 1
 fi
 
+# Include the Git common directory in the identity: two repositories can have
+# the same basename, and linked worktrees must resolve to the same namespace.
+REPO_COMMON=$(git rev-parse --path-format=absolute --git-common-dir)
+REPO_KEY=$(printf '%s' "$REPO_COMMON" | git hash-object --stdin)
 # Construct paths
 BRANCH_NAME="feature/$FEATURE_ID/$FEATURE_SLUG"
-WORKTREE_DIR="$WORKTREE_BASE/$REPO_NAME/$FEATURE_ID"
+WORKTREE_DIR="$WORKTREE_BASE/$REPO_NAME-$REPO_KEY/$FEATURE_ID"
 
 echo -e "${BLUE}Setting up worktree for $FEATURE_ID (repo: $REPO_NAME)${NC}"
 echo "  Branch: $BRANCH_NAME"
@@ -73,7 +77,21 @@ fi
 if [ -n "$BASE_BRANCH" ]; then
     MAIN_BRANCH="$BASE_BRANCH"
 else
-    MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+    MAIN_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || true)
+    MAIN_BRANCH=${MAIN_BRANCH#refs/remotes/origin/}
+    if [ -z "$MAIN_BRANCH" ]; then
+        if git show-ref --verify --quiet refs/heads/main; then
+            MAIN_BRANCH=main
+        elif git show-ref --verify --quiet refs/heads/master; then
+            MAIN_BRANCH=master
+        else
+            MAIN_BRANCH=$(git branch --show-current)
+        fi
+    fi
+fi
+if [ -z "$MAIN_BRANCH" ] || ! git rev-parse --verify "$MAIN_BRANCH^{commit}" >/dev/null 2>&1; then
+    echo "Error: Cannot resolve a base commit. Pass the base_branch argument explicitly." >&2
+    exit 1
 fi
 
 # Fetch latest from remote
@@ -85,11 +103,15 @@ if [ -d "$WORKTREE_DIR" ]; then
     echo -e "${YELLOW}Worktree already exists at $WORKTREE_DIR${NC}"
 
     # Verify it's a valid worktree
-    if git worktree list | grep -q "$WORKTREE_DIR"; then
+    if git worktree list --porcelain | grep -Fxq "worktree $WORKTREE_DIR"; then
         echo -e "${GREEN}Existing worktree is valid${NC}"
 
         # Get current branch in worktree
         CURRENT_BRANCH=$(git -C "$WORKTREE_DIR" branch --show-current 2>/dev/null || echo "unknown")
+        case "$CURRENT_BRANCH" in
+            "feature/$FEATURE_ID/"*) ;;
+            *) echo "Error: registered checkout is on $CURRENT_BRANCH, not a branch for $FEATURE_ID. Preserve it and choose another path." >&2; exit 1 ;;
+        esac
 
         # Get commit info
         COMMITS_AHEAD=$(git -C "$WORKTREE_DIR" rev-list "$MAIN_BRANCH"..HEAD --count 2>/dev/null || echo "0")
@@ -109,13 +131,13 @@ if [ -d "$WORKTREE_DIR" ]; then
         echo "UNCOMMITTED_FILES=$UNCOMMITTED"
         exit 0
     else
-        echo -e "${YELLOW}Directory exists but is not a valid worktree. Removing...${NC}"
-        rm -rf "$WORKTREE_DIR"
+        echo "Error: $WORKTREE_DIR exists but is not a worktree owned by this repository. Move it aside or choose another base path." >&2
+        exit 1
     fi
 fi
 
 # Create base directory if needed
-mkdir -p "$WORKTREE_BASE"
+mkdir -p "$(dirname "$WORKTREE_DIR")"
 
 # Check if branch exists locally
 LOCAL_BRANCH_EXISTS=$(git branch --list "$BRANCH_NAME" | wc -l | tr -d ' ')
@@ -135,10 +157,9 @@ if [ "$LOCAL_BRANCH_EXISTS" -gt 0 ] || [ "$REMOTE_BRANCH_EXISTS" -gt 0 ]; then
     echo -e "${BLUE}Creating worktree from existing branch...${NC}"
     git worktree add "$WORKTREE_DIR" "$BRANCH_NAME"
 
-    # Pull latest if remote exists
+    # Report the remote state without rebasing existing user work implicitly.
     if [ "$REMOTE_BRANCH_EXISTS" -gt 0 ]; then
-        echo "Pulling latest changes..."
-        git -C "$WORKTREE_DIR" pull --rebase origin "$BRANCH_NAME" 2>/dev/null || true
+        echo "Remote branch exists; inspect divergence before merging or publishing."
     fi
 
     # Get commit info

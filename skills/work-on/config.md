@@ -10,7 +10,7 @@ Base directory where git worktrees are created.
 
 | Property | Value |
 |----------|-------|
-| Default | `/tmp/virtualboard-worktrees` |
+| Default | `$XDG_STATE_HOME/virtualboard/worktrees` (fallback: `~/.local/state/virtualboard/worktrees`) |
 | Type | Directory path |
 
 **Example:**
@@ -18,13 +18,13 @@ Base directory where git worktrees are created.
 export VIRTUALBOARD_WORKTREE_PATH="$HOME/worktrees"
 ```
 
-Worktrees are created as subdirectories organized by repository name, then feature ID:
+Worktrees are created as subdirectories organized by repository name, then feature ID (use the setup script’s returned path):
 ```
 $VIRTUALBOARD_WORKTREE_PATH/
-├── my-webapp/
+├── my-webapp-<identity>/
 │   ├── FTR-0001/
 │   └── FTR-0042/
-└── api-service/
+└── api-service-<identity>/
     ├── FTR-0001/
     └── FTR-0099/
 ```
@@ -37,12 +37,13 @@ Action to take after pushing the feature branch.
 
 | Property | Value |
 |----------|-------|
-| Default | `push` |
+| Default | `local` |
 | Type | Enum |
-| Options | `push`, `push+pr`, `push+pr+cleanup` |
+| Options | `local`, `push`, `push+pr`, `push+pr+cleanup` |
 
 **Options:**
-- `push`: Push branch only (default)
+- `local`: Commit and hand off without publishing (default)
+- `push`: Push branch only
 - `push+pr`: Push branch and create a draft pull request
 - `push+pr+cleanup`: Push, create PR, and remove the worktree
 
@@ -96,6 +97,7 @@ Command line options override environment variables.
 | `--worktree-path <path>` | | Custom worktree location | `VIRTUALBOARD_WORKTREE_PATH` |
 | `--autonomous` | `-a` | Fully autonomous mode | `VIRTUALBOARD_SESSION_MODE` |
 | `--semi-autonomous` | `-s` | Semi-autonomous mode | `VIRTUALBOARD_SESSION_MODE` |
+| `--push` | | Publish the branch | `VIRTUALBOARD_POST_PUSH` |
 | `--create-pr` | | Create PR after push | `VIRTUALBOARD_POST_PUSH` |
 | `--cleanup` | | Remove worktree after PR | `VIRTUALBOARD_POST_PUSH` |
 
@@ -122,8 +124,8 @@ You can also set these in a `.env` file at the project root:
 
 ```bash
 # .env
-VIRTUALBOARD_WORKTREE_PATH=/tmp/virtualboard-worktrees
-VIRTUALBOARD_POST_PUSH=push
+VIRTUALBOARD_WORKTREE_PATH=~/.local/state/virtualboard/worktrees
+VIRTUALBOARD_POST_PUSH=local
 VIRTUALBOARD_SESSION_MODE=interactive
 ```
 

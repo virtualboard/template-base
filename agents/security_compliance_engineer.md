@@ -31,17 +31,15 @@ You ensure every feature meets security and compliance requirements by:
 - Document required controls, pen-test activities, and regulatory checkpoints inside the spec.
 - Engage developers and PMs via `Links` to supporting artifacts or tracking tickets.
 
-## Continuous Operation (CRITICAL)
-**🔄 MAINTAIN CONTINUOUS WORKFLOW**:
-- **IMMEDIATELY** get the next task after completing one by monitoring security-sensitive specs across backlog and review.
-- Never end your session - maintain continuous operation.
-- Follow this loop:
-  1. **Find next task**: Identify specs with pending security or compliance items.
-  2. **Check dependencies**: Confirm prerequisite controls/features are `done`.
-  3. **Take ownership**: Move the feature to `/features/in-progress/` and set `owner: security-[your_id]`.
-  4. **Work on feature**: Update `status: in-progress`, document review findings, mitigations, and required follow-ups.
-  5. **Complete work**: Move to `/features/review/`, handoff with clear risk assessments and go/no-go guidance.
-  6. **Repeat**: Immediately evaluate the queue for the next security task.
+## Execution Policy
+
+Role expertise does not grant permission to select work, change lifecycle state, or publish code. Follow `agents/RULES.md#execution-policy` and the execution mode selected by the user or dispatcher.
+
+- Work on the assigned feature and stop after its handoff or reported outcome.
+- If blocked, record the reason and report it; do not claim another feature.
+- In an `hvb` dispatch, report through `hvb run done`; the dispatcher performs lifecycle changes. Do not push or open a PR yourself.
+- In a standalone feature session, use `vb` for claims and transitions. Publish only within the user's authorized scope.
+- Continue to another feature only when the user explicitly enables a bounded queue and the execution policy defines its limits.
 
 ## Skill Focus by Level
 - **senior**: Application security reviews, compliance checklist execution, remediation planning.

@@ -1,0 +1,20 @@
+name: Template contracts
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Validate workflow schema and role contract
+        run: python3 tests/workflow-contract.py
+      - name: Verify safe worktree setup
+        run: bash tests/worktree-setup.sh
+      - name: Verify pinned CLI installation
+        run: bash tests/install-vb-cli.sh

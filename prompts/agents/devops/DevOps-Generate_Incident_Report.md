@@ -484,35 +484,36 @@ alerts:
 
 ### 7. Optional — Generate Branded HTML Report
 
-If the user appends `--html`, says "as HTML"/"branded HTML", or sets
-`format: html`, also produce an HTML rendering. **Additive** — Markdown is
-always written first.
+If the user requests `--html`, "as HTML"/"branded HTML", or `format: html`,
+write the Markdown deliverable first, then render an additional HTML report.
 
-1. Load `templates/reports/html/devops-incident-report.html`. Per-template
-   placeholders are listed in its top comment block.
-2. Inline partials; substitute `{{BRAND_LOGO_DATAURI}}` (stripped),
-   `{{BRAND_NAME}}`, `{{BRAND_TAGLINE}}`.
-3. Substitute scalars: `INCIDENT_ID`, `SEVERITY`
-   (`critical`/`high`/`medium`/`low`), `SEVERITY_LABEL`, `STATUS`,
-   `DETECTED_AT`, `RESOLVED_AT`, `DURATION`, `USERS_AFFECTED`,
-   `SERVICES_IMPACTED`, `BUSINESS_IMPACT`, `ROOT_CAUSE_ONE_LINE`,
-   `RESOLUTION_ONE_LINE`, `DETECTION_HTML`, `CLASSIFICATION_HTML`,
-   `IMPACT_SCOPE_HTML`, `ROOT_CAUSE_HTML`, `FIVE_WHYS_HTML`,
-   `WHAT_WENT_WELL_HTML`, `WHAT_WENT_WRONG_HTML`, `SYSTEM_STATE_HTML`,
-   `LOGS_HTML`, `METRICS_HTML`, `RESOLUTION_DETAILS_HTML`,
-   `VERIFICATION_HTML`, `SLA_BREACH`, `REVENUE_IMPACT`,
-   `SUPPORT_TICKETS`, `PREVENTION_TECHNICAL_HTML`,
-   `PREVENTION_PROCESS_HTML`, `PREVENTION_MONITORING_HTML`,
-   `LESSONS_HTML`, `REVIEW_MEETING_HTML`.
-4. Expand list blocks: `HERO_META_CELLS`, `TIMELINE` (`TIME`,
-   `EVENT_HTML`), the three action-item lists (each item: `TITLE`,
-   `OWNER`, `DUE`, `DESC`), `INTERNAL_COMMS` (`TIME`, `CHANNEL`,
-   `AUDIENCE`, `MESSAGE`), `EXTERNAL_COMMS` (`TIME`, `CHANNEL`,
-   `MESSAGE`), `SIMILAR_INCIDENTS` (`DATE`, `DESC`, `LINK_HTML`).
-5. Set each `LIST_EMPTY_<NAME>` accordingly.
-6. Write next to the Markdown:
-   `.virtualboard/incidents/reports/IR-{YYYY-MM-DD}-{incident-id}.html`.
-7. Verify no literal `{{` remains. Report both file paths.
+1. Read `templates/reports/html/devops-incident-report.html`. Its comment header lists the
+   scalar fields and list-item shapes. Use the same findings and measurements
+   as the Markdown report; do not invent values for unknown results.
+2. Write a companion JSON data file with uppercase field names, native numbers,
+   and arrays of objects for lists. Include every referenced field; use `""`,
+   `null`, or `[]` for explicitly empty values. The default brand and raster logo
+   are provided by the renderer.
+3. Run the deterministic renderer:
 
-Reference example:
-`templates/reports/examples/devops-incident-report.example.html`.
+   ```bash
+   vb report render --template devops-incident-report.html \
+     --data REPORT_DATA.json --output REPORT.html
+   ```
+
+   Replace the example paths with paths beside the Markdown deliverable, using
+   the same basename for `.md`, `.json`, and `.html`. Includes and repeated
+   blocks are resolved by the CLI; do not manually substitute template text.
+4. Strings are escaped, including `*_HTML` fields. Annotate reviewed markup as
+   `{"html":"<p>Reviewed content</p>"}` and add `--allow-html` only when those
+   fragments are intended as markup. Supply `*_JSON` fields as native JSON
+   values; the renderer safely serializes them in inline scripts.
+5. Validate with `--dry-run` if useful, then inspect the generated HTML. Existing
+   output requires `--force`; a rendering error must preserve earlier output.
+   If the installed CLI lacks `report render`, report that limitation instead
+   of claiming an HTML artifact was produced.
+6. List the Markdown and HTML paths in the final reply, with the companion JSON
+   path so the report can be reproduced.
+
+See `templates/reports/README.md` for the input contract and the runnable
+`templates/reports/examples/pm-progress-report.data.json` for a complete example.

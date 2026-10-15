@@ -44,8 +44,8 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --local, -l        Install to current directory (./vb)"
-            echo "  --ensure-latest    Install if missing, upgrade if outdated (non-interactive)"
-            echo "  --allow-sudo       Allow sudo escalation on upgrade failure (requires --ensure-latest)"
+            echo "  --ensure-latest    Install or enforce the selected release (non-interactive)"
+            echo "  --allow-sudo       Permit installation to a protected system path"
             echo "  --yes, -y          Non-interactive mode; auto-confirm all prompts"
             echo "  --help, -h         Show this help message"
             echo ""
@@ -99,15 +99,7 @@ else
     exit 1
 fi
 
-# Construct download URL (use pinned version if available, otherwise latest)
 BINARY_NAME="vb-${OS_NAME}-${ARCH}"
-if [[ -n "$PINNED_VERSION" ]]; then
-    DOWNLOAD_URL="https://github.com/${GITHUB_REPO}/releases/download/${PINNED_VERSION}/${BINARY_NAME}"
-    CHECKSUMS_URL="https://github.com/${GITHUB_REPO}/releases/download/${PINNED_VERSION}/checksums.txt"
-else
-    DOWNLOAD_URL="https://github.com/${GITHUB_REPO}/releases/latest/download/${BINARY_NAME}"
-    CHECKSUMS_URL="https://github.com/${GITHUB_REPO}/releases/latest/download/checksums.txt"
-fi
 
 # Determine install location
 if [[ "$LOCAL_INSTALL" == true ]]; then
@@ -187,6 +179,10 @@ TARGET_VERSION_NORMALIZED=""
 if [[ -n "$PINNED_VERSION" ]]; then
     TARGET_VERSION="$PINNED_VERSION"
     TARGET_VERSION_NORMALIZED=$(normalize_version "$PINNED_VERSION")
+    if [[ ! "$TARGET_VERSION" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]]; then
+        echo "Error: invalid version in $VB_VERSION_FILE: $TARGET_VERSION" >&2
+        exit 1
+    fi
 else
     echo "Checking for latest version..." >&2
     if command -v jq &> /dev/null; then
@@ -211,16 +207,27 @@ else
         fi
     fi
 fi
+if [[ ! "$TARGET_VERSION" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]]; then
+    echo "Error: release metadata did not contain a valid version tag: ${TARGET_VERSION:-<empty>}" >&2
+    exit 1
+fi
 # Backward-compat aliases used by the rest of the script
 LATEST_VERSION="$TARGET_VERSION"
 LATEST_VERSION_NORMALIZED="$TARGET_VERSION_NORMALIZED"
+
+if [[ -z "$TARGET_VERSION" ]]; then
+    echo "Error: could not resolve an exact VirtualBoard CLI release version." >&2
+    exit 1
+fi
+DOWNLOAD_URL="https://github.com/${GITHUB_REPO}/releases/download/${TARGET_VERSION}/${BINARY_NAME}"
+CHECKSUMS_URL="https://github.com/${GITHUB_REPO}/releases/download/${TARGET_VERSION}/checksums.txt"
 
 # Display information and get confirmation
 echo "Virtual Board CLI Installer"
 echo "=========================="
 echo ""
 
-# --ensure-latest: non-interactive upgrade path for agents/CI
+# --ensure-latest: non-interactive install path for agents/CI
 if [[ "$ENSURE_LATEST" == true ]] && [[ "$VB_INSTALLED" == true ]]; then
     echo "Virtual Board CLI is already installed."
     if [[ -n "$VB_VERSION" ]] && [[ "$VB_VERSION" != "(unable to determine version)" ]]; then
@@ -241,27 +248,9 @@ if [[ "$ENSURE_LATEST" == true ]] && [[ "$VB_INSTALLED" == true ]]; then
         exit 0
     fi
 
-    # Outdated (or version unknown) — upgrade via `vb upgrade`.
-    echo "Upgrading to $LATEST_VERSION via 'vb upgrade'..."
-    if vb upgrade; then
-        echo "✓ vb upgraded to latest."
-        exit 0
-    fi
-
-    if [[ "$ALLOW_SUDO" == true ]]; then
-        echo "'vb upgrade' failed; retrying with 'sudo vb upgrade' (--allow-sudo)..." >&2
-        if sudo vb upgrade; then
-            echo "✓ vb upgraded to latest (via sudo)."
-            exit 0
-        fi
-        echo "Error: 'sudo vb upgrade' also failed. Falling back to fresh install." >&2
-    else
-        echo "'vb upgrade' failed. To retry with elevated privileges, re-run with --allow-sudo." >&2
-        echo "Or install to a user-writable path with: $0 --local" >&2
-        exit 1
-    fi
-    echo ""
-    # Fall through to the fresh-install path below.
+    # Use the selected immutable release URL. `vb upgrade` targets latest and
+    # could silently ignore a project pin.
+    echo "Installing the selected release $LATEST_VERSION..."
 fi
 
 # If already installed, check version and suggest upgrade
@@ -300,6 +289,12 @@ if [[ "$VB_INSTALLED" == true ]]; then
         exit 0
     fi
     echo ""
+fi
+
+if [[ "$NEEDS_SUDO" == true && "$ALLOW_SUDO" != true ]]; then
+    echo "Error: installing to $TARGET_FILE requires elevated privileges." >&2
+    echo "Pass --allow-sudo explicitly or choose a user-writable install path." >&2
+    exit 1
 fi
 
 echo "System Information:"
@@ -347,17 +342,20 @@ fi
 echo "Verifying checksum..."
 CHECKSUMS_FILE=$(mktemp)
 if curl -s -L -f -o "$CHECKSUMS_FILE" "$CHECKSUMS_URL"; then
-    EXPECTED_HASH=$(grep "$BINARY_NAME" "$CHECKSUMS_FILE" | awk '{print $1}')
-    if [[ -z "$EXPECTED_HASH" ]]; then
-        echo "Warning: no checksum entry found for $BINARY_NAME in checksums.txt — skipping verification." >&2
+    EXPECTED_HASH=$(awk -v name="$BINARY_NAME" '$2 == name || (substr($2, 1, 2) == "./" && substr($2, 3) == name) { print $1 }' "$CHECKSUMS_FILE")
+    if [[ -z "$EXPECTED_HASH" || ! "$EXPECTED_HASH" =~ ^[[:xdigit:]]{64}$ ]]; then
+        echo "Error: missing or invalid SHA-256 entry for $BINARY_NAME in checksums.txt." >&2
+        rm -f "$TEMP_FILE" "$CHECKSUMS_FILE"
+        exit 1
     else
         if command -v sha256sum &> /dev/null; then
             ACTUAL_HASH=$(sha256sum "$TEMP_FILE" | awk '{print $1}')
         elif command -v shasum &> /dev/null; then
             ACTUAL_HASH=$(shasum -a 256 "$TEMP_FILE" | awk '{print $1}')
         else
-            echo "Warning: neither sha256sum nor shasum found — skipping verification." >&2
-            ACTUAL_HASH=""
+            echo "Error: neither sha256sum nor shasum is available; refusing an unverified binary." >&2
+            rm -f "$TEMP_FILE" "$CHECKSUMS_FILE"
+            exit 1
         fi
         if [[ -n "$ACTUAL_HASH" ]]; then
             if [[ "$ACTUAL_HASH" != "$EXPECTED_HASH" ]]; then
@@ -372,7 +370,9 @@ if curl -s -L -f -o "$CHECKSUMS_FILE" "$CHECKSUMS_URL"; then
         fi
     fi
 else
-    echo "Warning: could not download checksums.txt — skipping verification." >&2
+    echo "Error: could not download checksums.txt; refusing an unverified binary." >&2
+    rm -f "$TEMP_FILE" "$CHECKSUMS_FILE"
+    exit 1
 fi
 rm -f "$CHECKSUMS_FILE"
 
@@ -380,31 +380,58 @@ rm -f "$CHECKSUMS_FILE"
 chmod +x "$TEMP_FILE"
 echo "Binary prepared and made executable."
 
-# Install to target location
-if [[ "$LOCAL_INSTALL" == true ]]; then
-    # Local install - no confirmation needed
-    mv "$TEMP_FILE" "$TARGET_FILE"
-    echo "Installed to $TARGET_FILE"
-elif [[ "$NEEDS_SUDO" == true ]]; then
-    # Need sudo - ask for confirmation before requesting password
+# Validate the downloaded program and ensure the release asset matches its tag.
+if ! DOWNLOADED_VERSION=$("$TEMP_FILE" version 2>/dev/null); then
+    echo "Error: downloaded binary failed its version check." >&2
+    rm -f "$TEMP_FILE"
+    exit 1
+fi
+if [[ "$(normalize_version "$DOWNLOADED_VERSION")" != "$TARGET_VERSION_NORMALIZED" ]]; then
+    echo "Error: release tag $TARGET_VERSION does not match binary version $DOWNLOADED_VERSION." >&2
+    rm -f "$TEMP_FILE"
+    exit 1
+fi
+
+# Stage in the target directory so the final rename is atomic on one filesystem.
+TARGET_DIR=$(dirname "$TARGET_FILE")
+if [[ "$NEEDS_SUDO" == true ]]; then
+    if [[ "$ALLOW_SUDO" != true ]]; then
+        rm -f "$TEMP_FILE"
+        echo "Error: installing to $TARGET_FILE requires elevated privileges." >&2
+        echo "Pass --allow-sudo explicitly or choose a user-writable install path." >&2
+        exit 1
+    fi
     echo ""
-    if prompt_yes_no "Do you want to install to $INSTALL_PATH? (This requires sudo privileges)" "y"; then
-        echo ""
-        echo "Installing to $TARGET_FILE (sudo required)..."
-        sudo mv "$TEMP_FILE" "$TARGET_FILE"
-        echo "Installed to $TARGET_FILE"
-    else
-        echo ""
-        echo "Installation cancelled. The downloaded binary is available at: $TEMP_FILE"
-        echo "You can manually install it later or run this script again."
+    if ! prompt_yes_no "Do you want to install to $INSTALL_PATH? (This requires sudo privileges)" "y"; then
+        rm -f "$TEMP_FILE"
+        echo "Installation cancelled. The existing installation was preserved."
         exit 0
     fi
+    sudo mkdir -p "$TARGET_DIR"
+    STAGED_TARGET=$(sudo mktemp "$TARGET_DIR/.vb.XXXXXX")
+    if ! sudo install -m 0755 "$TEMP_FILE" "$STAGED_TARGET"; then
+        sudo rm -f "$STAGED_TARGET"
+        rm -f "$TEMP_FILE"
+        echo "Error: could not stage the verified binary in $TARGET_DIR." >&2
+        exit 1
+    fi
 else
-    # No sudo needed
-    mkdir -p "$(dirname "$TARGET_FILE")" 2>/dev/null || true
-    mv "$TEMP_FILE" "$TARGET_FILE"
-    echo "Installed to $TARGET_FILE"
+    mkdir -p "$TARGET_DIR"
+    STAGED_TARGET=$(mktemp "$TARGET_DIR/.vb.XXXXXX")
+    if ! install -m 0755 "$TEMP_FILE" "$STAGED_TARGET"; then
+        rm -f "$STAGED_TARGET" "$TEMP_FILE"
+        echo "Error: could not stage the verified binary in $TARGET_DIR." >&2
+        exit 1
+    fi
 fi
+rm -f "$TEMP_FILE"
+
+if [[ "$NEEDS_SUDO" == true ]]; then
+    sudo mv -f "$STAGED_TARGET" "$TARGET_FILE"
+else
+    mv -f "$STAGED_TARGET" "$TARGET_FILE"
+fi
+echo "Installed to $TARGET_FILE"
 
 echo ""
 echo "Installation complete!"

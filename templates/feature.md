@@ -9,7 +9,6 @@ created: YYYY-MM-DD
 updated: YYYY-MM-DD
 labels: []
 dependencies: []
-epic: ""
 risk_notes: ""
 ---
 
@@ -61,6 +60,12 @@ Who is impacted, what pain exists, why now.
 
 ## Implementation Notes
 - Libraries, patterns, risks, tech debt considerations.
+
+## Verification Evidence
+- Implementation commit: …
+- Command and result: …
+- Acceptance criterion demonstrated: …
+- Checks not run and reason: …
 
 ## Open Questions
 - …

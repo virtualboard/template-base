@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- The CLI installer now downloads the exact selected release tag, so an existing installation cannot bypass `.vb-version` through `vb upgrade` or a mutable `/latest` asset URL.
+- Missing or invalid SHA-256 entries now stop installation. The downloaded binary is validated and staged in the destination directory before atomic replacement; system-wide installs require explicit `--allow-sudo`.
+- `/work-on` documentation now describes local-only defaults and explicit publishing options.
+
+### Added
+
+- A lightweight feature template and shared workflow contract schema keep the
+  CLI, Herdr board, and template lifecycle and role rules in sync.
+- Worktree setup now namespaces paths by Git common directory, refuses unknown
+  occupied directories, and falls back to the repository's actual base branch.
+- Report templates include structured example data for deterministic renderer
+  validation.
+
+### Changed
+
+- Role charters now distinguish agent expertise from execution modes, and
+  `/work-on` keeps feature dispatch bounded and publishing opt-in.
+- Template installation validates exact release tags, binary versions, and
+  checksums before atomically replacing the installed CLI.
+
 ## [0.7.0] - 2026-04-28
 
 ### Added

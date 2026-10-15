@@ -1,0 +1,92 @@
+name: Build and Release Template
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: template-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify Template Contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Validate workflow schema and roles
+        run: python3 tests/workflow-contract.py
+      - name: Verify safe worktree setup
+        run: bash tests/worktree-setup.sh
+      - name: Verify pinned CLI installer
+        run: bash tests/install-vb-cli.sh
+      - name: Validate release metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="v$(tr -d '\r\n' < version.txt)"
+          if [[ "$VERSION" != "$GITHUB_REF_NAME" ]]; then
+            echo "Tag $GITHUB_REF_NAME does not match version.txt ($VERSION)" >&2
+            exit 1
+          fi
+          CLI_VERSION=$(tr -d '\r\n' < .vb-version)
+          STATUS=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/virtualboard/vb-cli/releases/tags/$CLI_VERSION")
+          if [[ "$STATUS" != "200" ]]; then
+            echo "Pinned vb release $CLI_VERSION is not available (HTTP $STATUS)." >&2
+            exit 1
+          fi
+
+  release:
+    name: Publish Immutable Template Archive
+    needs: verify
+    runs-on: ubuntu-latest
+    concurrency:
+      group: template-release-publish
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - name: Package template and checksums
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p dist
+          git archive --format=tar.gz --prefix="template-base-$VERSION/" "$GITHUB_SHA" > "dist/template-base-$VERSION.tar.gz"
+          cd dist
+          sha256sum "template-base-$VERSION.tar.gz" > checksums.txt
+          cd ..
+          awk '/^## \[Unreleased\]/{active=1; next} /^## \[/{if(active) exit} active{print}' CHANGELOG.md > release-notes.md
+          test -s release-notes.md
+      - name: Refuse to overwrite an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          STATUS=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME")
+          case "$STATUS" in
+            404) ;;
+            200) echo "Release $GITHUB_REF_NAME already exists; releases are immutable." >&2; exit 1 ;;
+            *) echo "Unable to verify whether release $GITHUB_REF_NAME exists (HTTP $STATUS)." >&2; exit 1 ;;
+          esac
+      - name: Create Release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Template ${{ github.ref_name }}
+          body_path: release-notes.md
+          files: |
+            dist/template-base-*.tar.gz
+            dist/checksums.txt
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}

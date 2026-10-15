@@ -50,11 +50,15 @@ All workflow operations run through the `vb` CLI. Before running any `vb` comman
 ./scripts/install-vb-cli.sh --ensure-latest
 ```
 
-`--ensure-latest` is non-interactive and does the right thing in every state:
+`--ensure-latest` is non-interactive and selects the project's pinned version, or
+resolves the latest release tag once when `.vb-version` is absent:
 
-- **Not installed** → downloads and installs the pinned release (from `.vb-version`) with SHA-256 checksum verification.
-- **Installed but outdated** → runs `vb upgrade`. Add `--allow-sudo` to permit sudo escalation on failure.
-- **Already at pinned version** → exits successfully with no changes.
+- **Not installed or outdated** → downloads that exact release, requires its SHA-256 checksum, validates the binary, and replaces it through a same-directory atomic rename.
+- **Already at the selected version** → exits successfully with no changes.
+
+System-wide installation requires the explicit `--allow-sudo` option; otherwise
+choose a user-writable path. The installer never falls back to `vb upgrade`,
+which could ignore a project pin.
 
 This is the only supported bootstrap path — there are no shell-script fallbacks for feature operations.
 
@@ -76,7 +80,7 @@ vb delete FTR-0001                       # Delete feature (with confirmation)
 vb lock FTR-0001                         # Acquire feature lock
 vb template FTR-0001                     # Apply canonical template
 vb init                                  # Initialize workspace
-vb init --update                         # Update to latest template (interactive)
+vb init --update                         # Update to the template release paired with this CLI
 vb install claude-code                   # Install Claude Code plugin
 vb install cursor                        # Install Cursor rules
 vb install opencode                      # Install OpenCode agents

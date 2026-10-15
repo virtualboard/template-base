@@ -30,16 +30,16 @@ The plugin includes a `/work-on` skill for working on features in isolated git w
 # Branch from develop instead of main
 /work-on FTR-0042 --base-branch develop
 
-# Create PR after pushing
+# Explicitly publish the branch and open a draft PR
 /work-on FTR-0042 --create-pr
 ```
 
 The skill:
 - Creates a git worktree with branch `feature/FTR-XXXX/feature-slug`
 - Detects and resumes existing work on the branch
-- Spawns a new Claude Code session in the worktree
+- Runs the implementation session in the selected worktree
 - Commits with footer: `FTR-XXXX implemented using the @virtualboard /work-on skill`
-- Pushes the branch (and optionally creates a PR)
+- Keeps work local by default; publishing requires an explicit option or saved preference
 
 See `skills/work-on/config.md` for configuration options.
 
@@ -120,7 +120,18 @@ All workflow operations run through the `vb` CLI — a single static binary with
 - **Consistent behavior**: One canonical implementation of validation, moves, indexing, and locks
 - **CI/CD friendly**: Install once, then invoke `vb` commands directly
 
-**CLI Tool Requirement:** The `vb` CLI is **required**. Agents and CI must run `./scripts/install-vb-cli.sh --ensure-latest` before any `vb` command — that single call installs `vb` if missing, upgrades it via `vb upgrade` (with `sudo vb upgrade` fallback) if outdated, and is a no-op if already on the latest release. There are no shell-script fallbacks for feature operations.
+**CLI Tool Requirement:** The `vb` CLI is required. Install it before any board operation with `./scripts/install-vb-cli.sh --ensure-latest`. A project's `.vb-version` selects an exact release; without one, the installer resolves the latest release tag once and downloads that immutable tag. It verifies the matching SHA-256 checksum and stages the binary beside its destination before replacement. System-wide installation requires the explicit `--allow-sudo` option. There are no shell-script fallbacks for feature operations.
+
+## Feature template sizes
+
+`vb new "Feature title"` uses the full planning template. For a small, bounded
+change, use `vb new "Small fix" --template light`. The compact template keeps a
+summary, testable acceptance criteria, implementation notes, verification evidence,
+and links. Both sizes share the schema and lifecycle; choose the full template
+when data, rollout, security, or UI planning needs dedicated sections.
+
+For review, record the implementation commit, commands run, their actual results,
+and the criteria demonstrated. Explain checks that could not be run.
 
 ## System Specification Templates
 
@@ -141,8 +152,8 @@ Each template includes frontmatter compatible with `schemas/system-spec.schema.j
 
 1. **Install the Virtual Board CLI (required):**
    ```bash
-   # Install to /usr/local/bin (requires sudo)
-   ./scripts/install-vb-cli.sh
+   # Install to /usr/local/bin (explicitly permits sudo)
+   ./scripts/install-vb-cli.sh --allow-sudo
 
    # Or install to current directory:
    ./scripts/install-vb-cli.sh --local
@@ -151,13 +162,9 @@ Each template includes frontmatter compatible with `schemas/system-spec.schema.j
    ./scripts/install-vb-cli.sh --help
    ```
 
-   The installer automatically:
-   - Checks if `vb` is already installed and compares versions
-   - Suggests `vb upgrade` if an older version is installed
-   - Detects your OS (macOS/Linux) and architecture (amd64/arm64)
-   - Downloads the appropriate binary from the latest GitHub release
+   The installer detects your OS and architecture, resolves either the project's pinned version or the latest release tag, verifies its checksum, and replaces the installed binary atomically. Add `--allow-sudo` when the chosen install directory requires elevated privileges; otherwise use `--local` or a user-writable path.
 
-   > **Note:** Agents should bootstrap the CLI automatically with `./scripts/install-vb-cli.sh --ensure-latest` at the start of any task. That one command installs `vb` if missing, runs `vb upgrade` (or `sudo vb upgrade` as a fallback) if outdated, and is a no-op if already on the latest release.
+   > **Note:** Agents should run `./scripts/install-vb-cli.sh --ensure-latest` at the start of a task. With `.vb-version`, it installs that exact version; without a pin, it installs the latest release resolved for that invocation.
 
 2. **Verify the installation:**
    ```bash
@@ -168,7 +175,7 @@ Each template includes frontmatter compatible with `schemas/system-spec.schema.j
 3. **Initialize a VirtualBoard workspace:**
    ```bash
    vb init                                              # New workspace
-   vb init --update                                     # Update to latest template
+   vb init --update                                     # Update to the template release paired with this CLI
    vb init --update --files agents/pm.md,templates/feature.md
    ```
 
@@ -262,13 +269,13 @@ The system includes sample features in different states to demonstrate the workf
 
 AI agents should:
 
-1. **Ensure the latest `vb` CLI is installed (required):**
+1. **Ensure the selected `vb` CLI is installed (required):**
    ```bash
    ./scripts/install-vb-cli.sh --ensure-latest
    vb version
    vb help
    ```
-   `--ensure-latest` installs when missing, runs `vb upgrade` (with `sudo vb upgrade` fallback) when outdated, and is a no-op when already on the latest release.
+   `--ensure-latest` installs the exact version in `.vb-version`, or resolves the latest release tag when no pin is present. Pass `--allow-sudo` explicitly for system-wide installation.
 
 2. **Adopt an agent role:** Read `/agents/AGENTS.md` to understand available roles, then read the specific role file (e.g., `/agents/pm.md`)
 3. **Load agent commands:** Check `/prompts/agents/{role}/README.md` for specialized commands available to your role
@@ -345,7 +352,8 @@ Add these steps to your CI pipeline:
 ```yaml
 - name: Install Virtual Board CLI
   run: |
-    ./scripts/install-vb-cli.sh --ensure-latest
+    ./scripts/install-vb-cli.sh --ensure-latest --local
+    export PATH="$PWD:$PATH"
     vb version
 
 - name: Validate Features
@@ -370,7 +378,7 @@ Add these steps to your CI pipeline:
 - Run `vb validate` to check frontmatter, dependencies, and folder/status alignment
 - Review the agent rules in `/agents/RULES.md`
 - Ensure the CLI is properly installed: `vb version`
-- To install or upgrade the CLI: `./scripts/install-vb-cli.sh` (fresh install) or `vb upgrade` (existing install)
+- To install or enforce the selected release, rerun `./scripts/install-vb-cli.sh --ensure-latest`; it preserves `.vb-version` and verifies the downloaded binary.
 
 ## Contributing
 
@@ -398,7 +406,7 @@ See the [Quick Start](#quick-start) section above for installation instructions 
 # Initialize workspace (first time setup)
 vb init
 
-# Update workspace to latest template
+# Update workspace to the template release paired with this CLI
 vb init --update
 
 # Update specific template files
@@ -428,3 +436,32 @@ vb lock --release FTR-0001
 # Update feature metadata
 vb update FTR-0001 --priority P1 --complexity H
 ```
+
+## Shared workflow contract
+
+`schemas/workflow-contract.json` pins lifecycle order/transitions, terminal states,
+role selection examples, CLI commands/flags/exit codes, and doctor capabilities.
+Each Go repository checks in the same bytes at `testdata/workflow-contract.json`;
+its tests compare the fixture with actual command registration and domain logic.
+The contract records hvb's local lifecycle refusals as usage exit 64 and vb's as
+transition exit 3; forwarded vb errors retain their documented codes.
+
+After an intentional interface change, update the canonical fixture and all
+consumers together:
+
+```bash
+python3 tests/workflow-contract.py
+bash scripts/sync-workflow-contract.sh ../vb-cli ../herdr-virtualboard
+bash scripts/sync-workflow-contract.sh --check ../vb-cli ../herdr-virtualboard
+```
+
+The template CI checks schema/role consistency, sync drift refusal, and safe
+worktree setup. Consumer tests and real-binary integration must pass before the
+matching versions are released. See `herdr-virtualboard/docs/testing.md` for the
+50-transition integration matrix.
+
+Releases are immutable tags matching `version.txt`. Release `vb-cli` first;
+the template release workflow verifies that `.vb-version` already exists as a
+published CLI release, reruns the template contracts, and attaches a versioned
+source archive with `checksums.txt`. Release `herdr-virtualboard` after both
+exact refs are available.

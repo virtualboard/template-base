@@ -111,33 +111,36 @@ Create report at `.virtualboard/security/audits/SA-{YYYY-MM-DD}.md`:
 
 ### 5. Optional — Generate Branded HTML Report
 
-If the user appends `--html`, says "as HTML"/"branded HTML", or sets
-`format: html`, also produce an HTML rendering. **Additive** — Markdown is
-always written first.
+If the user requests `--html`, "as HTML"/"branded HTML", or `format: html`,
+write the Markdown deliverable first, then render an additional HTML report.
 
-1. Load `templates/reports/html/security-audit.html`. The comment block at
-   the top of that file lists every placeholder this command must compute.
-2. Inline `{{INCLUDE: _partials/<name>.html}}` directives until none remain.
-3. Substitute `{{BRAND_LOGO_DATAURI}}` from
-   `templates/reports/html/_partials/astucia-logo.b64.txt` (strip leading and
-   trailing whitespace).
-4. Substitute `{{BRAND_NAME}}` (`Astucia`) and `{{BRAND_TAGLINE}}`
-   (`AI Development Studio`) unless overridden.
-5. Substitute the cross-cutting placeholders and per-template scalars
-   (`AUDIT_SCOPE_HTML`, `EXECUTIVE_SUMMARY_HTML`, `KPI_FINDINGS`,
-   `KPI_CRITICAL`, `KPI_HIGH`, `KPI_MEDIUM`, `KPI_LOW`, `OVERALL_RATING`,
-   `OVERALL_RATING_CLASS`, `COMPLIANCE_HTML`, `TIMELINE_HTML`,
-   `NEXT_AUDIT_DATE`).
-6. Build `FINDINGS_JSON` as a `JSON.stringify`-formatted array of objects
-   with keys `id`, `sev` (`critical`/`high`/`medium`/`low`), `title`, `file`,
-   `impact`, `likelihood`, `reco`. Escape any literal `</` inside values as
-   `<\/` to keep the inline `<script>` tag intact.
-7. Expand the list blocks (`HERO_META_CELLS`, `STANDARDS_CHECKED`,
-   `REMEDIATION_IMMEDIATE`, `REMEDIATION_SHORT`, `REMEDIATION_LONG`).
-8. Set each `LIST_EMPTY_<NAME>` scalar to `""` if the list has items, or to
-   a small italic note if empty.
-9. Write the HTML next to the Markdown:
-   `.virtualboard/security/audits/SA-{YYYY-MM-DD}.html`.
-10. Verify no literal `{{` remains. Report both file paths.
+1. Read `templates/reports/html/security-audit.html`. Its comment header lists the
+   scalar fields and list-item shapes. Use the same findings and measurements
+   as the Markdown report; do not invent values for unknown results.
+2. Write a companion JSON data file with uppercase field names, native numbers,
+   and arrays of objects for lists. Include every referenced field; use `""`,
+   `null`, or `[]` for explicitly empty values. The default brand and raster logo
+   are provided by the renderer.
+3. Run the deterministic renderer:
 
-Reference example: `templates/reports/examples/security-audit.example.html`.
+   ```bash
+   vb report render --template security-audit.html \
+     --data REPORT_DATA.json --output REPORT.html
+   ```
+
+   Replace the example paths with paths beside the Markdown deliverable, using
+   the same basename for `.md`, `.json`, and `.html`. Includes and repeated
+   blocks are resolved by the CLI; do not manually substitute template text.
+4. Strings are escaped, including `*_HTML` fields. Annotate reviewed markup as
+   `{"html":"<p>Reviewed content</p>"}` and add `--allow-html` only when those
+   fragments are intended as markup. Supply `*_JSON` fields as native JSON
+   values; the renderer safely serializes them in inline scripts.
+5. Validate with `--dry-run` if useful, then inspect the generated HTML. Existing
+   output requires `--force`; a rendering error must preserve earlier output.
+   If the installed CLI lacks `report render`, report that limitation instead
+   of claiming an HTML artifact was produced.
+6. List the Markdown and HTML paths in the final reply, with the companion JSON
+   path so the report can be reproduced.
+
+See `templates/reports/README.md` for the input contract and the runnable
+`templates/reports/examples/pm-progress-report.data.json` for a complete example.

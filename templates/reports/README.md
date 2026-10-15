@@ -25,8 +25,9 @@ templates/reports/
 
 ## Placeholder syntax
 
-Templates use a tiny Mustache-style convention. The agent does the substitution —
-no runtime, no build step, no dependency.
+Templates use a small Mustache-style convention rendered by `vb report render`.
+The agent supplies a JSON data file; the CLI resolves includes, validates values,
+and escapes them for their HTML, attribute, CSS, or JavaScript context.
 
 | Form | Meaning |
 |---|---|
@@ -40,8 +41,8 @@ no runtime, no build step, no dependency.
   `{{#TOP_RISKS}}`). This makes them visually distinct from JSX `{}` and
   CSS `{}` so they're collision-safe inside `<style>` and `<script>` blocks.
 - An empty list block (`{{#LIST}}…{{/LIST}}` with zero items) renders as nothing.
-- An optional scalar with no value renders as the empty string (the agent should
-  never leave a literal `{{NAME}}` in the output — see verification below).
+- Every referenced scalar must be supplied, including optional slots: use `""`
+  or `null` for empty text and `[]` for an empty list. Missing values are errors.
 
 ## Brand parameterization
 
@@ -63,8 +64,8 @@ These are available in every template via `_base/report.html`:
 | Placeholder | Description |
 |---|---|
 | `{{REPORT_TITLE}}` | Plain text — used in `<title>` |
-| `{{REPORT_TITLE_HTML}}` | May contain `<span class="green">…</span>` accent slice |
-| `{{REPORT_SUBTITLE}}` | Hero lead paragraph (HTML allowed) |
+| `{{REPORT_TITLE_HTML}}` | Plain text, or an explicitly trusted HTML fragment |
+| `{{REPORT_SUBTITLE}}` | Hero lead paragraph (text or explicitly trusted HTML) |
 | `{{EYEBROW}}` | Pill text above H1 (e.g. `● Architectural Review · Rev 3`) |
 | `{{GENERATED_DATE}}` / `{{GENERATED_DATETIME}}` | `YYYY-MM-DD` / `YYYY-MM-DD HH:MM` |
 | `{{AUTHOR_AGENT}}` | E.g. `PM Agent`, `Principal Systems Architect` |
@@ -83,49 +84,56 @@ Per-template files extend this with their own placeholders (KPIs, repeating
 blocks, narrative slots) — see the comment header at the top of each
 `html/<role>-<slug>.html`.
 
-## How an agent renders a template
+## Render a report
 
-1. Detect HTML opt-in (`--html` flag, "as HTML" / "branded HTML" suffix, or
-   `format: html` in a structured invocation).
-2. Read the template file at `templates/reports/html/<role>-<slug>.html`.
-3. Resolve every `{{INCLUDE: _partials/<name>.html}}` directive by inlining the
-   referenced file. Do this iteratively until no `{{INCLUDE:` markers remain.
-4. Substitute `{{BRAND_LOGO_DATAURI}}` with the contents of
-   `_partials/astucia-logo.b64.txt`, stripping leading and trailing whitespace.
-   (Preserve the data URI bytes exactly — do not re-wrap, re-encode, or insert
-   internal line breaks. The file may have a trailing newline added by
-   editors/pre-commit hooks; that newline must not appear inside `src="…"`.)
-5. Substitute `{{BRAND_NAME}}` and `{{BRAND_TAGLINE}}` with their defaults
-   (`Astucia` / `AI Development Studio`) unless the user provided overrides.
-6. Substitute every other scalar `{{PLACEHOLDER}}` with the value computed for
-   the Markdown report.
-7. Expand every `{{#LIST}}…{{/LIST}}` block once per item, substituting the
-   inner per-item placeholders.
-8. Write the result next to the Markdown file, swapping the `.md` extension for
-   `.html`.
-9. **Verify**: search the output for any literal `{{` — there should be none.
-   If any remain, resolve them (or replace with empty string for known-optional
-   slots) before reporting completion.
-10. In your final reply, list both the `.md` and `.html` paths.
+Write a JSON object with uppercase placeholder names. Lists contain objects;
+item fields override parent fields. Keep numbers and booleans as native JSON
+values. Supply `RISKS_JSON` and `FINDINGS_JSON` as JSON arrays or objects, not
+serialized strings: the renderer serializes and escapes inline script data.
+Duplicate keys, invalid list shapes, and missing referenced fields are errors.
 
-## JSON-escape rules for inline scripts
-
-Some templates (e.g. the architecture report's filterable risk table) embed a
-JSON array inside an inline `<script>` like:
-
-```html
-<script>
-const RISKS = {{RISKS_JSON}};
-</script>
+```json
+{
+  "REPORT_TITLE": "Weekly progress",
+  "REPORT_TITLE_HTML": {"html": "Weekly <span class=\"green\">progress</span>"},
+  "HERO_META_CELLS": [{"LABEL": "Owner", "VALUE": "Team"}],
+  "IN_PROGRESS": [],
+  "KPI_TOTAL": 0
+}
 ```
 
-When substituting `{{RISKS_JSON}}` you must:
+This illustrates the value types; a full template needs its remaining fields.
+The complete [progress example](examples/pm-progress-report.data.json) is runnable:
 
-- Emit valid JSON (use `JSON.stringify` or equivalent — never hand-roll).
-- Escape any `</` sequence inside string values as `<\/` to prevent the parser
-  from prematurely closing the `<script>` tag.
-- Do not wrap the value in quotes — the placeholder sits where a JSON
-  expression goes, so the substitution is the literal `[…]` array text.
+```bash
+vb report render --template pm-progress-report.html \
+  --data .virtualboard/templates/reports/examples/pm-progress-report.data.json \
+  --output .virtualboard/reports/progress.html --allow-html
+```
+
+`--template` is relative to `.virtualboard/templates/reports/html`; override the
+catalog with `--template-dir PATH`. Includes are relative to that directory and
+cannot escape it, including through symlinks. Cycles, excessive nesting, and
+oversized input/output are rejected. HTML comments documenting placeholders are
+omitted. Rendering does not add a timestamp: supply dates in the data for
+reproducible output.
+
+Strings are always escaped, including fields named `*_HTML`. To include reviewed
+markup, annotate that value as `{"html":"<p>Reviewed content</p>"}` and pass
+`--allow-html`. This permits active HTML, so only annotate fragments you intend
+to execute/display as markup. Templates themselves are trusted source files.
+Default brand text and the base64 raster logo are loaded automatically; branding
+fields may be overridden. SVG and non-image data URLs are refused as logos.
+
+`--dry-run` validates and reports the planned output without creating files.
+`--json` returns the output path, byte count, and dry-run flag. Existing output
+requires `--force`; failed rendering preserves the previous report. Do not use
+a template or data file as the output destination.
+
+Keep the Markdown report as the primary deliverable, derive both formats from
+the same findings, and list both paths in the final reply. Inspect generated HTML
+before sharing; rendering validates structure and escaping, not the truth of
+its findings.
 
 ## Adding a new report template
 
@@ -134,8 +142,8 @@ When substituting `{{RISKS_JSON}}` you must:
    into `{{MAIN_CONTENT}}`.
 3. Add a comment block at the top listing every placeholder the agent must
    compute, so the agent prompt can reference it.
-4. Author a filled-in `examples/<slug>.example.html` if it's a high-traffic
-   template — this doubles as the visual regression target.
+4. Author `examples/<slug>.data.json` with representative populated lists.
+   Render it with the CLI and inspect the result as a visual regression target.
 5. Update the relevant `prompts/agents/<role>/*.md` command file with the
    "Optional: Generate Branded HTML Report" block referencing the new template.
 

@@ -327,44 +327,36 @@ graph LR
 
 ### 6. Optional — Generate Branded HTML Report
 
-If the user appends `--html`, says "as HTML"/"branded HTML", or sets
-`format: html`, also produce an HTML rendering. **Additive** — the Markdown
-report is always written first.
+If the user requests `--html`, "as HTML"/"branded HTML", or `format: html`,
+write the Markdown deliverable first, then render an additional HTML report.
 
-1. Load `templates/reports/html/architect-architecture-report.html`. The
-   comment block at the top of that file lists every placeholder this command
-   must compute.
-2. Inline `{{INCLUDE: _partials/<name>.html}}` directives until none remain.
-3. Substitute `{{BRAND_LOGO_DATAURI}}` with the **stripped** contents of
-   `templates/reports/html/_partials/astucia-logo.b64.txt` (no leading/trailing
-   whitespace).
-4. Substitute `{{BRAND_NAME}}` (default `Astucia`) and `{{BRAND_TAGLINE}}`
-   (default `AI Development Studio`) unless the user provided overrides.
-5. Substitute the cross-cutting placeholders and the per-template scalars
-   listed in the template's comment header (`MATURITY_PERCENT`,
-   `MATURITY_VERDICT`, `MATURITY_VERDICT_CLASS`, `EXECUTIVE_SUMMARY_HTML`,
-   `OVERVIEW_HTML`, `QUALITY_TABLE_HTML`, `PATTERNS_HTML`, `INTEGRATION_HTML`,
-   `EVOLUTION_HTML`, `METRICS_HTML`, `CLOSING_ASSESSMENT_HTML`,
-   `KPI_RESPONSE_P95`, `KPI_THROUGHPUT`, `KPI_ERROR_RATE`, `KPI_UPTIME`,
-   `KPI_LOC`, `KPI_COMPLEXITY`, `KPI_TEST_COVERAGE`, `KPI_DUPLICATION`).
-6. Build `RISKS_JSON` as a JSON.stringify-formatted array of objects with
-   keys `id`, `sev` (`critical`/`high`/`medium`/`low`), `title`, `file`,
-   `impact`, `likelihood`, `reco`. Escape any literal `</` inside values as
-   `<\/` to keep the inline `<script>` tag intact. Do **not** wrap the value
-   in extra quotes — the placeholder sits where the JSON expression goes.
-7. Expand the list blocks (`HERO_META_CELLS`, `TOP_RISKS`, `TOP_OPPORTUNITIES`,
-   `COMPONENT_TABLE`, `TECH_DEBT_HIGH`, `TECH_DEBT_MEDIUM`, `TECH_DEBT_LOW`,
-   `IMMEDIATE_RECOS`, `SHORT_TERM_RECOS`, `LONG_TERM_RECOS`, `TRADEOFFS`).
-8. Set each `LIST_EMPTY_<NAME>` scalar to `""` if the list has items, or to
-   a small italic note if empty.
-9. Write the rendered HTML next to the Markdown:
-   `.virtualboard/architecture/reports/AR-{YYYY-MM-DD}.html`.
-10. **Verify before reporting completion.** Search the output for any
-    literal `{{` — there must be none. Resolve leftovers (or substitute the
-    empty string for known-optional slots) before continuing.
-11. In your final reply, list **both** file paths.
+1. Read `templates/reports/html/architect-architecture-report.html`. Its comment header lists the
+   scalar fields and list-item shapes. Use the same findings and measurements
+   as the Markdown report; do not invent values for unknown results.
+2. Write a companion JSON data file with uppercase field names, native numbers,
+   and arrays of objects for lists. Include every referenced field; use `""`,
+   `null`, or `[]` for explicitly empty values. The default brand and raster logo
+   are provided by the renderer.
+3. Run the deterministic renderer:
 
-A filled-in reference example lives at
-`templates/reports/examples/architect-architecture-report.example.html`. Open
-it side-by-side with `reports/virtualboard-architecture-review-rev3.html` to
-confirm visual parity.
+   ```bash
+   vb report render --template architect-architecture-report.html \
+     --data REPORT_DATA.json --output REPORT.html
+   ```
+
+   Replace the example paths with paths beside the Markdown deliverable, using
+   the same basename for `.md`, `.json`, and `.html`. Includes and repeated
+   blocks are resolved by the CLI; do not manually substitute template text.
+4. Strings are escaped, including `*_HTML` fields. Annotate reviewed markup as
+   `{"html":"<p>Reviewed content</p>"}` and add `--allow-html` only when those
+   fragments are intended as markup. Supply `*_JSON` fields as native JSON
+   values; the renderer safely serializes them in inline scripts.
+5. Validate with `--dry-run` if useful, then inspect the generated HTML. Existing
+   output requires `--force`; a rendering error must preserve earlier output.
+   If the installed CLI lacks `report render`, report that limitation instead
+   of claiming an HTML artifact was produced.
+6. List the Markdown and HTML paths in the final reply, with the companion JSON
+   path so the report can be reproduced.
+
+See `templates/reports/README.md` for the input contract and the runnable
+`templates/reports/examples/pm-progress-report.data.json` for a complete example.

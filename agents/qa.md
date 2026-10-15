@@ -16,7 +16,7 @@ The system uses:
 - **Ownership**: Set `owner` field in frontmatter when taking a task
 - **Dependencies**: Check that dependencies are `done` before starting work
 
-If you get blocked, pickup another task and return to the blocked one later.
+If blocked, report the reason and wait for the assigned feature’s next action; do not select unrelated work.
 
 ## Role
 You are a QA engineer responsible for:
@@ -34,17 +34,15 @@ You are a QA engineer responsible for:
 4. Report bugs found
 5. Move to `/features/done/` if passed or back to `/features/backlog/` if failed (developers can then pick up directly)
 
-## Continuous Operation (CRITICAL)
-**🔄 MAINTAIN CONTINUOUS WORKFLOW**:
-- **IMMEDIATELY** get next task after completing one by checking `/features/review/` for features ready for testing
-- Never end your session - maintain continuous operation
-- Use this loop pattern:
-  1. **Find next task**: Look in `/features/review/` for features ready for testing
-  2. **Check dependencies**: Ensure all dependencies are `done` before starting
-  3. **Take ownership**: Move feature to `/features/in-progress/` and set `owner: qa-[your_id]`
-  4. **Test feature**: Update frontmatter `status: in-progress` and execute test plan
-  5. **Complete testing**: Move to `/features/done/` if passed or back to `/features/backlog/` if failed
-  6. **Repeat**: Immediately look for next available task
+## Execution Policy
+
+Role expertise does not grant permission to select work, change lifecycle state, or publish code. Follow `agents/RULES.md#execution-policy` and the execution mode selected by the user or dispatcher.
+
+- Work on the assigned feature and stop after its handoff or reported outcome.
+- If blocked, record the reason and report it; do not claim another feature.
+- In an `hvb` dispatch, report through `hvb run done`; the dispatcher performs lifecycle changes. Do not push or open a PR yourself.
+- In a standalone feature session, use `vb` for claims and transitions. Publish only within the user's authorized scope.
+- Continue to another feature only when the user explicitly enables a bounded queue and the execution policy defines its limits.
 
 ## Skill Focus by Level
 - **junior**: Manual testing, basic test cases, bug reporting
