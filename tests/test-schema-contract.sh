@@ -42,6 +42,11 @@ write_feature() {
     local owner=$3
     local labels=${4:-'[contract]'}
     local implementation_owner=${5:-$owner}
+    local role=${6:-}
+    local role_frontmatter=""
+    if [[ -n "$role" ]]; then
+        role_frontmatter="role: $role"
+    fi
     cat > "$path" <<EOF
 ---
 id: FTR-0001
@@ -49,6 +54,7 @@ title: Contract Probe
 status: $status
 owner: $owner
 implementation_owner: $implementation_owner
+$role_frontmatter
 priority: P2
 complexity: S
 created: "$TODAY"
@@ -136,6 +142,14 @@ if ! vb --root "$TEST_ROOT" validate --only-features >"$TEST_ROOT/backlog-valid.
     fail "valid backlog contract probe did not validate"
 fi
 pass "backlog permits the explicit unassigned owner"
+
+write_feature "$TEST_ROOT/features/backlog/FTR-0001-contract-probe.md" backlog unassigned '[contract]' unassigned backend_dev
+vb --root "$TEST_ROOT" validate --only-features >/dev/null
+write_feature "$TEST_ROOT/features/backlog/FTR-0001-contract-probe.md" backlog unassigned '[contract]' unassigned 'Bad Role'
+if vb --root "$TEST_ROOT" validate --only-features >"$TEST_ROOT/invalid-role.out" 2>&1; then
+    fail "role outside the stable-handle pattern passed validation"
+fi
+pass "optional role metadata is validated against the CLI schema"
 
 # Entering in-progress requires a concrete owner.
 mv "$TEST_ROOT/features/backlog/FTR-0001-contract-probe.md" "$TEST_ROOT/features/in-progress/"

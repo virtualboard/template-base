@@ -30,13 +30,7 @@
     },
     "status": {
       "type": "string",
-      "enum": [
-        "backlog",
-        "in-progress",
-        "blocked",
-        "review",
-        "done"
-      ],
+      "enum": ["backlog", "in-progress", "blocked", "review", "done"],
       "description": "Current feature status"
     },
     "owner": {
@@ -53,23 +47,12 @@
     },
     "priority": {
       "type": "string",
-      "enum": [
-        "P0",
-        "P1",
-        "P2",
-        "P3"
-      ],
+      "enum": ["P0", "P1", "P2", "P3"],
       "description": "Feature priority level"
     },
     "complexity": {
       "type": "string",
-      "enum": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL"
-      ],
+      "enum": ["XS", "S", "M", "L", "XL"],
       "description": "Feature complexity estimate"
     },
     "created": {
