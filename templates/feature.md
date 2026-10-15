@@ -3,10 +3,12 @@ id: FTR-XXXX
 title: <Feature Title>
 status: backlog
 owner: unassigned
+implementation_owner: unassigned
 priority: P2
 complexity: M
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+status_changed: YYYY-MM-DD
 labels: []
 dependencies: []
 risk_notes: ""
@@ -70,7 +72,7 @@ Who is impacted, what pain exists, why now.
 ## Open Questions
 - …
 
-</untrusted-content>
-
 ## Links
 - Related FTRs, tickets, PRs.
+
+</untrusted-content>

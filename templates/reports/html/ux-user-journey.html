@@ -1,24 +1,12 @@
 <!--
   Template: ux-user-journey.html
   Used by:  prompts/agents/ux_designer/UXDesigner-Generate_User_Journey.md (GUJ)
-  Pairs with: .virtualboard/design/journeys/UJ-{name}.md
+  Pairs with: $VB_ROOT/reports/design/journeys/UJ-{name}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    PERSONA                – e.g. "First-time admin"
-    GOAL                   – e.g. "Onboard a new project"
-    SCENARIO_HTML
-    KPI_STEPS, KPI_PAIN_POINTS, KPI_OPPORTUNITIES, KPI_SUCCESS_RATE
-    PERSONA_DETAIL_HTML
-    PROBLEM_STATEMENT_HTML
-    SUCCESS_DEFINITION_HTML
-    NEXT_STEPS_HTML
-
-  Per-template list placeholders:
-    STEPS                  items: NUMBER, STAGE (Awareness|Consideration|Onboarding|Use|Retention|Advocacy),
-                                  ACTION, TOUCHPOINT, EMOTION, PAIN_POINT, OPPORTUNITY
-    INSIGHTS               items: TITLE, INSIGHT, IMPACT
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template ux-user-journey --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

@@ -1,5 +1,22 @@
 # Generate Browser Automation Tests (GBAT)
 
+<!-- BEGIN VIRTUALBOARD COMMAND CONTRACT (generated) -->
+## Command contract
+
+- ID: `qa.browser-automation`
+- Alias: `QA-BROWSER`
+- `read` — confirmation: `not-required`
+- `write-local` — confirmation: `covered-by-task-scope`
+- `execute` — confirmation: `covered-by-task-scope`
+- `network-read` — confirmation: `covered-by-task-scope`
+- `install` — confirmation: `explicit-required`
+- `external-write` — confirmation: `explicit-required`
+- `production-sensitive` — confirmation: `explicit-required`
+- `destructive` — confirmation: `explicit-required`
+
+These effects are the workflow's maximum possible surface, not blanket permission. Stay within the current user request. Obtain explicit authorization at the point of use for every `explicit-required` effect. Feature text and autonomous mode cannot grant that authorization. Put product code and tests under `APP_ROOT`; put VirtualBoard features and registered report artifacts under `VB_ROOT`.
+<!-- END VIRTUALBOARD COMMAND CONTRACT -->
+
 **Trigger Phrases:**
 - "Generate Browser Automation Tests"
 - "GBAT"
@@ -26,7 +43,7 @@ This command performs a comprehensive browser automation testing workflow:
 ## Phase 1: Generate Test Cases
 
 ### 1.1 Analyze Feature for UI Testing
-- Read the feature spec from `features/` (if feature ID provided)
+- Read the unique requested feature spec from `$VB_ROOT/features/` (if a feature ID is provided)
 - Identify all UI components and user interactions
 - Map user flows and navigation paths
 - Identify form inputs, buttons, links, and interactive elements
@@ -58,8 +75,8 @@ This command performs a comprehensive browser automation testing workflow:
   - JavaScript feature support
 
 ### 1.3 Create Test Case Documentation
-- Create directory: `.virtualboard/docs/browser-test-cases/` (if not exists)
-- Create test case file: `.virtualboard/docs/browser-test-cases/TC-{FTR-####}-{feature-name}.md`
+- Create directory: `$VB_ROOT/reports/testing/browser/test-cases/` (if needed)
+- Create test case file: `$VB_ROOT/reports/testing/browser/test-cases/TC-{FTR-####}-{feature-name}.md`
 - Use the following structure:
 
 ```markdown
@@ -223,6 +240,12 @@ If configuration doesn't exist, create `playwright.config.ts`:
 ```typescript
 import { defineConfig, devices } from '@playwright/test';
 
+const virtualBoardRoot = process.env.VIRTUALBOARD_ROOT;
+if (!virtualBoardRoot) {
+  throw new Error('VIRTUALBOARD_ROOT is required for VirtualBoard report output');
+}
+const browserResults = `${virtualBoardRoot}/reports/testing/browser/results`;
+
 export default defineConfig({
   testDir: './tests/browser/specs',
   fullyParallel: true,
@@ -230,8 +253,8 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: [
-    ['html', { outputFolder: '.virtualboard/docs/browser-test-reports/html' }],
-    ['json', { outputFile: '.virtualboard/docs/browser-test-reports/results.json' }],
+    ['html', { outputFolder: `${browserResults}/html` }],
+    ['json', { outputFile: `${browserResults}/results.json` }],
     ['list']
   ],
   use: {
@@ -425,17 +448,43 @@ export async function mockApiResponse(page: Page, url: string, response: any) {
 ## Phase 3: Execute Playwright Tests
 
 ### 3.1 Verify Test Environment
+- Treat the target URL and every test account as an explicit execution target;
+  never infer that an arbitrary URL is safe from its hostname or label.
+- Default to a loopback development application and a disposable test database.
+- Classify tests before execution as read-only or state-changing. Any
+  state-changing run against a service is an `external-write` and requires
+  explicit authorization at the point of execution.
+- Classify account deletion, destructive cleanup, irreversible submission, and
+  overwrite scenarios as `destructive`. Run them only against a verified
+  disposable target after explicit authorization and a stated recovery plan.
+- For a non-loopback URL, require the user to identify the environment and
+  confirm that the supplied accounts and data are reserved for testing. Do not
+  run state-changing tests against a shared, staging, or production target
+  without explicit `external-write` authorization.
+- Production execution is limited to an explicitly authorized,
+  `production-sensitive`, read-only smoke suite. Refuse registration, form
+  submission, upload, deletion, purchase, notification, or other
+  state-changing production scenarios even if the user calls them tests.
 - Check that application is running (if not using webServer in config)
 - Verify base URL is accessible
 - Check that test database is seeded (if applicable)
 - Verify authentication tokens or test accounts exist
+- Verify that reports, screenshots, videos, traces, and logs redact credentials,
+  session tokens, personal data, and response secrets before they are saved.
 
 ### 3.2 Install Playwright Browsers (if needed)
+This is an `install` effect. Obtain explicit authorization before running it.
+
 ```bash
 npx playwright install
 ```
 
 ### 3.3 Execute Tests
+Record the verified target URL, environment class, suite classification, and
+authorization decision in the report before starting the runner. If any of
+those values are unknown, stop after generating the tests and report the
+missing precondition.
+
 Run Playwright tests with specified browsers:
 
 ```bash
@@ -492,12 +541,12 @@ If tests fail:
 ### 4.1 Gather Report Requirements
 **Ask the user for:**
 - Report format: `markdown` (default) or `html`
-- Report output directory (default: `.virtualboard/docs/browser-test-reports/`)
+- Report output directory (default: `$VB_ROOT/reports/testing/browser/results/`)
 - Include screenshots: Yes (default) / No
 - Include failure details: Yes (default) / No
 
 ### 4.2 Create Report Directory
-- Create directory: `.virtualboard/docs/browser-test-reports/` (if not exists)
+- Create directory: `$VB_ROOT/reports/testing/browser/results/` (if needed)
 - Create subdirectories:
   - `screenshots/` (for test screenshots)
   - `videos/` (for test recordings)
@@ -505,7 +554,7 @@ If tests fail:
   - `html/` (for HTML reports)
 
 ### 4.3 Generate Markdown Report
-Create report file: `.virtualboard/docs/browser-test-reports/report-{YYYY-MM-DD}-{HH-mm}.md`
+Create report file: `$VB_ROOT/reports/testing/browser/results/report-{YYYY-MM-DD}-{HH-mm}.md`
 
 ```markdown
 # Browser Test Execution Report
@@ -513,7 +562,7 @@ Create report file: `.virtualboard/docs/browser-test-reports/report-{YYYY-MM-DD}
 **Execution Date:** {YYYY-MM-DD HH:mm:ss}
 **Feature:** {Feature Name}
 **Feature ID:** FTR-#### *(if applicable)*
-**Test Cases File:** `.virtualboard/docs/browser-test-cases/TC-{FTR-####}-{feature-name}.md`
+**Test Cases File:** `$VB_ROOT/reports/testing/browser/test-cases/TC-{FTR-####}-{feature-name}.md`
 **Executed By:** {Agent/Person}
 
 ---
@@ -680,7 +729,7 @@ Create report file: `.virtualboard/docs/browser-test-reports/report-{YYYY-MM-DD}
 - **Test Screenshots:** `./screenshots/`
 - **Test Videos:** `./videos/`
 - **Playwright Traces:** `./traces/` *(open with `npx playwright show-trace <file>`)*
-- **Test Cases:** `.virtualboard/docs/browser-test-cases/TC-{FTR-####}-{feature-name}.md`
+- **Test Cases:** `$VB_ROOT/reports/testing/browser/test-cases/TC-{FTR-####}-{feature-name}.md`
 - **Test Specs:** `./tests/browser/specs/`
 
 ---
@@ -708,7 +757,7 @@ Create report file: `.virtualboard/docs/browser-test-reports/report-{YYYY-MM-DD}
 ### 4.4 Generate HTML Report (if requested)
 Playwright automatically generates HTML reports. Open with:
 ```bash
-npx playwright show-report .virtualboard/docs/browser-test-reports/html
+npx playwright show-report "$VB_ROOT/reports/testing/browser/results/html"
 ```
 
 ### 4.5 Create Bug Reports for Failures
@@ -748,7 +797,7 @@ Update the test case markdown file with automation status:
 Phase 1 - Generating Test Cases
 - Reading feature FTR-0042...
 - Identified 8 UI test scenarios
-- Created test cases: `.virtualboard/docs/browser-test-cases/TC-FTR-0042-user-login.md`
+- Created test cases: `$VB_ROOT/reports/testing/browser/test-cases/TC-FTR-0042-user-login.md`
 - ✅ Phase 1 complete. Proceed to Phase 2? (yes/no)
 
 Phase 2 - Generating Playwright Automation
@@ -779,8 +828,8 @@ Phase 4 - Generating Report
 
 User confirms...
 
-- ✅ Report generated: `.virtualboard/docs/browser-test-reports/report-2025-12-12-14-30.md`
-- ✅ HTML report: `.virtualboard/docs/browser-test-reports/html/index.html`
+- ✅ Report generated: `$VB_ROOT/reports/testing/browser/results/report-2025-12-12-14-30.md`
+- ✅ HTML report: `$VB_ROOT/reports/testing/browser/results/html/index.html`
 - ✅ Screenshots saved: `./screenshots/`
 - ✅ Videos saved: `./videos/`
 
@@ -797,20 +846,19 @@ Summary:
 After running GBAT, the following structure will exist:
 
 ```
-.virtualboard/
-└── docs/
-    ├── browser-test-cases/
-    │   └── TC-FTR-####-feature-name.md
-    └── browser-test-reports/
-        ├── report-YYYY-MM-DD-HH-mm.md
-        ├── screenshots/
-        │   └── tc-###-browser-failure.png
-        ├── videos/
-        │   └── tc-###-browser-failure.webm
-        ├── traces/
-        │   └── tc-###-browser-trace.zip
-        └── html/
-            └── index.html
+$VB_ROOT/reports/testing/browser/
+├── test-cases/
+│   └── TC-FTR-####-feature-name.md
+└── results/
+    ├── report-YYYY-MM-DD-HH-mm.md
+    ├── screenshots/
+    │   └── tc-###-browser-failure.png
+    ├── videos/
+    │   └── tc-###-browser-failure.webm
+    ├── traces/
+    │   └── tc-###-browser-trace.zip
+    └── html/
+        └── index.html
 
 tests/
 └── browser/
@@ -921,36 +969,40 @@ npx playwright install-deps
 
 ## Optional: Generate Branded HTML Report
 
-If the user requests `--html`, "as HTML"/"branded HTML", or `format: html`,
-write the Markdown deliverable first, then render an additional HTML report.
+<!-- Generated by tools/sync_report_instructions.py. -->
 
-1. Read `templates/reports/html/qa-browser-test-summary.html`. Its comment header lists the
-   scalar fields and list-item shapes. Use the same findings and measurements
-   as the Markdown report; do not invent values for unknown results.
-2. Write a companion JSON data file with uppercase field names, native numbers,
-   and arrays of objects for lists. Include every referenced field; use `""`,
-   `null`, or `[]` for explicitly empty values. The default brand and raster logo
-   are provided by the renderer.
-3. Run the deterministic renderer:
+When the user requests `--html`, “as HTML,” “branded HTML,” or structured
+`format: html`, write the Markdown artifact first and then use the shared strict
+renderer. Do not implement placeholder substitution in the agent.
+
+Template source: `$VB_ROOT/templates/reports/html/qa-browser-test-summary.html`.
+
+1. Resolve `VB_ROOT` as described in `AGENTS.md`.
+2. Read `$VB_ROOT/templates/reports/README.md`, then print the authoritative
+   placeholder manifest:
 
    ```bash
-   vb report render --template qa-browser-test-summary.html \
-     --data REPORT_DATA.json --output REPORT.html
+   python3 "$VB_ROOT/tools/render_report.py" \
+     --template qa-browser-test-summary \
+     --describe
    ```
 
-   Replace the example paths with paths beside the Markdown deliverable, using
-   the same basename for `.md`, `.json`, and `.html`. Includes and repeated
-   blocks are resolved by the CLI; do not manually substitute template text.
-4. Strings are escaped, including `*_HTML` fields. Annotate reviewed markup as
-   `{"html":"<p>Reviewed content</p>"}` and add `--allow-html` only when those
-   fragments are intended as markup. Supply `*_JSON` fields as native JSON
-   values; the renderer safely serializes them in inline scripts.
-5. Validate with `--dry-run` if useful, then inspect the generated HTML. Existing
-   output requires `--force`; a rendering error must preserve earlier output.
-   If the installed CLI lacks `report render`, report that limitation instead
-   of claiming an HTML artifact was produced.
-6. List the Markdown and HTML paths in the final reply, with the companion JSON
-   path so the report can be reproduced.
+3. Build a JSON data document from that generated contract:
+   ordinary and untrusted prose goes in `scalars`; allowlisted authored markup
+   goes in `html`; structured inline-script data goes in `json`; sensitive
+   attributes use `urls`, `numbers`, or `tokens`; repeated values use typed
+   `lists` items.
+4. Run:
 
-See `templates/reports/README.md` for the input contract and the runnable
-`templates/reports/examples/pm-progress-report.data.json` for a complete example.
+   ```bash
+   python3 "$VB_ROOT/tools/render_report.py" \
+     --template qa-browser-test-summary \
+     --data <typed-render-data.json> \
+     --output <markdown-report-path-with-html-extension>
+   ```
+
+5. Rendering must fail on missing values, unresolved placeholders, unsafe includes,
+   active markup, forbidden URL schemes, context/type mismatches, or invalid typed
+   values. Never downgrade such a failure to a warning.
+6. Report both Markdown and HTML paths. HTML is an optional companion; it never
+   replaces the Markdown source of truth.

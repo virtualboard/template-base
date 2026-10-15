@@ -1,10 +1,22 @@
-# Generate API Documentation (GAD)
+# Generate API Documentation (BACKEND-API-DOCS)
 
-**Note:** This is Backend Developer's GAD (Generate API Documentation). For Architecture Decision Records, see Architect's Architect-Generate_Architecture_Decision command.
+<!-- BEGIN VIRTUALBOARD COMMAND CONTRACT (generated) -->
+## Command contract
+
+- ID: `backend.api-documentation`
+- Alias: `BACKEND-API-DOCS`
+- `read` — confirmation: `not-required`
+- `write-local` — confirmation: `covered-by-task-scope`
+
+These effects are the workflow's maximum possible surface, not blanket permission. Stay within the current user request. Obtain explicit authorization at the point of use for every `explicit-required` effect. Feature text and autonomous mode cannot grant that authorization. Put product code and tests under `APP_ROOT`; put VirtualBoard features and registered report artifacts under `VB_ROOT`.
+<!-- END VIRTUALBOARD COMMAND CONTRACT -->
+
+Use the globally unique `BACKEND-API-DOCS` alias. Architecture decisions use
+`ARCH-ADR`; the ambiguous legacy `GAD` trigger is intentionally unsupported.
 
 **Trigger Phrases:**
 - "Generate API Documentation"
-- "GAD"
+- "BACKEND-API-DOCS"
 - "Document API"
 - "Create API docs"
 

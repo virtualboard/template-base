@@ -1,5 +1,17 @@
 # Generate Project Progress Report (GPP)
 
+<!-- BEGIN VIRTUALBOARD COMMAND CONTRACT (generated) -->
+## Command contract
+
+- ID: `pm.progress-report`
+- Alias: `PM-PROGRESS`
+- `read` — confirmation: `not-required`
+- `write-local` — confirmation: `covered-by-task-scope`
+- `execute` — confirmation: `covered-by-task-scope`
+
+These effects are the workflow's maximum possible surface, not blanket permission. Stay within the current user request. Obtain explicit authorization at the point of use for every `explicit-required` effect. Feature text and autonomous mode cannot grant that authorization. Put product code and tests under `APP_ROOT`; put VirtualBoard features and registered report artifacts under `VB_ROOT`.
+<!-- END VIRTUALBOARD COMMAND CONTRACT -->
+
 **Trigger Phrases:**
 - "Generate Project Progress Report"
 - "GPP"
@@ -10,13 +22,14 @@
 When the PM agent receives this command, it should:
 
 ## 1. Analyze Current State
-- Scan all feature files in `.virtualboard/features/` across all status folders:
+- Scan all feature files in `$VB_ROOT/features/` across all status folders:
   - `backlog/` - Features awaiting development
   - `in-progress/` - Features currently being worked on
+  - `blocked/` - Owned work waiting on a documented unblock condition
   - `review/` - Features awaiting review/approval
   - `done/` - Completed features
 - Count features by status
-- Identify any blocked features (check dependencies)
+- Identify explicitly blocked features and backlog items held by dependencies
 - Note features missing `owner` field in `in-progress/`
 
 ### 2. Verify Implementation Status
@@ -25,7 +38,9 @@ When the PM agent receives this command, it should:
   - Files mentioned in spec exist in codebase
   - Tests are passing (if applicable)
 - For features in `in-progress`:
-  - Check how long they've been in progress (via `updated` date)
+  - Compute time in state only from the canonical `status_changed` date
+  - If `status_changed` is absent, report the duration as unknown; never infer a
+    lifecycle timestamp from the generic content `updated` date
   - Identify potential blockers
 - For features in `review`:
   - List what needs to be reviewed
@@ -38,7 +53,7 @@ When the PM agent receives this command, it should:
 - Highlight technical debt or incomplete implementations
 
 ### 4. Generate Report
-- Create a markdown report at `.virtualboard/reports/{YYYY-MM-DD}_Project_Progress_Report.md`
+- Create a Markdown report at `$VB_ROOT/reports/{YYYY-MM-DD}_Project_Progress_Report.md`
 - Use the following structure:
 
 ```markdown
@@ -61,6 +76,7 @@ When the PM agent receives this command, it should:
 | Done          | XX    | XX%        |
 | In Review     | XX    | XX%        |
 | In Progress   | XX    | XX%        |
+| Blocked       | XX    | XX%        |
 | Backlog       | XX    | XX%        |
 | **Total**     | XXX   | 100%       |
 
@@ -70,7 +86,7 @@ When the PM agent receives this command, it should:
 [List of FTR-#### features that are complete, grouped by epic/category if applicable]
 
 ### Recently Completed (Last 7 Days)
-- FTR-#### - Feature Name - *Completed: YYYY-MM-DD*
+- FTR-#### - Feature Name - *Completed: YYYY-MM-DD from `status_changed`*
 
 ### Previously Completed
 - FTR-#### - Feature Name - *Completed: YYYY-MM-DD*
@@ -169,29 +185,45 @@ When the PM agent receives this command, it should:
 
 ## Team Capacity & Velocity
 
-### Current Sprint (If Applicable)
-- Sprint Goal: [Description]
-- Story Points Committed: XX
-- Story Points Completed: XX
-- Velocity: XX%
+### Current Sprint (Only With a Named Source)
+- Sprint source: [linked/versioned planning artifact, or `Unavailable — not tracked`]
+- Sprint Goal: [source value, or `Unavailable — not tracked`]
+- Story Points Committed: [source value, or `Unavailable — not tracked`]
+- Story Points Completed: [source value, or `Unavailable — not tracked`]
+- Velocity: [calculated from those sourced values, or `Unavailable — not tracked`]
 
-### Agent Utilization
-- Features owned by specific agents
-- Idle capacity (no active features)
+### Active Ownership (Not Utilization)
+- Features owned by each concrete `owner` can be counted from frontmatter.
+- Do not claim utilization, availability, or idle capacity without an explicit
+  capacity roster and observation window; otherwise report
+  `Unavailable — no capacity source`.
 
 ---
 
 ## Metrics & Trends
 
 ### Completion Rate
-- Features completed last 7 days: XX
-- Features completed last 30 days: XX
-- Average time in progress: X days
+- Features completed last 7 days: [count from done `status_changed` dates]
+- Features completed last 30 days: [count from done `status_changed` dates]
+- Average time in progress: [calculate only when transition history contains
+  both entry and exit timestamps; otherwise `Unavailable — insufficient event history`]
 
 ### Quality Indicators
-- Features requiring rework: XX
-- Test coverage: XX%
-- Open bugs/issues: XX
+- Features requiring rework: [count only from explicit review-return events;
+  otherwise `Unavailable — no transition event history`]
+- Test coverage: [named coverage artifact and timestamp, or
+  `Unavailable — not tracked`]
+- Open bugs/issues: [named issue source and query timestamp, or
+  `Unavailable — not tracked`]
+
+### Metric Provenance Rules
+
+- Attach a source path/URL, query, and observation time to every metric not
+  derivable directly from feature frontmatter.
+- Use `status_changed` only for the current state's entry date. It does not by
+  itself prove prior-state duration or rework history.
+- Never replace unavailable data with `XX`, zero, estimated percentages, or
+  invented trends. Render the explicit unavailable reason in Markdown and HTML.
 
 ---
 
@@ -210,45 +242,49 @@ When the PM agent receives this command, it should:
 
 ### 5. Announce Completion
 - Inform the user that the report has been generated
-- Provide the file path: `.virtualboard/reports/{YYYY-MM-DD}_Project_Progress_Report.md`
+- Provide the file path: `$VB_ROOT/reports/{YYYY-MM-DD}_Project_Progress_Report.md`
 - Highlight any critical findings or recommended immediate actions
 
 ### 6. Create Reports Directory if Needed
-- Ensure `.virtualboard/reports/` directory exists before writing the report
+- Ensure `$VB_ROOT/reports/` exists before writing the report
 - Use `mkdir -p` to create if necessary
 
-### 7. Optional — Generate Branded HTML Report
+## Optional: Generate Branded HTML Report
 
-If the user requests `--html`, "as HTML"/"branded HTML", or `format: html`,
-write the Markdown deliverable first, then render an additional HTML report.
+<!-- Generated by tools/sync_report_instructions.py. -->
 
-1. Read `templates/reports/html/pm-progress-report.html`. Its comment header lists the
-   scalar fields and list-item shapes. Use the same findings and measurements
-   as the Markdown report; do not invent values for unknown results.
-2. Write a companion JSON data file with uppercase field names, native numbers,
-   and arrays of objects for lists. Include every referenced field; use `""`,
-   `null`, or `[]` for explicitly empty values. The default brand and raster logo
-   are provided by the renderer.
-3. Run the deterministic renderer:
+When the user requests `--html`, “as HTML,” “branded HTML,” or structured
+`format: html`, write the Markdown artifact first and then use the shared strict
+renderer. Do not implement placeholder substitution in the agent.
+
+Template source: `$VB_ROOT/templates/reports/html/pm-progress-report.html`.
+
+1. Resolve `VB_ROOT` as described in `AGENTS.md`.
+2. Read `$VB_ROOT/templates/reports/README.md`, then print the authoritative
+   placeholder manifest:
 
    ```bash
-   vb report render --template pm-progress-report.html \
-     --data REPORT_DATA.json --output REPORT.html
+   python3 "$VB_ROOT/tools/render_report.py" \
+     --template pm-progress-report \
+     --describe
    ```
 
-   Replace the example paths with paths beside the Markdown deliverable, using
-   the same basename for `.md`, `.json`, and `.html`. Includes and repeated
-   blocks are resolved by the CLI; do not manually substitute template text.
-4. Strings are escaped, including `*_HTML` fields. Annotate reviewed markup as
-   `{"html":"<p>Reviewed content</p>"}` and add `--allow-html` only when those
-   fragments are intended as markup. Supply `*_JSON` fields as native JSON
-   values; the renderer safely serializes them in inline scripts.
-5. Validate with `--dry-run` if useful, then inspect the generated HTML. Existing
-   output requires `--force`; a rendering error must preserve earlier output.
-   If the installed CLI lacks `report render`, report that limitation instead
-   of claiming an HTML artifact was produced.
-6. List the Markdown and HTML paths in the final reply, with the companion JSON
-   path so the report can be reproduced.
+3. Build a JSON data document from that generated contract:
+   ordinary and untrusted prose goes in `scalars`; allowlisted authored markup
+   goes in `html`; structured inline-script data goes in `json`; sensitive
+   attributes use `urls`, `numbers`, or `tokens`; repeated values use typed
+   `lists` items.
+4. Run:
 
-See `templates/reports/README.md` for the input contract and the runnable
-`templates/reports/examples/pm-progress-report.data.json` for a complete example.
+   ```bash
+   python3 "$VB_ROOT/tools/render_report.py" \
+     --template pm-progress-report \
+     --data <typed-render-data.json> \
+     --output <markdown-report-path-with-html-extension>
+   ```
+
+5. Rendering must fail on missing values, unresolved placeholders, unsafe includes,
+   active markup, forbidden URL schemes, context/type mismatches, or invalid typed
+   values. Never downgrade such a failure to a warning.
+6. Report both Markdown and HTML paths. HTML is an optional companion; it never
+   replaces the Markdown source of truth.

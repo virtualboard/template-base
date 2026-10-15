@@ -1,27 +1,12 @@
 <!--
   Template: devops-deployment-readiness.html
   Used by:  prompts/agents/devops/DevOps-Generate_Deployment_Readiness_Report.md (GDRR)
-  Pairs with: .virtualboard/deployments/readiness/DRR-{YYYY-MM-DD}-{env}.md
+  Pairs with: $VB_ROOT/reports/deployments/readiness/DRR-{YYYY-MM-DD}-{env}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    ENVIRONMENT, TARGET_VERSION
-    GO_NOGO                – "GO" | "NO-GO" | "GO with conditions"
-    GO_NOGO_CLASS          – "ok" | "danger" | ""
-    EXECUTIVE_SUMMARY_HTML
-    KPI_CHECKS_TOTAL, KPI_CHECKS_PASSED, KPI_CHECKS_FAILED, KPI_CHECKS_BLOCKING
-    ROLLBACK_PLAN_HTML
-    KNOWN_RISKS_HTML
-    POST_DEPLOY_VERIFY_HTML
-    NEXT_DEPLOY_DATE
-
-  Per-template list placeholders:
-    READINESS_CHECKS       items: CATEGORY (Code|Tests|Infra|Monitoring|Security|Comms|Other),
-                                  NAME, STATUS (pass|warn|fail), BLOCKING (Yes|No), NOTES
-    SIGNOFFS               items: ROLE, NAME, STATUS, DATE
-    APPROVED_DEPLOYERS     items: NAME, ROLE, NOTES
-    COMMUNICATION_PLAN     items: AUDIENCE, CHANNEL, OWNER, TIMING
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template devops-deployment-readiness --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

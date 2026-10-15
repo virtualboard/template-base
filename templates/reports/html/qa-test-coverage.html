@@ -1,35 +1,12 @@
 <!--
   Template: qa-test-coverage.html
   Used by:  prompts/agents/qa/QA-Generate_Test_Coverage_Report.md (GTCR)
-  Pairs with: .virtualboard/testing/coverage/TCR-{YYYY-MM-DD}-{module}.md
+  Pairs with: $VB_ROOT/reports/testing/coverage/TCR-{YYYY-MM-DD}-{module}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    SCOPE                  – e.g. "Full codebase" / "Module: payments"
-    EXECUTIVE_SUMMARY_HTML
-    OVERALL_STATUS         – "Healthy" | "Needs Improvement" | "Critical"
-    OVERALL_STATUS_CLASS   – "ok" | "" | "danger"
-    COVERAGE_OVERALL, COVERAGE_LINES, COVERAGE_BRANCHES,
-    COVERAGE_FUNCTIONS, COVERAGE_STATEMENTS  – integers (no % sign)
-    COVERAGE_TREND         – "Increasing" | "Decreasing" | "Stable"
-    UNIT_COVERAGE, UNIT_TESTS_TOTAL, UNIT_TESTS_PASSING, UNIT_TESTS_FAILING
-    INTEGRATION_COVERAGE, INTEGRATION_TESTS_TOTAL, INTEGRATION_TESTS_PASSING, INTEGRATION_TESTS_FAILING
-    E2E_COVERAGE, E2E_TESTS_TOTAL, E2E_TESTS_PASSING, E2E_TESTS_FAILING
-    FLAKY_COUNT, SKIPPED_COUNT, SLOW_COUNT
-    PRODUCTION_LOC, TEST_LOC
-    TOOLS_HTML             – paragraph(s) describing test runners, frameworks
-    EXCLUSIONS_HTML
-    NEXT_REVIEW_DATE
-
-  Per-template list placeholders:
-    PER_FILE               items: FILE, LINES, BRANCHES, FUNCTIONS, STATEMENTS, STATUS
-    ZERO_COVERAGE          items: FILE, LINES, REASON
-    LOW_COVERAGE           items: FILE, LINES, COVERAGE, PRIORITY
-    GAPS                   items: TITLE, MODULE, SEVERITY, IMPACT, RECO
-    IMMEDIATE_ACTIONS      items: TITLE, DESC
-    SHORT_TERM_ACTIONS     items: TITLE, DESC
-    LONG_TERM_ACTIONS      items: TITLE, DESC
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template qa-test-coverage --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

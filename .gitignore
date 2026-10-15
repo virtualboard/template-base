@@ -1,2 +1,17 @@
-reports/*
-!reports/.gitkeep
+# Markdown reports and optional HTML companions are durable review artifacts.
+# Ignore only heavyweight browser/runtime evidence by default.
+reports/**/screenshots/
+reports/**/videos/
+reports/**/traces/
+reports/**/results.json
+
+# VirtualBoard runtime state (never commit ephemeral leases or audit output)
+audit.jsonl
+audit.jsonl.append.lock
+locks/
+.state/
+/vb
+
+# Python-based validation and report-rendering caches
+__pycache__/
+*.py[cod]

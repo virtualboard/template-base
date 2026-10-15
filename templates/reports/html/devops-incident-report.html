@@ -1,40 +1,12 @@
 <!--
   Template: devops-incident-report.html
   Used by:  prompts/agents/devops/DevOps-Generate_Incident_Report.md (GIR)
-  Pairs with: .virtualboard/incidents/reports/IR-{YYYY-MM-DD}-{incident-id}.md
+  Pairs with: $VB_ROOT/reports/deployments/incidents/IR-{YYYY-MM-DD}-{incident-id}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    INCIDENT_ID            – e.g. "INC-2026-04-28-01"
-    SEVERITY, SEVERITY_LABEL  – critical|high|medium|low / "Critical" etc.
-    STATUS                 – Resolved | Investigating | Monitoring
-    DETECTED_AT            – ISO datetime
-    RESOLVED_AT            – ISO datetime or "—"
-    DURATION               – e.g. "1h 42m"
-    USERS_AFFECTED, SERVICES_IMPACTED, BUSINESS_IMPACT
-    ROOT_CAUSE_ONE_LINE
-    RESOLUTION_ONE_LINE
-    DETECTION_HTML, CLASSIFICATION_HTML, IMPACT_SCOPE_HTML
-    ROOT_CAUSE_HTML, FIVE_WHYS_HTML
-    WHAT_WENT_WELL_HTML, WHAT_WENT_WRONG_HTML
-    SYSTEM_STATE_HTML, LOGS_HTML, METRICS_HTML
-    RESOLUTION_DETAILS_HTML, VERIFICATION_HTML
-    SLA_BREACH             – "Yes" | "No" + optional explanation
-    REVENUE_IMPACT         – e.g. "$12,000" or "—"
-    SUPPORT_TICKETS        – integer or "—"
-    PREVENTION_TECHNICAL_HTML, PREVENTION_PROCESS_HTML, PREVENTION_MONITORING_HTML
-    LESSONS_HTML
-    REVIEW_MEETING_HTML
-
-  Per-template list placeholders:
-    TIMELINE               items: TIME, EVENT_HTML
-    ACTION_IMMEDIATE       items: TITLE, OWNER, DUE, DESC
-    ACTION_SHORT           items: TITLE, OWNER, DUE, DESC
-    ACTION_LONG            items: TITLE, OWNER, DUE, DESC
-    INTERNAL_COMMS         items: TIME, CHANNEL, AUDIENCE, MESSAGE
-    EXTERNAL_COMMS         items: TIME, CHANNEL, MESSAGE
-    SIMILAR_INCIDENTS      items: DATE, DESC, LINK_HTML
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template devops-incident-report --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

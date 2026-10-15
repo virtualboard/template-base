@@ -1,7 +1,7 @@
 <!--
   Template: security-threat-model.html
   Used by:  prompts/agents/security/Security-Generate_Threat_Model.md (GTM)
-  Pairs with: .virtualboard/security/threat-models/TM-{YYYY-MM-DD}-{component}.md
+  Pairs with: $VB_ROOT/reports/security/threat-models/TM-{YYYY-MM-DD}-{component}.md
 
   Cross-cutting placeholders: standard set.
 
@@ -9,7 +9,7 @@
     COMPONENT
     EXECUTIVE_SUMMARY_HTML
     SCOPE_HTML
-    ARCHITECTURE_DIAGRAM_HTML  – inline SVG, pre-rendered Mermaid, or note
+    ARCHITECTURE_DIAGRAM_HTML  – sanitized HTML or pre/code Mermaid text
     DATA_FLOW_HTML             – paragraph(s) describing data flow
     KPI_TOTAL_THREATS, KPI_CRITICAL, KPI_HIGH, KPI_MEDIUM, KPI_LOW
     OVERALL_POSTURE            – e.g. "Acceptable with caveats"
@@ -973,6 +973,7 @@
     <h2><span class="num">04</span>Architecture &amp; Data Flow</h2>
     <p class="lead">Trust boundaries, assets, and the flow of data across them.</p>
     <h3>Architecture diagram</h3>
+    <p class="lead">Sanitized structural HTML or pre/code Mermaid text; raw SVG and image tags are rejected by the renderer.</p>
     <p style='color: var(--text-mute); font-style: italic;'>[Mermaid render of: User &rarr; install-vb-cli.sh &rarr; GitHub Releases &rarr; sha256 verify &rarr; install dir]</p>
     <h3>Data flow</h3>
     <p>Installer fetches release metadata, downloads asset, computes SHA-256, compares to checksums.txt, atomically renames into place.</p>

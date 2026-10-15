@@ -1,41 +1,45 @@
-# Pull Request: FTR-XXXX - <Feature Title>
+## Feature
 
-## Overview
-Brief description of changes made.
+- Feature ID: `FTR-____`
+- Spec link: <!-- Link the exact feature spec; do not use a wildcard path. -->
 
-## Feature Spec
-- [ ] Links to feature spec: `/features/[status]/FTR-XXXX-*.md`
-- [ ] Spec is in `review` status
-- [ ] All acceptance criteria are implemented
+## Summary
 
-## Acceptance Criteria
-- [ ] Criterion 1
-- [ ] Criterion 2
-- [ ] Criterion 3
+<!-- What changed, why, and which user-visible outcome it delivers. -->
 
-## Risk Assessment
-- **Low Risk:** [ ] No breaking changes, minimal impact
-- **Medium Risk:** [ ] Some breaking changes, moderate impact
-- **High Risk:** [ ] Major changes, significant impact
+## Acceptance criteria
 
-## Rollback Plan
-- [ ] Feature flag can be disabled
-- [ ] Database changes are reversible
-- [ ] No data loss on rollback
+<!-- Copy the applicable criteria from the feature spec and mark verified items. -->
 
-## Testing
-- [ ] Unit tests added/updated
-- [ ] Integration tests added/updated
-- [ ] Manual testing completed
-- [ ] Performance impact assessed
+- [ ] Criteria are implemented or explicitly deferred in the feature spec.
+- [ ] Implementation notes and links are current.
 
-## Dependencies
-- [ ] All dependencies are `done`
-- [ ] No circular dependencies
+## Verification evidence
 
-## Checklist
-- [ ] Code follows project conventions
-- [ ] Documentation updated
-- [ ] No console errors or warnings
-- [ ] Accessibility requirements met
-- [ ] Security review completed (if applicable)
+<!-- List exact commands, results, screenshots, or runtime evidence. -->
+
+- [ ] Unit/integration tests pass.
+- [ ] `"$VB" --root "$VB_ROOT" validate` passes with non-vacuous fixture coverage.
+- [ ] Contract, plugin inventory, and generated-drift checks pass when applicable.
+- [ ] Documentation examples changed by this PR were executed verbatim.
+
+## Effects and authorization
+
+- [ ] Local writes only
+- [ ] Dependency installation (approval recorded)
+- [ ] External write such as push/PR/deployment (approval recorded)
+- [ ] Production-sensitive operation (approval and rollback recorded)
+- [ ] Destructive operation (approval recorded)
+
+## Risk and rollback
+
+- Risk level: <!-- low / medium / high / critical -->
+- Security/privacy impact:
+- Migration or compatibility impact:
+- Rollback procedure:
+
+## Review
+
+- [ ] No unrelated changes are included.
+- [ ] Lifecycle transition is valid.
+- [ ] The feature is in `review` before merge and moves to `done` only after approval.

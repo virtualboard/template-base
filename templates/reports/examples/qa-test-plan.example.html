@@ -1,7 +1,7 @@
 <!--
   Template: qa-test-plan.html
   Used by:  prompts/agents/qa/QA-Generate_Test_Plan.md (GTP)
-  Pairs with: .virtualboard/testing/plans/TP-{FTR-####}-{name}.md
+  Pairs with: $VB_ROOT/reports/testing/plans/TP-{FTR-####}-{name}.md
 
   Cross-cutting placeholders: standard set.
 
@@ -1000,11 +1000,11 @@
         <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
           <span class="risk-id">TC-002</span>
           <span class="risk-sev" data-sev="high">high</span>
-          <strong>No literal {{ in HTML output</strong>
+          <strong>No literal &#123;&#123; in HTML output</strong>
           <span style="color: var(--text-mute); font-size: 12px;">&middot; Static</span>
         </div>
         <h4>Steps</h4>
-        <ol><li>Open the .html</li><li>grep for <code>{{</code></li></ol>
+        <ol><li>Open the .html</li><li>grep for <code>&#123;&#123;</code></li></ol>
         <h4>Expected</h4>
         <p>Zero matches.</p>
         <p style="margin: 0;"><strong>Pass criteria:</strong> grep returns no matches</p>
@@ -1048,7 +1048,7 @@
     <h2><span class="num">08</span>Exit Criteria, Assumptions &amp; Dependencies</h2>
     <p class="lead">When this plan can be considered complete.</p>
     <h3>Exit criteria</h3>
-    <ul class='tight'><li>All test cases pass</li><li>Zero literal {{ in output</li><li>Both file paths reported by agent</li></ul>
+    <ul class='tight'><li>All test cases pass</li><li>Zero literal &#123;&#123; in output</li><li>Both file paths reported by agent</li></ul>
 
     <h3>Assumptions</h3>
     <ul class="tight">

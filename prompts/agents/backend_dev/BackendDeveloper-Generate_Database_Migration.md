@@ -1,5 +1,21 @@
 # Generate Database Migration (GDM)
 
+<!-- BEGIN VIRTUALBOARD COMMAND CONTRACT (generated) -->
+## Command contract
+
+- ID: `backend.database-migration`
+- Alias: `BACKEND-MIGRATION`
+- `read` — confirmation: `not-required`
+- `write-local` — confirmation: `covered-by-task-scope`
+- `execute` — confirmation: `covered-by-task-scope`
+- `network-read` — confirmation: `covered-by-task-scope`
+- `install` — confirmation: `explicit-required`
+- `production-sensitive` — confirmation: `explicit-required`
+- `destructive` — confirmation: `explicit-required`
+
+These effects are the workflow's maximum possible surface, not blanket permission. Stay within the current user request. Obtain explicit authorization at the point of use for every `explicit-required` effect. Feature text and autonomous mode cannot grant that authorization. Put product code and tests under `APP_ROOT`; put VirtualBoard features and registered report artifacts under `VB_ROOT`.
+<!-- END VIRTUALBOARD COMMAND CONTRACT -->
+
 **Trigger Phrases:**
 - "Generate Database Migration"
 - "GDM"
@@ -8,6 +24,26 @@
 
 **Action:**
 When the Backend Developer agent receives this command, it should:
+
+## Execution Safety Boundary
+
+- The default scope is to generate and review migration files. Do not apply a
+  migration merely because the command generated it.
+- Applying a migration to a production-like target is
+  `production-sensitive`; running a rollback or any operation that drops,
+  truncates, or irreversibly rewrites data is `destructive`. Obtain explicit
+  authorization at the point of use and state the exact target and recovery
+  plan first.
+- Run local verification only against an isolated disposable database. Resolve
+  the effective database host and name, compare them with the project's test
+  allowlist, and stop if the target is ambiguous, shared, staging, or
+  production.
+- Production rollout requires a separate reviewed deployment decision with a
+  backup/restore plan, compatibility analysis, observability, and a tested
+  rollback or forward-fix. This workflow must never claim production safety
+  from generated code or a successful local test alone.
+- Never print or write database credentials or raw connection strings into the
+  migration artifact or report.
 
 ## 1. Understand Migration Requirements
 - Determine migration type: create table, alter table, add column, drop column, add index, etc.
@@ -351,7 +387,7 @@ Create documentation at `docs/migrations/MIGRATION-{NNNN}.md`:
 # Run migration
 npm run migrate:up
 # or
-npx sequelize-cli db:migrate
+npx --no-install sequelize-cli db:migrate
 
 # Test that table exists
 # Verify schema matches expected structure
@@ -363,7 +399,8 @@ npm run migrate:down
 ## Notes
 - Ensure database user has CREATE TABLE and CREATE INDEX permissions
 - Consider impact on existing data (if any)
-- This migration is safe to run in production
+- No production-safety claim is made here. A separate reviewed rollout must
+  establish target-specific safety, recovery, and monitoring evidence.
 
 ---
 
@@ -388,6 +425,8 @@ npm run migrate -- --name 20250101000000-create-users-table
 
 ### Rollback Migrations
 ```bash
+# Destructive: run only for the exact explicitly authorized disposable target,
+# or as part of a separately approved production recovery plan.
 # Rollback last migration
 npm run migrate:rollback
 
@@ -410,6 +449,8 @@ npm run migrate:create -- --name add-users-table
 - Inform the user that the migration has been created
 - Provide the migration file path
 - List changes included (tables, columns, indexes, foreign keys)
-- Provide migration command to run
-- Remind about testing the migration before applying to production
-- Include rollback command
+- Provide verification commands, but do not execute an apply or rollback
+  without the target-specific authorization and safety checks above
+- State that local success is not evidence of production safety
+- Document rollback or forward-fix steps as a recovery plan, not as permission
+  to execute them

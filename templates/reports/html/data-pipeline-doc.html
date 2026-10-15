@@ -1,24 +1,12 @@
 <!--
   Template: data-pipeline-doc.html (optional, S+R)
   Used by:  prompts/agents/data_engineer/DataEngineer-Generate_Data_Pipeline.md (GDP)
-  Pairs with: .virtualboard/data/pipelines/{name}.md
+  Pairs with: $VB_ROOT/reports/data/pipelines/{name}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    PIPELINE_NAME, OWNER
-    SOURCE, SINK, SCHEDULE
-    OVERVIEW_HTML
-    SLA_HTML               – freshness / latency / completeness SLAs
-    OBSERVABILITY_HTML     – dashboards, alerts, runbook links
-    KPI_STAGES, KPI_INPUTS, KPI_OUTPUTS, KPI_TESTS
-
-  Per-template list placeholders:
-    STAGES                 items: NAME, KIND (extract|transform|load), TRANSFORM_HTML, NOTES
-    INPUTS                 items: NAME, KIND, NOTES
-    OUTPUTS                items: NAME, KIND, NOTES
-    TESTS                  items: ID, NAME, KIND, STATUS
-    OPEN_ITEMS             items: ID, TITLE, OWNER, DUE
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template data-pipeline-doc --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

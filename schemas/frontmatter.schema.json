@@ -5,8 +5,16 @@
     "id",
     "title",
     "status",
+    "owner",
+    "implementation_owner",
+    "priority",
+    "complexity",
     "created",
-    "updated"
+    "updated",
+    "status_changed",
+    "labels",
+    "dependencies",
+    "risk_notes"
   ],
   "properties": {
     "id": {
@@ -33,7 +41,15 @@
     },
     "owner": {
       "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:unassigned|[A-Za-z0-9][A-Za-z0-9._-]*)$",
       "description": "Current owner (human or agent handle)"
+    },
+    "implementation_owner": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?:unassigned|[A-Za-z0-9][A-Za-z0-9._-]*)$",
+      "description": "Implementation assignee retained across reviewer handoff"
     },
     "priority": {
       "type": "string",
@@ -66,12 +82,19 @@
       "format": "date",
       "description": "Last update date (YYYY-MM-DD)"
     },
+    "status_changed": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Date of the most recent lifecycle transition (YYYY-MM-DD)"
+    },
     "labels": {
       "type": "array",
       "items": {
         "type": "string",
         "pattern": "^[a-z0-9-]+$"
       },
+      "uniqueItems": true,
       "maxItems": 10,
       "description": "Feature labels (kebab-case)"
     },
@@ -81,6 +104,7 @@
         "type": "string",
         "pattern": "^FTR-\\d{4}$"
       },
+      "uniqueItems": true,
       "description": "Feature dependencies"
     },
     "epic": {
@@ -99,5 +123,32 @@
       "description": "Explicit implementation role; stage-specific configuration may select a reviewer"
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": ["in-progress", "blocked", "review", "done"]
+          }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["owner", "implementation_owner"],
+        "properties": {
+          "owner": {
+            "not": {
+              "enum": ["unassigned"]
+            }
+          },
+          "implementation_owner": {
+            "not": {
+              "enum": ["unassigned"]
+            }
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false
 }

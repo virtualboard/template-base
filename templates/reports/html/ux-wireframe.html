@@ -1,24 +1,12 @@
 <!--
   Template: ux-wireframe.html
   Used by:  prompts/agents/ux_designer/UXDesigner-Generate_Wireframe.md (GWF)
-  Pairs with: .virtualboard/design/wireframes/WF-{feature}.md
+  Pairs with: $VB_ROOT/reports/design/wireframes/WF-{feature}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    SCREEN_NAME
-    FIDELITY               – "Low-fi" | "Mid-fi" | "Hi-fi"
-    DEVICE                 – "Desktop" | "Tablet" | "Mobile"
-    OVERVIEW_HTML
-    WIREFRAME_HTML         – inline SVG, <img>, or ASCII layout
-    INTERACTION_NOTES_HTML
-    ACCESSIBILITY_NOTES_HTML
-    OPEN_QUESTIONS_HTML
-
-  Per-template list placeholders:
-    ANNOTATIONS            items: NUMBER, ELEMENT, NOTE
-    USER_FLOWS             items: NAME, STEPS_HTML
-    STATES                 items: NAME, DESC
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template ux-wireframe --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>
@@ -51,7 +39,9 @@
 
   <section id="wireframe">
     <h2><span class="num">02</span>Wireframe</h2>
-    <p class="lead">Inline rendering. Hover annotations align to the table below.</p>
+    <p class="lead">Sanitized structural HTML or a
+      <code>&lt;pre&gt;&lt;code&gt;</code> textual wireframe. Raw SVG and image tags are
+      intentionally rejected. Annotations align to the table below.</p>
     {{WIREFRAME_HTML}}
   </section>
 

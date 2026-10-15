@@ -1,25 +1,37 @@
 # Agent Rules & Validation Parameters
 # Machine-readable configuration for AI agents
 
-# Agent Configuration
+# Enforced agent configuration
 agent:
-  max_concurrent_features: 3
-  conflict_resolution: "first-come-first-served"
+  lock_ttl_minutes: 30
+
+# Advisory operating guidance. These values inform cooperative agents; the CLI
+# cannot authenticate identities, count sessions in other clones, or mandate a
+# retry strategy, so they are intentionally not presented as runtime controls.
+guidance:
+  max_concurrent_features_per_agent: 3
+  conflict_resolution: "first-valid-atomic-claim"
   error_retry_attempts: 2
-  lock_ttl_minutes: 60
 
 # Validation Rules
 validation:
-  frontmatter_schema: "/schemas/frontmatter.schema.json"
+  frontmatter_schema: "schemas/frontmatter.schema.json"
   enforce_circular_dependency_check: true
   require_updated_date_on_edit: true
-  max_description_length: 1000
+  require_assigned_owner_for_in_progress: true
+  require_assigned_owner_for_blocked: true
+  require_assigned_owner_for_review: true
+  require_assigned_owner_for_done: true
+  require_implementation_owner_for_managed_status: true
+  require_status_changed: true
   max_labels: 10
 
 # File Naming
 naming:
-  id_pattern: "^FTR-\\d{4}$"
-  filename_pattern: "^FTR-\\d{4}-[a-z0-9-]+$"
+  id_pattern: "^FTR-[0-9]{4}$"
+  filename_pattern: "^FTR-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$"
+  owner_pattern: "^(?:unassigned|[A-Za-z0-9][A-Za-z0-9._-]*)$"
+  branch_pattern: "^feat/FTR-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+){0,5}$"
   max_description_words: 6
 
 # State Transitions
@@ -46,7 +58,7 @@ dependencies:
 
 # Error Messages
 errors:
-  ownership_conflict: "Feature FTR-{id} is already owned by {owner}. Please select another feature."
-  circular_dependency: "Circular dependency detected involving FTR-{id}. Break the cycle before proceeding."
-  invalid_transition: "Transition from {from} to {to} is not allowed for FTR-{id}."
-  missing_dependency: "Dependency FTR-{dep_id} is not done. Cannot move FTR-{id} to in-progress."
+  ownership_conflict: "Feature {id} is already owned by {owner}. Report the conflict and stop."
+  circular_dependency: "Circular dependency detected involving {id}. Break the cycle before proceeding."
+  invalid_transition: "Transition from {from} to {to} is not allowed for {id}."
+  missing_dependency: "Dependency {dep_id} is not done. Cannot move {id} to in-progress."

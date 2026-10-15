@@ -1,132 +1,117 @@
 # /work-on Skill Configuration
 
-This document describes the configuration options for the `/work-on` skill.
+`/work-on` handles one explicit feature per invocation. Configuration changes
+paths and interaction style; it never relaxes ownership, locking, lifecycle,
+validation, or permission checks.
 
 ## Environment Variables
 
+### AGENT_ID
+
+Stable owner and lock identity. It must match
+`^[A-Za-z0-9][A-Za-z0-9._-]*$` and may not be `unassigned`.
+
+```bash
+export AGENT_ID="backend-dev-42"
+```
+
+The `--agent-id` option overrides this value. The skill stops rather than
+inventing an identity when neither is set.
+
 ### VIRTUALBOARD_WORKTREE_PATH
 
-Base directory where git worktrees are created.
+Base directory where worktrees are created.
 
 | Property | Value |
-|----------|-------|
-| Default | `$XDG_STATE_HOME/virtualboard/worktrees` (fallback: `~/.local/state/virtualboard/worktrees`) |
+| --- | --- |
+| Default | `${XDG_STATE_HOME:-$HOME/.local/state}/virtualboard/worktrees` |
 | Type | Directory path |
 
-**Example:**
-```bash
-export VIRTUALBOARD_WORKTREE_PATH="$HOME/worktrees"
-```
+Worktrees are organized by repository name and feature ID:
 
-Worktrees are created as subdirectories organized by repository name, then feature ID (use the setup script’s returned path):
-```
-$VIRTUALBOARD_WORKTREE_PATH/
-├── my-webapp-<identity>/
-│   ├── FTR-0001/
-│   └── FTR-0042/
-└── api-service-<identity>/
+```text
+<base>/
+└── my-webapp/
     ├── FTR-0001/
-    └── FTR-0099/
-```
-
-This structure prevents feature ID collisions when using VirtualBoard across multiple projects.
-
-### VIRTUALBOARD_POST_PUSH
-
-Action to take after pushing the feature branch.
-
-| Property | Value |
-|----------|-------|
-| Default | `local` |
-| Type | Enum |
-| Options | `local`, `push`, `push+pr`, `push+pr+cleanup` |
-
-**Options:**
-- `local`: Commit and hand off without publishing (default)
-- `push`: Push branch only
-- `push+pr`: Push branch and create a draft pull request
-- `push+pr+cleanup`: Push, create PR, and remove the worktree
-
-**Example:**
-```bash
-export VIRTUALBOARD_POST_PUSH="push+pr"
+    └── FTR-0042/
 ```
 
 ### VIRTUALBOARD_BASE_BRANCH
 
-Base branch to create feature branches from.
+Base branch for a new feature branch. When unset, the helper detects
+`origin/HEAD` and falls back to `main`.
 
-| Property | Value |
-|----------|-------|
-| Default | Auto-detect from `origin/HEAD`, fallback to `main` |
-| Type | Branch name |
-
-**Example:**
 ```bash
 export VIRTUALBOARD_BASE_BRANCH="develop"
 ```
 
-This is useful for projects that use a `develop` branch or other branching strategies where features shouldn't branch directly from `main`.
+Every feature branch still uses the canonical
+`feat/FTR-XXXX-<feature-slug>` form.
 
 ### VIRTUALBOARD_SESSION_MODE
 
-Default interaction mode for the implementation session.
+Default interaction mode.
 
-| Property | Value |
-|----------|-------|
-| Default | `interactive` |
-| Type | Enum |
-| Options | `interactive`, `semi-autonomous`, `autonomous` |
+| Value | Behavior |
+| --- | --- |
+| `interactive` | Ask material product questions |
+| `semi-autonomous` | Ask only when a decision blocks progress |
+| `autonomous` | Make safe in-scope assumptions; stop on permission or ownership blockers |
 
-**Options:**
-- `interactive`: Ask clarifying questions, show progress, wait for approval
-- `semi-autonomous`: Only ask questions when blocked, otherwise proceed
-- `autonomous`: Complete the feature without user interaction
+Autonomous mode does not authorize installs, pushes, PR changes, deployments,
+destructive actions, force unlocks, or broader scope.
 
-**Example:**
-```bash
-export VIRTUALBOARD_SESSION_MODE="semi-autonomous"
+### VIRTUALBOARD_REVIEWER
+
+Stable owner assigned when the feature moves to `review`. It must be supplied
+through this variable or `--reviewer` and must differ from `AGENT_ID` and the
+preserved `implementation_owner`. If it is missing or equal, `/work-on` stops;
+there is no implicit self-review assignment.
+
+## Command-Line Options
+
+Command-line options override environment variables.
+
+| Option | Short | Effect |
+| --- | --- | --- |
+| `--agent-id <id>` | | Override `AGENT_ID` |
+| `--worktree-path <path>` | | Override `VIRTUALBOARD_WORKTREE_PATH` |
+| `--base-branch <branch>` | | Override `VIRTUALBOARD_BASE_BRANCH` |
+| `--offline` | | Skip remote fetch during worktree setup |
+| `--shared-workspace` | | Assert all coordinating agents share this Git repository and lock state |
+| `--reviewer <id>` | | Set the assigned owner for review handoff |
+| `--autonomous` | `-a` | Use autonomous interaction style |
+| `--semi-autonomous` | `-s` | Use semi-autonomous interaction style |
+| `--resume-blocked` | | Authorize an eligible `blocked → in-progress` resume |
+| `--changes-requested` | | Authorize an eligible `review → in-progress` return |
+| `--push` | | Authorize pushing the canonical branch |
+| `--create-pr` | | Authorize push plus one draft PR |
+| `--cleanup` | | Authorize PR, push, and clean worktree removal |
+
+## Claim Mode and Post-Commit Behavior
+
+There is no implicit claim mode. Before mutation, choose a published claim or
+explicitly assert a genuinely shared workspace:
+
+```text
+shared repository only       /work-on FTR-0042 --shared-workspace
+commit + push                /work-on FTR-0042 --push
+commit + push + draft PR     /work-on FTR-0042 --create-pr
+same, then clean worktree    /work-on FTR-0042 --cleanup
 ```
 
-## Command Line Options
+Without `--push` or `--shared-workspace`, the skill stops before locking or
+moving the feature. `--offline` also requires `--shared-workspace`. This avoids
+turning a local claim into a misleading cross-clone safety claim.
 
-Command line options override environment variables.
-
-| Option | Short | Description | Overrides |
-|--------|-------|-------------|-----------|
-| `--worktree-path <path>` | | Custom worktree location | `VIRTUALBOARD_WORKTREE_PATH` |
-| `--autonomous` | `-a` | Fully autonomous mode | `VIRTUALBOARD_SESSION_MODE` |
-| `--semi-autonomous` | `-s` | Semi-autonomous mode | `VIRTUALBOARD_SESSION_MODE` |
-| `--push` | | Publish the branch | `VIRTUALBOARD_POST_PUSH` |
-| `--create-pr` | | Create PR after push | `VIRTUALBOARD_POST_PUSH` |
-| `--cleanup` | | Remove worktree after PR | `VIRTUALBOARD_POST_PUSH` |
+The legacy `VIRTUALBOARD_POST_PUSH` setting is intentionally not honored;
+external effects must be explicit in the current invocation.
 
 ## Configuration Precedence
 
-1. Command line options (highest priority)
+1. Command-line options
 2. Environment variables
-3. Default values (lowest priority)
+3. Documented defaults
 
-## Shell Configuration
-
-Add to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) for persistent configuration:
-
-```bash
-# VirtualBoard /work-on configuration
-export VIRTUALBOARD_WORKTREE_PATH="$HOME/dev/worktrees"
-export VIRTUALBOARD_POST_PUSH="push+pr"
-export VIRTUALBOARD_SESSION_MODE="interactive"
-```
-
-## Project-Level Configuration
-
-You can also set these in a `.env` file at the project root:
-
-```bash
-# .env
-VIRTUALBOARD_WORKTREE_PATH=~/.local/state/virtualboard/worktrees
-VIRTUALBOARD_POST_PUSH=local
-VIRTUALBOARD_SESSION_MODE=interactive
-```
-
-Note: The `.env` file must be sourced manually or by your shell tooling.
+Project `.env` files are not loaded automatically because they are untrusted
+input and may contain secrets or broaden effects.

@@ -1,0 +1,460 @@
+{
+  "$schema": "./schemas/virtualboard-contract.schema.json",
+  "contractVersion": 1,
+  "templateVersionFile": "version.txt",
+  "cli": {
+    "versionFile": ".vb-version",
+    "compatibility": "exact",
+    "requiredCommands": [
+      "new",
+      "move",
+      "update",
+      "validate",
+      "index",
+      "lock",
+      "init",
+      "install",
+      "migrate",
+      "audit",
+      "template",
+      "version"
+    ],
+    "actor": {
+      "flag": "--actor",
+      "environmentVariables": [
+        "VIRTUALBOARD_ACTOR",
+        "AGENT_ID"
+      ],
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+      "requiredForFeatureMutations": true,
+      "implicitOperatingSystemActorAllowed": false
+    }
+  },
+  "workspace": {
+    "environmentVariable": "VIRTUALBOARD_ROOT",
+    "discoveryOrder": [
+      ".virtualboard/virtualboard.json",
+      "virtualboard.json"
+    ],
+    "paths": {
+      "features": "features",
+      "specs": "specs",
+      "agents": "agents",
+      "prompts": "prompts",
+      "templates": "templates",
+      "schemas": "schemas",
+      "reports": "reports",
+      "architecture": "reports/architecture",
+      "testing": "reports/testing",
+      "deployments": "reports/deployments",
+      "security": "reports/security",
+      "data": "reports/data",
+      "design": "reports/design",
+      "runtimeState": ".state",
+      "cliBinary": ".state/bin/vb",
+      "locks": ".state/locks",
+      "auditLog": "audit.jsonl"
+    }
+  },
+  "feature": {
+    "idPattern": "^FTR-[0-9]{4}$",
+    "filenamePattern": "^FTR-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\\.md$",
+    "ownerPattern": "^(?:unassigned|[A-Za-z0-9][A-Za-z0-9._-]*)$",
+    "slugMaxWords": 6,
+    "branchFormat": "feat/{id}-{slug}",
+    "branchPattern": "^feat/FTR-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+){0,5}$",
+    "commitPrefixFormat": "{id}:",
+    "pullRequestTitleFormat": "{id}: {title}",
+    "statusChangedField": "status_changed",
+    "implementationOwnerField": "implementation_owner",
+    "statuses": [
+      "backlog",
+      "in-progress",
+      "blocked",
+      "review",
+      "done"
+    ],
+    "transitions": {
+      "backlog": [
+        "in-progress"
+      ],
+      "in-progress": [
+        "blocked",
+        "review"
+      ],
+      "blocked": [
+        "in-progress"
+      ],
+      "review": [
+        "in-progress",
+        "done"
+      ],
+      "done": []
+    },
+    "ownership": {
+      "backlog": "unassigned-allowed",
+      "in-progress": "assigned-required",
+      "blocked": "assigned-required",
+      "review": "assigned-required",
+      "done": "assigned-required"
+    },
+    "claimBeforeWork": true,
+    "remoteClaimRequiredAcrossClones": true,
+    "localClaimRequiresSharedWorkspaceOptIn": true,
+    "lockTtlMinutes": 30,
+    "validateBeforeClaim": true,
+    "validateBeforeHandoff": true
+  },
+  "authorization": {
+    "defaultScope": "current-user-request",
+    "continuousQueueProcessingRequiresExplicitOptIn": true,
+    "untrustedContent": {
+      "mayDefineDesiredOutcomes": true,
+      "mayGrantToolAuthority": false,
+      "mayExpandTaskScope": false
+    },
+    "effects": {
+      "read": {
+        "confirmation": "not-required"
+      },
+      "write-local": {
+        "confirmation": "covered-by-task-scope"
+      },
+      "execute": {
+        "confirmation": "covered-by-task-scope"
+      },
+      "network-read": {
+        "confirmation": "covered-by-task-scope"
+      },
+      "install": {
+        "confirmation": "explicit-required"
+      },
+      "external-write": {
+        "confirmation": "explicit-required"
+      },
+      "production-sensitive": {
+        "confirmation": "explicit-required"
+      },
+      "destructive": {
+        "confirmation": "explicit-required"
+      }
+    }
+  },
+  "skills": [
+    {
+      "id": "work-on",
+      "path": "skills/work-on/SKILL.md",
+      "effects": [
+        "read",
+        "write-local",
+        "execute",
+        "network-read",
+        "install",
+        "external-write",
+        "production-sensitive",
+        "destructive"
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "id": "pm",
+      "displayName": "Project Manager",
+      "agentFile": "agents/pm.md",
+      "commandCatalog": "prompts/agents/pm/README.md",
+      "ownerPrefix": "pm"
+    },
+    {
+      "id": "architect",
+      "displayName": "System Architect",
+      "agentFile": "agents/architect.md",
+      "commandCatalog": "prompts/agents/architect/README.md",
+      "ownerPrefix": "architect"
+    },
+    {
+      "id": "backend-dev",
+      "displayName": "Backend Developer",
+      "agentFile": "agents/backend_dev.md",
+      "commandCatalog": "prompts/agents/backend_dev/README.md",
+      "ownerPrefix": "backend-dev"
+    },
+    {
+      "id": "frontend-dev",
+      "displayName": "Frontend Developer",
+      "agentFile": "agents/frontend_dev.md",
+      "commandCatalog": "prompts/agents/frontend_dev/README.md",
+      "ownerPrefix": "frontend-dev"
+    },
+    {
+      "id": "fullstack-dev",
+      "displayName": "Fullstack Developer",
+      "agentFile": "agents/fullstack_dev.md",
+      "commandCatalog": "prompts/agents/fullstack_dev/README.md",
+      "ownerPrefix": "fullstack-dev"
+    },
+    {
+      "id": "qa",
+      "displayName": "QA Engineer",
+      "agentFile": "agents/qa.md",
+      "commandCatalog": "prompts/agents/qa/README.md",
+      "ownerPrefix": "qa"
+    },
+    {
+      "id": "devops",
+      "displayName": "DevOps and Reliability Engineer",
+      "agentFile": "agents/devops_engineer.md",
+      "commandCatalog": "prompts/agents/devops/README.md",
+      "ownerPrefix": "devops"
+    },
+    {
+      "id": "security",
+      "displayName": "Security and Compliance Engineer",
+      "agentFile": "agents/security_compliance_engineer.md",
+      "commandCatalog": "prompts/agents/security/README.md",
+      "ownerPrefix": "security"
+    },
+    {
+      "id": "data",
+      "displayName": "Data and Analytics Engineer",
+      "agentFile": "agents/data_analytics_engineer.md",
+      "commandCatalog": "prompts/agents/data_engineer/README.md",
+      "ownerPrefix": "data"
+    },
+    {
+      "id": "ux",
+      "displayName": "UX and Product Designer",
+      "agentFile": "agents/ux_product_designer.md",
+      "commandCatalog": "prompts/agents/ux_designer/README.md",
+      "ownerPrefix": "ux"
+    }
+  ],
+  "commands": [
+    {
+      "id": "pm.progress-report",
+      "alias": "PM-PROGRESS",
+      "role": "pm",
+      "prompt": "prompts/agents/pm/PM-Generate_Project_Progress_Report.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "pm.backlog-grooming",
+      "alias": "PM-GROOM",
+      "role": "pm",
+      "prompt": "prompts/agents/pm/PM-Generate_Backlog_Grooming.md",
+      "effects": ["read", "write-local", "execute", "network-read", "install", "external-write"]
+    },
+    {
+      "id": "architect.decision",
+      "alias": "ARCH-ADR",
+      "role": "architect",
+      "prompt": "prompts/agents/architect/Architect-Generate_Architecture_Decision.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "architect.report",
+      "alias": "ARCH-REPORT",
+      "role": "architect",
+      "prompt": "prompts/agents/architect/Architect-Generate_Architecture_Report.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "architect.technical-debt",
+      "alias": "ARCH-DEBT",
+      "role": "architect",
+      "prompt": "prompts/agents/architect/Architect-Generate_Technical_Debt_Report.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "backend.api-documentation",
+      "alias": "BACKEND-API-DOCS",
+      "role": "backend-dev",
+      "prompt": "prompts/agents/backend_dev/BackendDeveloper-Generate_API_Documentation.md",
+      "effects": ["read", "write-local"]
+    },
+    {
+      "id": "backend.api-endpoint",
+      "alias": "BACKEND-ENDPOINT",
+      "role": "backend-dev",
+      "prompt": "prompts/agents/backend_dev/BackendDeveloper-Generate_API_Endpoint.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "backend.database-migration",
+      "alias": "BACKEND-MIGRATION",
+      "role": "backend-dev",
+      "prompt": "prompts/agents/backend_dev/BackendDeveloper-Generate_Database_Migration.md",
+      "effects": ["read", "write-local", "execute", "network-read", "install", "production-sensitive", "destructive"]
+    },
+    {
+      "id": "frontend.accessibility-audit",
+      "alias": "FRONTEND-A11Y",
+      "role": "frontend-dev",
+      "prompt": "prompts/agents/frontend_dev/FrontendDeveloper-Generate_Accessibility_Audit.md",
+      "effects": ["read", "write-local", "execute", "network-read", "install"]
+    },
+    {
+      "id": "frontend.component",
+      "alias": "FRONTEND-COMPONENT",
+      "role": "frontend-dev",
+      "prompt": "prompts/agents/frontend_dev/FrontendDeveloper-Generate_Component.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "frontend.component-story",
+      "alias": "FRONTEND-STORY",
+      "role": "frontend-dev",
+      "prompt": "prompts/agents/frontend_dev/FrontendDeveloper-Generate_Component_Story.md",
+      "effects": ["read", "write-local", "execute", "network-read", "install"]
+    },
+    {
+      "id": "fullstack.feature",
+      "alias": "FULLSTACK-FEATURE",
+      "role": "fullstack-dev",
+      "prompt": "prompts/agents/fullstack_dev/FullstackDeveloper-Generate_Full_Feature.md",
+      "effects": ["read", "write-local", "execute", "network-read", "install"]
+    },
+    {
+      "id": "fullstack.integration-contract",
+      "alias": "FULLSTACK-CONTRACT",
+      "role": "fullstack-dev",
+      "prompt": "prompts/agents/fullstack_dev/FullstackDeveloper-Generate_Integration_Contract.md",
+      "effects": ["read", "write-local", "execute", "network-read", "install", "external-write"]
+    },
+    {
+      "id": "fullstack.end-to-end-test",
+      "alias": "FULLSTACK-E2E",
+      "role": "fullstack-dev",
+      "prompt": "prompts/agents/fullstack_dev/FullstackDeveloper-Generate_End_to_End_Test.md",
+      "effects": ["read", "write-local", "execute", "network-read", "install", "external-write", "production-sensitive", "destructive"]
+    },
+    {
+      "id": "qa.bug-report",
+      "alias": "QA-BUG",
+      "role": "qa",
+      "prompt": "prompts/agents/qa/QA-Generate_Bug_Report.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "qa.coverage-report",
+      "alias": "QA-COVERAGE",
+      "role": "qa",
+      "prompt": "prompts/agents/qa/QA-Generate_Test_Coverage_Report.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "qa.test-plan",
+      "alias": "QA-PLAN",
+      "role": "qa",
+      "prompt": "prompts/agents/qa/QA-Generate_Test_Plan.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "qa.browser-automation",
+      "alias": "QA-BROWSER",
+      "role": "qa",
+      "prompt": "prompts/agents/qa/QA-Generate_Browser_Automation_Tests.md",
+      "effects": ["read", "write-local", "execute", "network-read", "install", "external-write", "production-sensitive", "destructive"]
+    },
+    {
+      "id": "devops.deployment-checklist",
+      "alias": "DEVOPS-CHECKLIST",
+      "role": "devops",
+      "prompt": "prompts/agents/devops/DevOps-Generate_Deployment_Checklist.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "devops.deployment-readiness",
+      "alias": "DEVOPS-READINESS",
+      "role": "devops",
+      "prompt": "prompts/agents/devops/DevOps-Generate_Deployment_Readiness_Report.md",
+      "effects": ["read", "write-local", "execute", "network-read", "production-sensitive"]
+    },
+    {
+      "id": "devops.incident-report",
+      "alias": "DEVOPS-INCIDENT",
+      "role": "devops",
+      "prompt": "prompts/agents/devops/DevOps-Generate_Incident_Report.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "security.audit",
+      "alias": "SECURITY-AUDIT",
+      "role": "security",
+      "prompt": "prompts/agents/security/Security-Generate_Security_Audit.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "security.review",
+      "alias": "SECURITY-REVIEW",
+      "role": "security",
+      "prompt": "prompts/agents/security/Security-Generate_Security_Review.md",
+      "effects": ["read", "write-local", "execute", "network-read"]
+    },
+    {
+      "id": "security.threat-model",
+      "alias": "SECURITY-THREAT",
+      "role": "security",
+      "prompt": "prompts/agents/security/Security-Generate_Threat_Model.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "data.pipeline",
+      "alias": "DATA-PIPELINE",
+      "role": "data",
+      "prompt": "prompts/agents/data_engineer/DataEngineer-Generate_Data_Pipeline.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "data.metrics-dashboard",
+      "alias": "DATA-METRICS",
+      "role": "data",
+      "prompt": "prompts/agents/data_engineer/DataEngineer-Generate_Metrics_Dashboard.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "data.quality-check",
+      "alias": "DATA-QUALITY",
+      "role": "data",
+      "prompt": "prompts/agents/data_engineer/DataEngineer-Generate_Data_Quality_Check.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "data.entity-relationship-diagram",
+      "alias": "DATA-ERD",
+      "role": "data",
+      "prompt": "prompts/agents/data_engineer/DataEngineer-Generate_Entity_Relationship_Diagram.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "ux.design-system-component",
+      "alias": "UX-DESIGN-SYSTEM",
+      "role": "ux",
+      "prompt": "prompts/agents/ux_designer/UXDesigner-Generate_Design_System_Component.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "ux.user-journey",
+      "alias": "UX-JOURNEY",
+      "role": "ux",
+      "prompt": "prompts/agents/ux_designer/UXDesigner-Generate_User_Journey.md",
+      "effects": ["read", "write-local", "execute"]
+    },
+    {
+      "id": "ux.wireframe",
+      "alias": "UX-WIREFRAME",
+      "role": "ux",
+      "prompt": "prompts/agents/ux_designer/UXDesigner-Generate_Wireframe.md",
+      "effects": ["read", "write-local", "execute"]
+    }
+  ],
+  "pluginExpectations": {
+    "claude": {
+      "agents": 10,
+      "workflows": 31,
+      "skills": 1
+    },
+    "codex": {
+      "skills": 1
+    }
+  }
+}
