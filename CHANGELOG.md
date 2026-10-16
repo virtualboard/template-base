@@ -5,6 +5,106 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Native Windows PowerShell bootstrap with exact `.vb-version` selection,
+  bounded HTTPS streaming, checksum and executable verification, junction-safe
+  destination handling, and native Windows CI fault-injection coverage.
+- Generated Claude and Codex `/work-on` packages with exact-copy drift checks,
+  plugin validation, and one canonical task-scoped workflow source.
+
+### Changed
+
+- Feature bodies now require exactly one ordered copy of all 14 canonical
+  sections inside one trust boundary. Review requires fully checked acceptance
+  evidence; done also requires meaningful implementation notes and a concrete
+  reference.
+- Feature branches commit only scoped lifecycle and evidence changes; main or
+  integration owns aggregate index regeneration and CI uses `vb index --check`.
+- Candidate builds require a clean CLI checkout at the exact 40-character
+  `.vb-cli-source-ref`, then smoke the resulting binary against the exact
+  template archive rather than a moving branch or dirty worktree.
+- Windows guidance now reserves native PowerShell for verified bootstrap and
+  read-only inspection; Git Bash or WSL is required for the complete mutation,
+  worktree, plugin, and verification workflow.
+
+### Security
+
+- Unix and Windows bootstraps now reject linked destination components, stage
+  verified bytes in the final directory, flush them, and use one atomic
+  activation that preserves an existing binary on failure.
+- Release publication now reconciles an exact asset inventory inside a draft
+  bound to the tag commit and publishes with one final state transition; retries
+  never delete a release and refuse every published same-tag release.
+- Actor and owner values plus declared effects are documented as cooperative
+  metadata, not authentication, sandboxing, or hostile multi-tenant authority.
+  Those deployments require protected storage and an authenticated orchestrator.
+
+### Fixed
+
+- Made the legacy demo workspace explicit and self-contained with a bounded
+  pre-v0.8 marker plus drift-checked schema and feature-template fixtures.
+
+## [0.8.0] - 2026-07-10
+
+### Added
+
+- Canonical `virtualboard.json` contract for workspace paths, lifecycle,
+  ownership, effects, roles, commands, plugins, and exact CLI compatibility.
+- Separate self-contained Claude and Codex plugin packages with generated
+  inventory and runtime validation.
+- Executable contract, installer, worktree, schema, renderer, link, plugin, and
+  demo-workspace test suites plus a required GitHub Actions gate.
+- A real five-state demo workspace, repository governance files, and generated
+  dependency-free reference documentation.
+- Stable, checksummed template release assets and coordinated compatibility with
+  the actor-enforcing `vb v0.10.0` lifecycle runtime.
+- Explicit lifecycle-provenance migration and canonical audit verification
+  guidance, with black-box coverage for multi-owner administrative repair.
+- Source-pinned CLI bootstrap verification, built-binary archive and IDE-install
+  smoke tests, and a protected release-branch sequence that keeps moving-main
+  vb v0.9 clients on the compatible v0.7 template.
+
+### Changed
+
+- Agent and command workflows are task-scoped, carry generated stable IDs and
+  effect ceilings, use workspace-local tooling, and stop after the requested
+  unit of work.
+- `/work-on` now locks before setup, claims before implementation, validates
+  before handoff, moves to review before its scoped commit, and makes push/PR
+  and cleanup opt-in effects.
+- The CLI installer now installs the exact pinned release, verifies checksum
+  and version before replacement, uses bounded network operations, cleans up
+  temporary files, and never invokes implicit sudo or unpinned upgrade logic.
+- Worktree setup now validates identifiers and refs, uses canonical
+  `feat/FTR-####-slug` branches, exposes deterministic JSON, and refuses unsafe
+  directory deletion.
+- HTML reports use one strict escaped renderer instead of agent-authored text
+  substitution. All 21 templates are smoke-tested.
+- Every feature mutation carries an explicit actor distinct from workflow owner;
+  review handback restores only the preserved implementation owner.
+
+### Security
+
+- Feature and report prose is explicitly untrusted and cannot grant tool
+  authority, expand scope, or authorize installs, external writes, production
+  operations, or destructive actions.
+- Active lifecycle states require canonical stable owner handles; local lock
+  limits and cross-clone coordination requirements are documented honestly.
+- Release actions are commit-pinned and least-privilege; installer redirects are
+  HTTPS-only and bounded by both transfer and post-download size checks.
+- Template release assets receive build-provenance attestations, and release
+  publication remains isolated from checkout and test execution credentials.
+
+### Fixed
+
+- Corrected contradictory lifecycle, QA, backlog-grooming, plugin inventory,
+  branch, workspace-root, report, schema, and pull-request instructions.
+- Removed obsolete CLI examples, vacuous validation claims, unsafe checksum
+  fallback, and generated-package drift.
+
 ## [0.7.0] - 2026-04-28
 
 ### Added

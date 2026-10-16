@@ -1,7 +1,7 @@
 <!--
   Template: qa-bug-report.html
   Used by:  prompts/agents/qa/QA-Generate_Bug_Report.md (GBR)
-  Pairs with: .virtualboard/testing/bugs/BUG-{####}-{slug}.md
+  Pairs with: $VB_ROOT/reports/testing/bugs/BUG-{####}-{slug}.md
 
   Cross-cutting placeholders: standard set.
 
@@ -919,7 +919,7 @@
   <div class="hero-inner">
     <span class="eyebrow">&#9679; Bug Report &middot; P1</span>
     <h1>Bug Report &middot; <span class="green">BUG-0042</span></h1>
-    <p class="subtitle">Branded HTML companion to <code>.virtualboard/testing/bugs/BUG-0042-feature-list-pagination-broken.md</code>.</p>
+    <p class="subtitle">Branded HTML companion to <code>$VB_ROOT/reports/testing/bugs/BUG-0042-index-dry-run-json-written.md</code>.</p>
     <div class="hero-meta">
       
       <div class="cell">
@@ -956,7 +956,7 @@
   <section id="summary">
     <h2><span class="num">01</span>Summary</h2>
     <p class="lead">One-line description and key classification.</p>
-    <p><code>vb list --status backlog</code> returns only the first 50 features; pagination is silently truncated and there is no <code>--limit</code> override.</p>
+    <p><code>vb index --dry-run --json</code> reports <code>"written": true</code> even though dry-run mode leaves the index unchanged.</p>
     <div class="callout">
       <p>
         <strong>BUG-0042</strong> &middot;
@@ -970,7 +970,7 @@
   <section id="description">
     <h2><span class="num">02</span>Description</h2>
     <p class="lead">What's wrong and why it matters.</p>
-    <p>The <code>list</code> subcommand applies a hard-coded page size of 50 and omits any indication that more results exist. On a backlog with 60+ items, agents and humans both lose track of features past row 50. There is no warning, no pagination cursor, and no override flag.</p><p>Reproduces in dev, staging, and production. Affects every <code>vb list --status &lt;status&gt;</code> invocation where the matching count exceeds 50.</p>
+    <p>The index command's JSON response sets <code>written</code> from the requested operation instead of the actual dry-run result. Automation therefore reports a filesystem mutation that never happened.</p><p>Reproduces in local and CI workspaces whenever JSON and dry-run mode are combined.</p>
   </section>
 
   <section id="environment">
@@ -984,13 +984,13 @@
     <p class="lead">Reproducibility: <strong>100% — Always reproducible</strong>.</p>
     <ol style="padding-left: 22px;">
       
-      <li style="margin-bottom: 8px; color: var(--text-dim);">Create more than 50 backlog features (e.g., loop <code>vb new</code>).</li>
+      <li style="margin-bottom: 8px; color: var(--text-dim);">Create one valid feature and generate <code>features/INDEX.md</code>.</li>
       
-      <li style="margin-bottom: 8px; color: var(--text-dim);">Run <code>vb list --status backlog</code>.</li>
+      <li style="margin-bottom: 8px; color: var(--text-dim);">Record the index hash, then run <code>vb index --dry-run --json</code>.</li>
       
-      <li style="margin-bottom: 8px; color: var(--text-dim);">Compare the printed count against <code>ls features/backlog | wc -l</code>.</li>
+      <li style="margin-bottom: 8px; color: var(--text-dim);">Confirm that the index hash is unchanged.</li>
       
-      <li style="margin-bottom: 8px; color: var(--text-dim);">Observe: printed count is capped at 50 with no warning.</li>
+      <li style="margin-bottom: 8px; color: var(--text-dim);">Observe that the response nevertheless contains <code>"written": true</code>.</li>
       
     </ol>
     
@@ -1002,19 +1002,18 @@
     <div class="grid-2">
       <div class="card">
         <h4 style="margin-top: 0;">Expected</h4>
-        <p>All matching features are listed, or the command warns when results are truncated and offers a <code>--limit</code> / <code>--all</code> override.</p>
+        <p>Dry-run output reports <code>"written": false</code> and previews the generated index without changing the file.</p>
       </div>
       <div class="card" style="border-left: 3px solid var(--sev-high);">
         <h4 style="margin-top: 0; color: var(--sev-high);">Actual</h4>
-        <p>Only the first 50 results are printed. No warning. No exit-code change.</p>
+        <p>The file remains unchanged, but machine-readable output reports <code>"written": true</code>.</p>
       </div>
     </div>
     <h3 style="margin-top: 32px;">Error logs</h3>
-    <pre><code>$ vb list --status backlog | wc -l
-     50
-$ ls features/backlog | wc -l
-     61
-# 11 features are missing from the output</code></pre>
+    <pre><code>$ vb index --dry-run --json
+{"success":true,"written":true}
+$ shasum features/INDEX.md
+# hash is unchanged</code></pre>
   </section>
 
   <section id="impact">
@@ -1022,8 +1021,8 @@ $ ls features/backlog | wc -l
     <p class="lead">Who is affected and what the business cost is.</p>
     <div class="kpi">
       <div class="stat"><div class="n" style="font-size: 16px;">All users</div><div class="l">Users affected</div></div>
-      <div class="stat"><div class="n" style="font-size: 16px;">Feature browsing broken</div><div class="l">Business impact</div></div>
-      <div class="stat"><div class="n" style="font-size: 16px;">Yes — manual file scan</div><div class="l">Workaround</div></div>
+      <div class="stat"><div class="n" style="font-size: 16px;">Automation state is false</div><div class="l">Business impact</div></div>
+      <div class="stat"><div class="n" style="font-size: 16px;">Yes — hash the file</div><div class="l">Workaround</div></div>
     </div>
   </section>
 
@@ -1031,7 +1030,7 @@ $ ls features/backlog | wc -l
     <h2><span class="num">07</span>Technical Analysis</h2>
     <p class="lead">Suspected root cause and affected surface area.</p>
     <h3>Root cause hypothesis</h3>
-    <p>Hypothesis: <code>cmd/list.go</code> uses <code>features = features[:50]</code> as a default cap. The cap pre-dates a feature-creation burst and was never adjusted. Fix is two lines: remove the cap, or expose <code>--limit</code> with a sane default and a truncation warning.</p>
+    <p>Hypothesis: <code>cmd/index.go</code> populates the JSON response with a constant <code>written: true</code> after rendering. The response should instead use whether the write path actually ran.</p>
 
     <h3>Affected components</h3>
     <table class="component-table">
@@ -1041,13 +1040,13 @@ $ ls features/backlog | wc -l
       <tbody>
         
         <tr>
-          <td>vb-cli — list subcommand</td>
-          <td>Hard-coded slice cap at <code>cmd/list.go</code>.</td>
+          <td>vb-cli — index subcommand</td>
+          <td>Dry-run response is assembled in <code>cmd/index.go</code>.</td>
         </tr>
         
         <tr>
-          <td>Agent workflows that scan backlog</td>
-          <td>PM agent grooming and progress reports under-report when backlog &gt; 50.</td>
+          <td>CI and agent automation</td>
+          <td>Machine consumers cannot trust whether an index write occurred.</td>
         </tr>
         
       </tbody>
@@ -1064,13 +1063,13 @@ $ ls features/backlog | wc -l
         <tr>
           <td>Blocks</td>
           <td><code>FTR-0099</code></td>
-          <td>Backlog grooming feature requires reliable list output.</td>
+          <td>Release automation requires truthful mutation evidence.</td>
         </tr>
         
         <tr>
           <td>Related to</td>
           <td><code>BUG-0019</code></td>
-          <td>Earlier truncation bug in <code>vb show</code> output (resolved 2026-03-04).</td>
+          <td>Earlier dry-run reporting defect in another mutating command (resolved 2026-03-04).</td>
         </tr>
         
       </tbody>
@@ -1082,9 +1081,9 @@ $ ls features/backlog | wc -l
     <h2><span class="num">08</span>Proposed Solution &amp; Testing Notes</h2>
     <p class="lead">How to fix it, and how to verify the fix.</p>
     <h3>Proposed solution</h3>
-    <p>Add a <code>--limit</code> flag (default 100) and a <code>--all</code> flag. When the natural result count exceeds the limit, print a one-line stderr warning indicating truncation and the override flag. Update the integration test to cover both default and override behavior.</p>
+    <p>Set <code>written</code> from the actual write result. Add an integration test that hashes the index before and after dry-run and asserts both a stable file and <code>"written": false</code>.</p>
     <h3>Testing notes</h3>
-    <p>After fix: confirm <code>vb list --status backlog</code> returns all 61 backlog features when <code>--all</code> is passed. Confirm default invocation prints the truncation warning to stderr. Confirm exit code is 0 in both cases.</p>
+    <p>After the fix, confirm normal mode reports <code>"written": true</code>, dry-run reports <code>"written": false</code>, and only normal mode changes the index hash.</p>
   </section>
 
   <section id="meta">
@@ -1096,7 +1095,7 @@ $ ls features/backlog | wc -l
     <h3>Attachments</h3>
     <ul class="tight">
       
-      <li><strong>list-truncation-asciinema.cast</strong> — Recorded session demonstrating the truncation.</li>
+      <li><strong>index-dry-run-response.txt</strong> — Captured JSON output and before/after hashes.</li>
       
     </ul>
     
@@ -1116,7 +1115,7 @@ $ ls features/backlog | wc -l
   </div>
   <p style="margin: 0;">Bug Report &middot; <strong style="color: var(--accent);">BUG-0042</strong> &middot; 2026-04-28</p>
   <p style="margin: 8px 0 0; font-size: 12px;">Filed by the QA agent &middot; Internal advisory.</p>
-  <p style="margin: 14px 0 0; font-size: 11px; color: var(--text-mute);">Companion: <code>.virtualboard/testing/bugs/BUG-0042-feature-list-pagination-broken.md</code>.</p>
+  <p style="margin: 14px 0 0; font-size: 11px; color: var(--text-mute);">Companion: <code>$VB_ROOT/reports/testing/bugs/BUG-0042-index-dry-run-json-written.md</code>.</p>
 </footer>
 
 

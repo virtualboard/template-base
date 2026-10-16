@@ -1,14 +1,14 @@
 <!--
   Template: data-erd.html
   Used by:  prompts/agents/data_engineer/DataEngineer-Generate_Entity_Relationship_Diagram.md (ERD)
-  Pairs with: .virtualboard/reports/{YYYY-MM-DD}_Entity_Relationship_Diagram.md
+  Pairs with: $VB_ROOT/reports/data/{YYYY-MM-DD}_Entity_Relationship_Diagram.md
 
   Cross-cutting placeholders: standard set.
 
   Per-template scalar placeholders:
     DOMAIN                 – e.g. "Billing" / "Identity"
     EXECUTIVE_SUMMARY_HTML
-    DIAGRAM_HTML           – inline SVG, pre-rendered Mermaid, or img
+    DIAGRAM_HTML           – sanitized HTML or pre/code Mermaid text; no SVG/img
     KPI_ENTITIES, KPI_RELATIONSHIPS, KPI_PRIMARY_KEYS, KPI_FOREIGN_KEYS
     NORMALIZATION_HTML     – paragraphs on normalization level
     INDEXING_HTML          – paragraphs on indexes
@@ -952,7 +952,7 @@
 
   <section id="diagram">
     <h2><span class="num">02</span>Diagram</h2>
-    <p class="lead">Inline SVG / Mermaid render of the ER diagram.</p>
+    <p class="lead">Sanitized structural HTML or a pre/code Mermaid/text diagram. Raw SVG and image tags are intentionally rejected.</p>
     <p style='color: var(--text-mute); font-style: italic;'>[Mermaid render of: customers &rarr; orders &rarr; order_items &larr; products; payments belongs to orders]</p>
   </section>
 

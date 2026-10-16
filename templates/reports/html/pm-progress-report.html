@@ -2,48 +2,12 @@
   Template: pm-progress-report.html
   Used by:  prompts/agents/pm/PM-Generate_Project_Progress_Report.md (GPP)
   Pairs with the Markdown report at:
-            .virtualboard/reports/{YYYY-MM-DD}_Project_Progress_Report.md
+            $VB_ROOT/reports/{YYYY-MM-DD}_Project_Progress_Report.md
 
-  Cross-cutting placeholders (see templates/reports/README.md):
-    REPORT_TITLE, REPORT_TITLE_HTML, REPORT_SUBTITLE, EYEBROW
-    GENERATED_DATE, GENERATED_DATETIME, AUTHOR_AGENT, CLASSIFICATION
-    PROJECT_NAME, BRAND_NAME, BRAND_TAGLINE, BRAND_LOGO_DATAURI
-    NAV_LINKS, MAIN_CONTENT, EXTRA_SCRIPTS
-    HERO_META_CELLS  → list of {LABEL, VALUE}
-    FOOTER_PRIMARY_LINE, FOOTER_SECONDARY_LINE, FOOTER_NOTE_BLOCK
-
-  Per-template scalar placeholders:
-    HEALTH_VERDICT          – "At risk" | "On track" | "Ahead"
-    HEALTH_VERDICT_CLASS    – "danger" | "ok" | "" (drives KPI accent)
-    EXECUTIVE_SUMMARY_HTML  – 1–3 paragraph executive summary (HTML allowed)
-    KPI_TOTAL, KPI_DONE, KPI_REVIEW, KPI_IN_PROGRESS, KPI_BACKLOG, KPI_BLOCKED
-    PCT_DONE, PCT_REVIEW, PCT_IN_PROGRESS, PCT_BACKLOG  (integers, no % sign)
-    SPRINT_GOAL             – text or "—"
-    VELOCITY_PCT            – integer or "—"
-    POINTS_COMPLETED        – integer or "—"
-    POINTS_COMMITTED        – integer or "—"
-    COMPLETED_LAST_7        – integer
-    COMPLETED_LAST_30       – integer
-    AVG_DAYS_IN_PROGRESS    – integer or decimal
-    OPEN_BUGS               – integer or "—"
-    NEXT_REPORT_DATE        – YYYY-MM-DD
-
-  Per-template list placeholders (each name appears as an opening/closing
-  block elsewhere in this file; the agent expands it once per item):
-    IN_PROGRESS       items: FTR_ID, TITLE, OWNER, DAYS_IN_PROGRESS, BLOCKERS
-    IN_REVIEW         items: FTR_ID, TITLE, OWNER, REVIEW_STATUS
-    RECENT_DONE       items: FTR_ID, TITLE, COMPLETED_DATE
-    NEXT_PRIORITIES   items: FTR_ID, TITLE, COMPLEXITY (XS/S/M/L/XL)
-    BLOCKED_BY_DEPS   items: FTR_ID, TITLE, WAITING_ON
-    BLOCKERS          items: FTR_ID, REASON
-    IMMEDIATE_ACTIONS items: TITLE, DESC
-    SHORT_TERM        items: TITLE, DESC
-    LONG_TERM         items: TITLE, DESC
-
-  Empty-state convention: if a list is empty, the surrounding section still
-  renders. Pair the list with a plain-text fallback shown only when empty by
-  substituting LIST_EMPTY_<NAME> with HTML ("" if items exist, an italic note
-  otherwise). The fallbacks below are wrapped in <p class="empty-note">.
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template pm-progress-report --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>
@@ -245,20 +209,21 @@
 
   <section id="capacity">
     <h2><span class="num">08</span>Capacity &amp; Trends</h2>
-    <p class="lead">Sprint capacity and rolling completion metrics. Substitute "—" for unknown values.</p>
+    <p class="lead">Sprint capacity and rolling completion metrics. Every value must name its source or state why it is unavailable.</p>
 
     <div class="callout">
       <p><strong>Sprint goal:</strong> {{SPRINT_GOAL}}</p>
     </div>
+    {{METRIC_PROVENANCE_HTML}}
 
     <div class="kpi">
       <div class="stat"><div class="n">{{POINTS_COMPLETED}}</div><div class="l">Points completed</div></div>
       <div class="stat"><div class="n">{{POINTS_COMMITTED}}</div><div class="l">Points committed</div></div>
-      <div class="stat"><div class="n">{{VELOCITY_PCT}}%</div><div class="l">Velocity</div></div>
+      <div class="stat"><div class="n">{{VELOCITY}}</div><div class="l">Velocity · sourced or unavailable</div></div>
       <div class="stat"><div class="n">{{COMPLETED_LAST_7}}</div><div class="l">Completed · 7d</div></div>
       <div class="stat"><div class="n">{{COMPLETED_LAST_30}}</div><div class="l">Completed · 30d</div></div>
-      <div class="stat"><div class="n">{{AVG_DAYS_IN_PROGRESS}}</div><div class="l">Avg days in progress</div></div>
-      <div class="stat"><div class="n">{{OPEN_BUGS}}</div><div class="l">Open bugs</div></div>
+      <div class="stat"><div class="n">{{AVG_DAYS_IN_PROGRESS}}</div><div class="l">Avg days · event history required</div></div>
+      <div class="stat"><div class="n">{{OPEN_BUGS}}</div><div class="l">Open bugs · named source required</div></div>
     </div>
   </section>
 

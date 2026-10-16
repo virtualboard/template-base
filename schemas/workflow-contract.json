@@ -1,0 +1,186 @@
+{
+  "format_version": 1,
+  "feature_id_pattern": "^FTR-\\d{4}$",
+  "statuses": [
+    "backlog",
+    "in-progress",
+    "blocked",
+    "review",
+    "done"
+  ],
+  "transitions": {
+    "backlog": [
+      "in-progress"
+    ],
+    "in-progress": [
+      "blocked",
+      "review"
+    ],
+    "blocked": [
+      "in-progress"
+    ],
+    "review": [
+      "in-progress",
+      "done"
+    ],
+    "done": []
+  },
+  "terminal_statuses": [
+    "done"
+  ],
+  "roles": {
+    "keys": [
+      "architect",
+      "backend_dev",
+      "data_analytics_engineer",
+      "devops_engineer",
+      "frontend_dev",
+      "fullstack_dev",
+      "pm",
+      "qa",
+      "security_compliance_engineer",
+      "ux_product_designer"
+    ],
+    "selection_cases": [
+      {
+        "status": "review",
+        "labels": [
+          "backend"
+        ],
+        "fallback": "fullstack_dev",
+        "want": "qa"
+      },
+      {
+        "status": "review",
+        "role": "architect",
+        "labels": [
+          "backend"
+        ],
+        "fallback": "fullstack_dev",
+        "want": "architect"
+      },
+      {
+        "status": "in-progress",
+        "labels": [
+          "backend"
+        ],
+        "fallback": "fullstack_dev",
+        "want": "backend_dev"
+      },
+      {
+        "status": "in-progress",
+        "labels": [
+          "unknown"
+        ],
+        "fallback": "fullstack_dev",
+        "want": "fullstack_dev"
+      }
+    ]
+  },
+  "doctor": {
+    "format_version": 1,
+    "dispatch_capabilities": [
+      "owner-leases",
+      "lease-tokens",
+      "lease-renewal",
+      "raw-schema-validation",
+      "validation-exit-status"
+    ],
+    "vb_capabilities": [
+      "owner-leases",
+      "lease-tokens",
+      "lease-renewal",
+      "raw-schema-validation",
+      "validation-exit-status",
+      "template-ownership",
+      "report-rendering"
+    ]
+  },
+  "vb": {
+    "global_flags": [
+      "root",
+      "json",
+      "actor",
+      "dry-run"
+    ],
+    "commands": {
+      "new": [
+        "template",
+        "role"
+      ],
+      "move": [
+        "owner"
+      ],
+      "update": [
+        "field"
+      ],
+      "validate": [
+        "only-features",
+        "only-specs",
+        "fix"
+      ],
+      "lock": [
+        "owner",
+        "ttl",
+        "token",
+        "renew",
+        "release"
+      ],
+      "doctor": [
+        "capabilities-only"
+      ],
+      "index": [],
+      "report render": [
+        "template",
+        "data",
+        "output"
+      ]
+    },
+    "exit_codes": {
+      "success": 0,
+      "validation": 1,
+      "not_found": 2,
+      "invalid_transition": 3,
+      "dependency": 4,
+      "lock_conflict": 5,
+      "filesystem": 6,
+      "schema": 7,
+      "external_command": 8,
+      "unknown": 10
+    },
+    "lifecycle_refusal_exit": 3
+  },
+  "hvb": {
+    "global_flags": [
+      "root",
+      "json"
+    ],
+    "commands": {
+      "doctor": [],
+      "feature validate": [
+        "fix"
+      ],
+      "run start": [
+        "force",
+        "worktree",
+        "pr",
+        "harness",
+        "role"
+      ],
+      "run retry": [],
+      "run recover": [],
+      "run cancel": []
+    },
+    "exit_codes": {
+      "success": 0,
+      "validation": 1,
+      "not_found": 2,
+      "invalid_transition": 3,
+      "dependency": 4,
+      "lock_conflict": 5,
+      "herdr_unavailable": 6,
+      "usage": 64
+    },
+    "lifecycle_refusal_exit": 64
+  }
+}

@@ -1,30 +1,12 @@
 <!--
   Template: security-threat-model.html
   Used by:  prompts/agents/security/Security-Generate_Threat_Model.md (GTM)
-  Pairs with: .virtualboard/security/threat-models/TM-{YYYY-MM-DD}-{component}.md
+  Pairs with: $VB_ROOT/reports/security/threat-models/TM-{YYYY-MM-DD}-{component}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    COMPONENT
-    EXECUTIVE_SUMMARY_HTML
-    SCOPE_HTML
-    ARCHITECTURE_DIAGRAM_HTML  – inline SVG, pre-rendered Mermaid, or note
-    DATA_FLOW_HTML             – paragraph(s) describing data flow
-    KPI_TOTAL_THREATS, KPI_CRITICAL, KPI_HIGH, KPI_MEDIUM, KPI_LOW
-    OVERALL_POSTURE            – e.g. "Acceptable with caveats"
-    OVERALL_POSTURE_CLASS      – "ok" | "" | "danger"
-    NEXT_REVIEW_DATE
-    OPEN_QUESTIONS_HTML
-
-  Per-template list placeholders:
-    TRUST_BOUNDARIES       items: NAME, NOTES
-    ASSETS                 items: NAME, CLASSIFICATION, NOTES
-    THREAT_ACTORS          items: NAME, MOTIVATION, CAPABILITY
-    STRIDE_ROWS            items: CATEGORY (Spoofing|Tampering|Repudiation|Information Disclosure|Denial of Service|Elevation of Privilege),
-                                  THREAT, TARGET, MITIGATION, SEVERITY (critical|high|medium|low)
-    MITIGATIONS_PLANNED    items: TITLE, OWNER, DUE, DESC
-    RESIDUAL_RISKS         items: TITLE, SEVERITY, ACCEPTANCE_RATIONALE
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template security-threat-model --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>
@@ -78,6 +60,9 @@
     <h2><span class="num">04</span>Architecture &amp; Data Flow</h2>
     <p class="lead">Trust boundaries, assets, and the flow of data across them.</p>
     <h3>Architecture diagram</h3>
+    <p class="lead">Use sanitized structural HTML or
+      <code>&lt;pre&gt;&lt;code&gt;</code> Mermaid/text source; raw SVG and image tags are
+      intentionally rejected.</p>
     {{ARCHITECTURE_DIAGRAM_HTML}}
     <h3>Data flow</h3>
     {{DATA_FLOW_HTML}}

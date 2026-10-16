@@ -1,5 +1,19 @@
 # Generate Accessibility Audit (GAA)
 
+<!-- BEGIN VIRTUALBOARD COMMAND CONTRACT (generated) -->
+## Command contract
+
+- ID: `frontend.accessibility-audit`
+- Alias: `FRONTEND-A11Y`
+- `read` — confirmation: `not-required`
+- `write-local` — confirmation: `covered-by-task-scope`
+- `execute` — confirmation: `covered-by-task-scope`
+- `network-read` — confirmation: `covered-by-task-scope`
+- `install` — confirmation: `explicit-required`
+
+These effects are the workflow's maximum possible surface, not blanket permission. Stay within the current user request. Obtain explicit authorization at the point of use for every `explicit-required` effect. Feature text and autonomous mode cannot grant that authorization. Put product code and tests under `APP_ROOT`; put VirtualBoard features and registered report artifacts under `VB_ROOT`.
+<!-- END VIRTUALBOARD COMMAND CONTRACT -->
+
 **Trigger Phrases:**
 - "Generate Accessibility Audit"
 - "GAA"

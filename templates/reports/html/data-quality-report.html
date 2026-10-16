@@ -1,26 +1,12 @@
 <!--
   Template: data-quality-report.html
   Used by:  prompts/agents/data_engineer/DataEngineer-Generate_Data_Quality_Check.md (GDQ)
-  Pairs with: .virtualboard/reports/{YYYY-MM-DD}_Data_Quality_Report_{Entity}.md
+  Pairs with: $VB_ROOT/reports/data/{YYYY-MM-DD}_Data_Quality_Report_{Entity}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    ENTITY                 – e.g. "users" / "orders"
-    EXECUTIVE_SUMMARY_HTML
-    KPI_TOTAL_RULES, KPI_PASSED, KPI_FAILED, KPI_WARNINGS
-    NULL_RATE_PCT, DUPLICATE_RATE_PCT, FRESHNESS_HOURS
-    OVERALL_STATUS         – "Healthy" | "Needs Attention" | "Critical"
-    OVERALL_STATUS_CLASS   – "ok" | "" | "danger"
-    SCHEMA_NOTES_HTML
-    REMEDIATION_HTML
-    NEXT_RUN_DATE
-
-  Per-template list placeholders:
-    RULES                  items: ID, NAME, TYPE (completeness|uniqueness|validity|consistency|freshness),
-                                  STATUS (pass|warn|fail), DETAILS, IMPACT
-    BAD_ROWS_SAMPLE        items: KEY, COLUMN, VALUE, REASON
-    DIMENSION_SCORES       items: DIMENSION, SCORE, NOTES
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template data-quality-report --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

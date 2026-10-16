@@ -1,0 +1,273 @@
+name: VirtualBoard contracts
+
+on:
+  workflow_call:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: "1.25.0"
+  CLAUDE_CODE_VERSION: "2.1.201"
+  CLAUDE_CODE_INTEGRITY: "sha512-BIWC6KCKtLNb8pbVIuWiJ+qcthCFhrmIm6u3wOcIHjYc5oruozQ7l5pWWGVyJcUrKygysdWS4pkljdXL2rDdsg=="
+  CLAUDE_CODE_LINUX_X64_INTEGRITY: "sha512-pJaih99BHjY2WvBoPYvDMFhs90DwTXUaC8LIqQe/W+2g4jJr7VYMTVv0C60vIoxg17nxaMUTtlBhY87U3qP5kA=="
+
+jobs:
+  contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out template source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Resolve the exact CLI source candidate
+        id: cli-ref
+        run: |
+          SOURCE_REF=$(tr -d '[:space:]' < .vb-cli-source-ref)
+          [[ "$SOURCE_REF" =~ ^[0-9a-f]{40}$ ]]
+          test "$SOURCE_REF" != 0000000000000000000000000000000000000000
+          echo "ref=$SOURCE_REF" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the exact CLI source candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: virtualboard/vb-cli
+          ref: ${{ steps.cli-ref.outputs.ref }}
+          path: .state/vb-cli-source
+          persist-credentials: false
+
+      - name: Set up exact Go toolchain
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: .state/vb-cli-source/go.sum
+
+      - name: Build the CLI candidate against this exact template archive
+        run: |
+          test "$(go env GOVERSION)" = "go${GO_VERSION}"
+          cmp schemas/frontmatter.schema.json \
+            .state/vb-cli-source/internal/frameworkschema/frontmatter.schema.json
+          cmp schemas/system-spec.schema.json \
+            .state/vb-cli-source/internal/frameworkschema/system-spec.schema.json
+          TEMPLATE_RELEASE="v$(tr -d '[:space:]' < version.txt)"
+          ARCHIVE="$RUNNER_TEMP/template-base-${TEMPLATE_RELEASE}.zip"
+          git archive --format=zip --prefix="template-base-${TEMPLATE_RELEASE}/" \
+            --output="$ARCHIVE" "$GITHUB_SHA"
+          GO=go scripts/build-vb-cli-candidate.sh \
+            .state/vb-cli-source "$ARCHIVE" .state/bin/vb
+          .state/vb-cli-source/scripts/release-smoke.sh \
+            .state/bin/vb "$ARCHIVE" "$TEMPLATE_RELEASE"
+
+      - name: Set up minimum supported Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+        with:
+          python-version: "3.9"
+
+      - name: Set up Node for Claude plugin runtime validation
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Install integrity-pinned Claude Code test runtime
+        run: |
+          WRAPPER="$RUNNER_TEMP/claude-code-${CLAUDE_CODE_VERSION}.tgz"
+          NATIVE="$RUNNER_TEMP/claude-code-linux-x64-${CLAUDE_CODE_VERSION}.tgz"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --proto-redir '=https' \
+            --connect-timeout 10 --max-time 120 --max-filesize 262144000 \
+            --retry 3 --output "$WRAPPER" \
+            "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${CLAUDE_CODE_VERSION}.tgz"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --proto-redir '=https' \
+            --connect-timeout 10 --max-time 120 --max-filesize 262144000 \
+            --retry 3 --output "$NATIVE" \
+            "https://registry.npmjs.org/@anthropic-ai/claude-code-linux-x64/-/claude-code-linux-x64-${CLAUDE_CODE_VERSION}.tgz"
+          WRAPPER_ACTUAL="sha512-$(openssl dgst -sha512 -binary "$WRAPPER" | openssl base64 -A)"
+          NATIVE_ACTUAL="sha512-$(openssl dgst -sha512 -binary "$NATIVE" | openssl base64 -A)"
+          test "$WRAPPER_ACTUAL" = "$CLAUDE_CODE_INTEGRITY"
+          test "$NATIVE_ACTUAL" = "$CLAUDE_CODE_LINUX_X64_INTEGRITY"
+          npm install --global --omit=optional "$NATIVE" "$WRAPPER"
+          test "$(claude --version | awk '{print $1}')" = "$CLAUDE_CODE_VERSION"
+
+      - name: Verify framework contracts
+        run: ./scripts/validate-automation.sh
+        env:
+          REQUIRE_CLAUDE_PLUGIN_CLI: "1"
+
+      - name: Check repository diff
+        run: |
+          git diff --check
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  installer-platforms:
+    name: Installer · ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+          - macos-15-intel
+          - macos-15
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    steps:
+      - name: Check out template source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Resolve the exact CLI source candidate
+        id: cli-ref
+        shell: bash
+        run: |
+          SOURCE_REF=$(tr -d '[:space:]' < .vb-cli-source-ref)
+          [[ "$SOURCE_REF" =~ ^[0-9a-f]{40}$ ]]
+          test "$SOURCE_REF" != 0000000000000000000000000000000000000000
+          echo "ref=$SOURCE_REF" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the exact CLI source candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: virtualboard/vb-cli
+          ref: ${{ steps.cli-ref.outputs.ref }}
+          path: .state/vb-cli-source
+          persist-credentials: false
+
+      - name: Set up exact Go toolchain
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: .state/vb-cli-source/go.sum
+
+      - name: Build the exact platform CLI candidate
+        shell: bash
+        run: |
+          test "$(go env GOVERSION)" = "go${GO_VERSION}"
+          TEMPLATE_RELEASE="v$(tr -d '[:space:]' < version.txt)"
+          ARCHIVE="$RUNNER_TEMP/template-base-${TEMPLATE_RELEASE}.zip"
+          git archive --format=zip --prefix="template-base-${TEMPLATE_RELEASE}/" \
+            --output="$ARCHIVE" "$GITHUB_SHA"
+          GO=go scripts/build-vb-cli-candidate.sh \
+            .state/vb-cli-source "$ARCHIVE" .state/bin/vb
+
+      - name: Run portable installer contracts
+        shell: bash
+        run: bash tests/test-install-vb-cli.sh
+
+  windows-installer:
+    name: Installer · windows-2025
+    runs-on: windows-2025
+    timeout-minutes: 15
+    steps:
+      - name: Check out template source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Resolve the exact CLI source candidate
+        id: cli-ref
+        shell: pwsh
+        run: |
+          $sourceRef = (Get-Content -LiteralPath .vb-cli-source-ref -Raw).Trim()
+          if ($sourceRef -notmatch '^[0-9a-f]{40}$' -or $sourceRef -eq ('0' * 40)) {
+            throw '.vb-cli-source-ref must select one concrete 40-hex commit'
+          }
+          "ref=$sourceRef" >> $env:GITHUB_OUTPUT
+
+      - name: Check out the exact CLI source candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: virtualboard/vb-cli
+          ref: ${{ steps.cli-ref.outputs.ref }}
+          path: .state/vb-cli-source
+          persist-credentials: false
+
+      - name: Set up exact Go toolchain
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: .state/vb-cli-source/go.sum
+
+      - name: Build the exact Windows CLI candidate
+        shell: pwsh
+        run: |
+          if ((go env GOVERSION) -ne "go$env:GO_VERSION") {
+            throw "exact Go $env:GO_VERSION is required"
+          }
+          $selectedVersion = (Get-Content -LiteralPath .vb-version -Raw).Trim()
+          $sourceText = Get-Content -LiteralPath .state/vb-cli-source/internal/version/version.go -Raw
+          $match = [regex]::Match($sourceText, 'const Current = "([^"]+)"')
+          if (-not $match.Success -or $match.Groups[1].Value -ne $selectedVersion) {
+            throw 'selected CLI source version does not match .vb-version'
+          }
+          $templateRelease = "v$((Get-Content -LiteralPath version.txt -Raw).Trim())"
+          $archive = Join-Path $env:RUNNER_TEMP "template-base-$templateRelease.zip"
+          git archive --format=zip --prefix="template-base-$templateRelease/" --output=$archive $env:GITHUB_SHA
+          if ($LASTEXITCODE -ne 0) { throw 'git archive failed' }
+          $templateDigest = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          $output = Join-Path $env:GITHUB_WORKSPACE '.state/bin/vb.exe'
+          $null = New-Item -ItemType Directory -Path (Split-Path $output) -Force
+          Push-Location .state/vb-cli-source
+          try {
+            $ldflags = "-s -w -X github.com/virtualboard/vb-cli/cmd.templateArchiveSHA256=$templateDigest"
+            go build -trimpath -buildvcs=false "-ldflags=$ldflags" -o $output .
+            if ($LASTEXITCODE -ne 0) { throw 'Windows CLI candidate build failed' }
+          }
+          finally {
+            Pop-Location
+          }
+          if ((& $output version) -ne $selectedVersion) {
+            throw 'built Windows candidate reports the wrong version'
+          }
+
+      - name: Run native PowerShell installer contracts
+        shell: pwsh
+        run: ./tests/test-install-vb-cli.ps1 -Candidate .state/bin/vb.exe
+
+      - name: Run Windows PowerShell 5.1 installer contracts
+        shell: powershell
+        run: ./tests/test-install-vb-cli.ps1 -Candidate .state/bin/vb.exe
+
+  legacy-main-compatibility:
+    name: Stop-ship · vb v0.9.0 moving-main compatibility
+    if: >-
+      (github.event_name == 'pull_request' && github.base_ref == 'main') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out template source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Check out immutable vb v0.9.0 source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: virtualboard/vb-cli
+          ref: d0d05d656c721ade944ad4dd61e1aa7d3ffb0f8a
+          path: .state/vb-cli-v0.9
+          persist-credentials: false
+
+      - name: Set up exact Go toolchain
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: .state/vb-cli-v0.9/go.sum
+
+      - name: Rehearse the candidate with the moving-main v0.9 client
+        run: |
+          test "$(go env GOVERSION)" = "go${GO_VERSION}"
+          TEMPLATE_RELEASE="v$(tr -d '[:space:]' < version.txt)"
+          ARCHIVE="$RUNNER_TEMP/template-base-${TEMPLATE_RELEASE}.zip"
+          git archive --format=zip --prefix="template-base-${TEMPLATE_RELEASE}/" \
+            --output="$ARCHIVE" "$GITHUB_SHA"
+          GO=go scripts/rehearse-v0.9-compatibility.sh \
+            .state/vb-cli-v0.9 "$ARCHIVE"

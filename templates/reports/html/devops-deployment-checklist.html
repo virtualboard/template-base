@@ -1,21 +1,12 @@
 <!--
   Template: devops-deployment-checklist.html (optional, S+R)
   Used by:  prompts/agents/devops/DevOps-Generate_Deployment_Checklist.md (GDC)
-  Pairs with: .virtualboard/deployments/checklists/DC-{YYYY-MM-DD}-{env}.md
+  Pairs with: $VB_ROOT/reports/deployments/checklists/DC-{YYYY-MM-DD}-{env}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    ENVIRONMENT, TARGET_VERSION, DEPLOY_WINDOW
-    OWNER                  – deploy lead
-    KPI_TOTAL, KPI_REQUIRED, KPI_DONE, KPI_PENDING
-    NOTES_HTML
-
-  Per-template list placeholders:
-    PRE_DEPLOY             items: CATEGORY, ITEM, REQUIRED (Yes|No), STATUS (done|pending|skipped), OWNER, NOTES
-    DEPLOY                 items: STEP, COMMAND_HTML (e.g. <code>...</code>), NOTES
-    POST_DEPLOY            items: ITEM, STATUS, OWNER, NOTES
-    ROLLBACK_STEPS         items: STEP, COMMAND_HTML, NOTES
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template devops-deployment-checklist --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

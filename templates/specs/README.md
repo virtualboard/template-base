@@ -7,7 +7,9 @@ last_updated: YYYY-MM-DD
 
 # System Specification Templates
 
-This directory contains cross-cutting specification templates that complement feature specs in `/features`. Each Markdown file provides a repeatable structure you can clone (`cp templates/specs/<template>.md specs/<project>-<area>.md`) or reference when drafting foundational documentation.
+This directory contains cross-cutting specification templates that complement
+feature specs under `$VB_ROOT/features`. Copy instantiated system specs into
+`$VB_ROOT/specs`, the only canonical directory scanned by `vb validate`.
 
 | Template | Purpose |
 | -------- | ------- |
@@ -21,19 +23,23 @@ This directory contains cross-cutting specification templates that complement fe
 | `observability-and-incident-response.md` | Establish telemetry coverage, alerting, and incident management practices. |
 
 ## How to Use These Templates
-1. Duplicate the relevant template (or subset of sections) into your feature/design doc.
-2. Update the frontmatter metadata (`spec_type`, `title`, `owner`, `last_updated`, etc.) so automation can catalog the document.
-3. Replace bracketed placeholder text with project-specific details.
-4. Link completed specs from relevant feature files, PRs, or `/docs` articles for discoverability.
+1. Copy the relevant complete template to `$VB_ROOT/specs/<spec-type>.md`.
+2. Update the frontmatter metadata (`spec_type`, `title`, `owner`,
+   `last_updated`, etc.) so automation can catalog the document.
+3. Replace every placeholder, including `YYYY-MM-DD`, with real project data.
+4. Link the canonical spec from relevant features, PRs, and application docs;
+   do not create a second authoritative copy elsewhere.
 
-> Tip: Keep specs close to the code that implements them (e.g., `docs/architecture/`, `docs/ops/`). When the implementation changes, update both the spec body *and* the `last_updated` field.
+> Application docs may summarize or link a system spec, but the validated source
+> remains under `$VB_ROOT/specs`. Update its body and `last_updated` together.
 
 ## Validation
 
 All system specs share the same schema (`schemas/system-spec.schema.json`). `vb validate` verifies that:
 
 - `spec_type`, `status`, and `applicability` use allowed values.
-- `last_updated` is either a real ISO date or the placeholder `YYYY-MM-DD` while templating.
+- `last_updated` is a real ISO date. The literal template placeholder
+  `YYYY-MM-DD` is invalid in an instantiated spec.
 - Arrays (`applicability`, `related_initiatives`) contain normalized tokens.
 
 If something is missing, the validator will flag the offending file before your PR lands.

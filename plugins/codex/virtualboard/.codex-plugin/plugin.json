@@ -1,0 +1,29 @@
+{
+  "name": "virtualboard",
+  "version": "0.8.0",
+  "description": "Markdown-first feature workflow and safe task coordination for Codex",
+  "author": {
+    "name": "Ernesto Ruy Sanchez",
+    "url": "https://github.com/virtualboard"
+  },
+  "homepage": "https://github.com/virtualboard/template-base",
+  "repository": "https://github.com/virtualboard/template-base",
+  "license": "MIT",
+  "keywords": ["feature-management", "workflow", "agents", "markdown"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "VirtualBoard",
+    "shortDescription": "Safely implement a tracked feature with Codex.",
+    "longDescription": "VirtualBoard gives Codex a contract-driven workflow for validating, claiming, implementing, testing, and handing off Markdown feature specifications.",
+    "developerName": "VirtualBoard",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "websiteURL": "https://github.com/virtualboard/template-base",
+    "defaultPrompt": [
+      "Work on a VirtualBoard feature safely.",
+      "Show the current VirtualBoard feature status.",
+      "Validate this VirtualBoard workspace."
+    ],
+    "brandColor": "#22C55E"
+  }
+}

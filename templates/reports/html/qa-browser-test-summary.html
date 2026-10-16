@@ -1,22 +1,12 @@
 <!--
   Template: qa-browser-test-summary.html (optional, S+R wrapper)
   Used by:  prompts/agents/qa/QA-Generate_Browser_Automation_Tests.md (GBAT)
-  Pairs with: Playwright HTML reporter output + .virtualboard/docs/browser-test-cases/TC-{FTR-####}-{name}.md
+  Pairs with: Playwright output + $VB_ROOT/reports/testing/browser/test-cases/TC-{FTR-####}-{name}.md
 
-  Cross-cutting placeholders: standard set.
-
-  Per-template scalar placeholders:
-    FTR_ID, FEATURE_TITLE
-    KPI_TOTAL, KPI_PASSED, KPI_FAILED, KPI_FLAKY, KPI_SKIPPED
-    TOTAL_DURATION
-    PLAYWRIGHT_REPORT_URL  – relative path to playwright-report/index.html
-    SUMMARY_HTML
-    TRACE_NOTES_HTML
-
-  Per-template list placeholders:
-    FAILURES               items: TEST_NAME, FILE_REF, ERROR_HTML, TRACE_LINK
-    FLAKY                  items: TEST_NAME, FILE_REF, NOTES
-    BROWSERS               items: NAME, VERSION, STATUS
+  Placeholder contract (generated at runtime):
+    python3 tools/render_report.py --template qa-browser-test-summary --describe
+  This command is authoritative for scalar, HTML, JSON, URL, number,
+  token, defaulted, and per-list item values.
 -->
 {{INCLUDE: _partials/head.html}}
 <body>

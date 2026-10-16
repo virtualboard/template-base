@@ -3,13 +3,14 @@ id: FTR-XXXX
 title: <Feature Title>
 status: backlog
 owner: unassigned
+implementation_owner: unassigned
 priority: P2
 complexity: M
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
+status_changed: YYYY-MM-DD
 labels: []
 dependencies: []
-epic: ""
 risk_notes: ""
 ---
 
@@ -62,10 +63,16 @@ Who is impacted, what pain exists, why now.
 ## Implementation Notes
 - Libraries, patterns, risks, tech debt considerations.
 
+## Verification Evidence
+- Implementation commit: …
+- Command and result: …
+- Acceptance criterion demonstrated: …
+- Checks not run and reason: …
+
 ## Open Questions
 - …
 
-</untrusted-content>
-
 ## Links
 - Related FTRs, tickets, PRs.
+
+</untrusted-content>

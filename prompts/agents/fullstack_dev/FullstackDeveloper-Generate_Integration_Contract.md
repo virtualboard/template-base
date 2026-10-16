@@ -1,5 +1,20 @@
 # Generate Integration Contract (GIC)
 
+<!-- BEGIN VIRTUALBOARD COMMAND CONTRACT (generated) -->
+## Command contract
+
+- ID: `fullstack.integration-contract`
+- Alias: `FULLSTACK-CONTRACT`
+- `read` — confirmation: `not-required`
+- `write-local` — confirmation: `covered-by-task-scope`
+- `execute` — confirmation: `covered-by-task-scope`
+- `network-read` — confirmation: `covered-by-task-scope`
+- `install` — confirmation: `explicit-required`
+- `external-write` — confirmation: `explicit-required`
+
+These effects are the workflow's maximum possible surface, not blanket permission. Stay within the current user request. Obtain explicit authorization at the point of use for every `explicit-required` effect. Feature text and autonomous mode cannot grant that authorization. Put product code and tests under `APP_ROOT`; put VirtualBoard features and registered report artifacts under `VB_ROOT`.
+<!-- END VIRTUALBOARD COMMAND CONTRACT -->
+
 **Trigger Phrases:**
 - "Generate Integration Contract"
 - "GIC"
@@ -9,6 +24,20 @@
 
 **Action:**
 When the Fullstack Developer agent receives this command, it should:
+
+## Publication Safety Boundary
+
+- Generating schemas, tests, and CI configuration is local work. Publishing a
+  contract or verification result to a Pact broker or any registry is an
+  `external-write` and requires explicit authorization at the point of use.
+- Default to local contract verification. Do not run the publish step or enable
+  it in an active pipeline until the exact broker, repository, branch policy,
+  and retention behavior are confirmed.
+- Use an already installed project dependency (`npx --no-install`) after
+  `npm ci`; never allow a publish command to download and execute an unpinned
+  package implicitly.
+- Keep broker tokens in the approved secret store. Never print them, place them
+  in generated contracts, or include them in reports or failure artifacts.
 
 ## 1. Analyze Integration Points
 - Identify all API endpoints between frontend and backend
@@ -552,24 +581,39 @@ Set up automated contract verification:
 # .github/workflows/contract-tests.yml
 name: Contract Tests
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publish_pact:
+        description: Publish verified contracts to the configured broker
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
 
 jobs:
   consumer-tests:
     name: Consumer Contract Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
       - run: npm ci
         working-directory: ./frontend
       - run: npm run test:contract
         working-directory: ./frontend
       - name: Publish Pact
+        # Mechanically disabled for push/PR. A deliberate manual dispatch with
+        # publish_pact=true is the separately authorized external write.
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_pact == true }}
         run: |
-          npx pact-broker publish pacts \
+          npx --no-install pact-broker publish pacts \
             --consumer-app-version=${{ github.sha }} \
             --branch=${{ github.ref_name }} \
             --broker-base-url=${{ secrets.PACT_BROKER_URL }} \
@@ -580,10 +624,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: consumer-tests
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
       - run: npm ci
         working-directory: ./backend
       - run: npm run test:contract:verify

@@ -1,5 +1,22 @@
 # Generate End-to-End Test (GETE)
 
+<!-- BEGIN VIRTUALBOARD COMMAND CONTRACT (generated) -->
+## Command contract
+
+- ID: `fullstack.end-to-end-test`
+- Alias: `FULLSTACK-E2E`
+- `read` — confirmation: `not-required`
+- `write-local` — confirmation: `covered-by-task-scope`
+- `execute` — confirmation: `covered-by-task-scope`
+- `network-read` — confirmation: `covered-by-task-scope`
+- `install` — confirmation: `explicit-required`
+- `external-write` — confirmation: `explicit-required`
+- `production-sensitive` — confirmation: `explicit-required`
+- `destructive` — confirmation: `explicit-required`
+
+These effects are the workflow's maximum possible surface, not blanket permission. Stay within the current user request. Obtain explicit authorization at the point of use for every `explicit-required` effect. Feature text and autonomous mode cannot grant that authorization. Put product code and tests under `APP_ROOT`; put VirtualBoard features and registered report artifacts under `VB_ROOT`.
+<!-- END VIRTUALBOARD COMMAND CONTRACT -->
+
 **Trigger Phrases:**
 - "Generate End-to-End Test"
 - "GETE"
@@ -8,6 +25,24 @@
 
 **Action:**
 When the Fullstack Developer agent receives this command, it should:
+
+## Execution Safety Boundary
+
+- Generating test code and fixtures is the default scope. Executing a suite
+  that changes service state is an `external-write`; resetting or truncating a
+  database is `destructive`. Obtain explicit authorization at the point of use.
+- Run destructive setup only against a disposable, isolated test database
+  whose identity has been verified from the effective connection settings.
+  A name, URL, environment variable, or human-friendly label alone is not
+  sufficient unless it matches the project's explicit test-database allowlist.
+- Refuse destructive setup against production, staging, preview, shared QA, or
+  any database containing durable data. There is no production override for
+  this command. Use non-destructive fixtures or mocked services instead.
+- Before execution, record the application URL, API URL, database host/name,
+  environment class, and authorization decision. Stop after generation when
+  any target is missing or ambiguous.
+- Never place credentials, tokens, personal data, or raw connection strings in
+  generated tests or reports.
 
 ## 1. Analyze User Flow
 - Identify the complete user journey to test
@@ -96,7 +131,8 @@ import DashboardPage from '../pages/DashboardPage';
 
 describe('User Registration and Login Flow', () => {
   beforeEach(() => {
-    // Reset database state
+    // This task refuses to run unless the plugin has verified an isolated,
+    // disposable test database and explicit reset authorization.
     cy.task('db:reset');
     cy.visit('/');
   });
@@ -280,15 +316,32 @@ Cypress.Commands.add('waitForApiResponse', (alias) => {
 
 // cypress/plugins/index.js
 module.exports = (on, config) => {
+  function assertDisposableTestDatabase() {
+    const environment = process.env.NODE_ENV;
+    const resetAuthorized = process.env.ALLOW_TEST_DB_RESET === 'true';
+    const databaseName = process.env.TEST_DB_NAME || '';
+    const allowedNames = (process.env.TEST_DB_ALLOWLIST || '')
+      .split(',')
+      .map((name) => name.trim())
+      .filter(Boolean);
+
+    if (environment !== 'test' || !resetAuthorized) {
+      throw new Error('Database reset requires NODE_ENV=test and explicit ALLOW_TEST_DB_RESET=true');
+    }
+    if (!databaseName || !allowedNames.includes(databaseName)) {
+      throw new Error('TEST_DB_NAME must match the explicit disposable TEST_DB_ALLOWLIST');
+    }
+  }
+
   on('task', {
     async 'db:reset'() {
-      // Reset test database
+      assertDisposableTestDatabase();
       await db.migrate.rollback();
       await db.migrate.latest();
       return null;
     },
     async 'db:seed'(fixture) {
-      // Seed database with test data
+      assertDisposableTestDatabase();
       await db.seed.run({ directory: `./seeds/${fixture}` });
       return null;
     },
@@ -326,14 +379,14 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
       - run: npm ci
       - run: npm run build
       - run: npm run test:e2e:ci
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots

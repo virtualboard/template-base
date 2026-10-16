@@ -26,12 +26,12 @@ Generate Browser Automation Tests for the User Login Feature
 ## Step 2 - Phase 1 Test Case Generation
 
 ### QA Agent Actions
-1. Reads feature spec from `features/in-progress/FTR-0042-user-login.md`
+1. Reads feature spec from `$VB_ROOT/features/in-progress/FTR-0042-user-login.md`
 2. Analyzes UI components and user flows
 3. Generates test cases document
 
 ### Output
-File Created: `.virtualboard/docs/browser-test-cases/TC-FTR-0042-user-login.md`
+File Created: `$VB_ROOT/reports/testing/browser/test-cases/TC-FTR-0042-user-login.md`
 
 Content Preview:
 ```markdown
@@ -89,7 +89,7 @@ Generated 8 test cases:
 - TC-007: Forgot password link (Medium Priority)
 - TC-008: Social login buttons (Low Priority)
 
-📄 Test cases saved to: .virtualboard/docs/browser-test-cases/TC-FTR-0042-user-login.md
+📄 Test cases saved to: $VB_ROOT/reports/testing/browser/test-cases/TC-FTR-0042-user-login.md
 
 Would you like to proceed to Phase 2 (Generate Automation Scripts)? (yes/no)
 ```
@@ -130,13 +130,17 @@ Please provide the following configuration:
 ```typescript
 import { defineConfig, devices } from '@playwright/test';
 
+const virtualBoardRoot = process.env.VIRTUALBOARD_ROOT;
+if (!virtualBoardRoot) throw new Error('VIRTUALBOARD_ROOT is required');
+const browserResults = `${virtualBoardRoot}/reports/testing/browser/results`;
+
 export default defineConfig({
   testDir: './tests/browser/specs',
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
   reporter: [
-    ['html', { outputFolder: '.virtualboard/docs/browser-test-reports/html' }],
-    ['json', { outputFile: '.virtualboard/docs/browser-test-reports/results.json' }],
+    ['html', { outputFolder: `${browserResults}/html` }],
+    ['json', { outputFile: `${browserResults}/results.json` }],
   ],
   use: {
     baseURL: 'http://localhost:3000',
@@ -489,7 +493,7 @@ both
 
 ### Output Files
 
-File Created: `.virtualboard/docs/browser-test-reports/report-2025-12-12-14-30.md`
+File Created: `$VB_ROOT/reports/testing/browser/results/report-2025-12-12-14-30.md`
 
 Content Preview:
 ```markdown
@@ -498,7 +502,7 @@ Content Preview:
 **Execution Date:** 2025-12-12 14:30:15
 **Feature:** User Login Feature
 **Feature ID:** FTR-0042
-**Test Cases File:** `.virtualboard/docs/browser-test-cases/TC-FTR-0042-user-login.md`
+**Test Cases File:** `$VB_ROOT/reports/testing/browser/test-cases/TC-FTR-0042-user-login.md`
 **Executed By:** QA Agent
 
 ---
@@ -590,7 +594,7 @@ Average test duration by browser:
 - **HTML Report:** [View Report](./html/index.html)
 - **Screenshots:** `./screenshots/`
 - **Videos:** `./videos/`
-- **Test Cases:** `.virtualboard/docs/browser-test-cases/TC-FTR-0042-user-login.md`
+- **Test Cases:** `$VB_ROOT/reports/testing/browser/test-cases/TC-FTR-0042-user-login.md`
 - **Test Specs:** `./tests/browser/specs/login.spec.ts`
 
 ---
@@ -604,12 +608,12 @@ Final Agent Response:
 ✅ All Phases Complete!
 
 📊 Test Execution Report Generated:
-   - Markdown: .virtualboard/docs/browser-test-reports/report-2025-12-12-14-30.md
-   - HTML: .virtualboard/docs/browser-test-reports/html/index.html
+   - Markdown: $VB_ROOT/reports/testing/browser/results/report-2025-12-12-14-30.md
+   - HTML: $VB_ROOT/reports/testing/browser/results/html/index.html
 
 📸 Artifacts:
-   - Screenshots: .virtualboard/docs/browser-test-reports/screenshots/
-   - Videos: .virtualboard/docs/browser-test-reports/videos/
+   - Screenshots: $VB_ROOT/reports/testing/browser/results/screenshots/
+   - Videos: $VB_ROOT/reports/testing/browser/results/videos/
 
 🎯 Results Summary:
    - 23/24 tests passed (95.8%)

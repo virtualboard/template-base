@@ -1,0 +1,87 @@
+{
+  "AUTHOR_AGENT": "PM Agent",
+  "AVG_DAYS_IN_PROGRESS": "",
+  "BLOCKED_BY_DEPS": [],
+  "BLOCKERS": [],
+  "CLASSIFICATION": "Example",
+  "COMPLETED_LAST_30": "",
+  "COMPLETED_LAST_7": "",
+  "EXECUTIVE_SUMMARY_HTML": {
+    "html": "<p>The report renderer is in progress. Completed work has passed its listed checks.</p>"
+  },
+  "EYEBROW": "Project progress \u00b7 Example",
+  "FOOTER_NOTE_BLOCK": "",
+  "FOOTER_PRIMARY_LINE": "VirtualBoard \u00b7 Example report",
+  "FOOTER_SECONDARY_LINE": "Data is illustrative; no production project is represented.",
+  "GENERATED_DATE": "2026-10-14",
+  "GENERATED_DATETIME": "2026-10-14 09:00",
+  "HEALTH_VERDICT": "On track",
+  "HEALTH_VERDICT_CLASS": "ok",
+  "HERO_META_CELLS": [
+    {
+      "LABEL": "Project",
+      "VALUE": "VirtualBoard"
+    },
+    {
+      "LABEL": "Date",
+      "VALUE": "2026-10-14"
+    }
+  ],
+  "IMMEDIATE_ACTIONS": [
+    {
+      "DESC": "Check content, layout, and acceptance evidence.",
+      "TITLE": "Review the generated report"
+    }
+  ],
+  "IN_PROGRESS": [
+    {
+      "BLOCKERS": "None",
+      "DAYS_IN_PROGRESS": 1,
+      "FTR_ID": "FTR-0042",
+      "OWNER": "developer",
+      "TITLE": "Progress report renderer"
+    }
+  ],
+  "IN_REVIEW": [],
+  "KPI_BACKLOG": 0,
+  "KPI_BLOCKED": 0,
+  "KPI_DONE": 1,
+  "KPI_IN_PROGRESS": 1,
+  "KPI_REVIEW": 0,
+  "KPI_TOTAL": 2,
+  "LIST_EMPTY_BLOCKED_BY_DEPS": "",
+  "LIST_EMPTY_BLOCKERS": "",
+  "LIST_EMPTY_IMMEDIATE_ACTIONS": "",
+  "LIST_EMPTY_IN_PROGRESS": "",
+  "LIST_EMPTY_IN_REVIEW": "",
+  "LIST_EMPTY_LONG_TERM": "",
+  "LIST_EMPTY_NEXT_PRIORITIES": "",
+  "LIST_EMPTY_RECENT_DONE": "",
+  "LIST_EMPTY_SHORT_TERM": "",
+  "LONG_TERM": [],
+  "NAV_LINKS": "",
+  "NEXT_PRIORITIES": [],
+  "NEXT_REPORT_DATE": "2026-10-21",
+  "OPEN_BUGS": "",
+  "PCT_BACKLOG": 0,
+  "PCT_DONE": 50,
+  "PCT_IN_PROGRESS": 50,
+  "PCT_REVIEW": 0,
+  "POINTS_COMMITTED": "",
+  "POINTS_COMPLETED": "",
+  "RECENT_DONE": [
+    {
+      "COMPLETED_DATE": "2026-10-13",
+      "FTR_ID": "FTR-0041",
+      "TITLE": "Validate report inputs"
+    }
+  ],
+  "REPORT_SUBTITLE": "A reproducible example with one feature in progress and one completed.",
+  "REPORT_TITLE": "VirtualBoard Progress Report",
+  "REPORT_TITLE_HTML": {
+    "html": "VirtualBoard <span class=\"green\">Progress</span>"
+  },
+  "SHORT_TERM": [],
+  "SPRINT_GOAL": "Make reports reproducible and reviewable.",
+  "VELOCITY_PCT": ""
+}
